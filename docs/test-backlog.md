@@ -11,7 +11,22 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M3c — settings + 10 new cards (latest deploy)
+## CRITICAL FIX — root scripts now attached (latest deploy)
+
+The previous deploys had a bug where TitleScreen.gd / MetaScreen.gd / SettingsScreen.gd were registered but **never attached to their root nodes** — so buttons rendered but did nothing. Fixed now.
+
+- [ ] **START RUN button works** (the moment of truth)
+- [ ] Title screen lifetime stats now show correct numbers (not all zero)
+- [ ] META PROGRESSION button opens the meta screen
+- [ ] SETTINGS button opens settings screen
+- [ ] Settings sliders move and persist
+- [ ] BACK buttons return to title
+
+If those work, the M2/M3 features below all become testable.
+
+---
+
+## M3c — settings + 10 new cards
 
 ### Settings menu
 - [ ] Title screen now has a **SETTINGS** button (below META PROGRESSION)
