@@ -6,6 +6,21 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🛑 NEW: Wave-end buffer screen
+
+- [ ] When a wave ends, the screen shows "WAVE N COMPLETE" with per-wave stats (Kills, Headshots, Tokens +X) — NOT the card draft cards directly
+- [ ] The 3 cards are visible but dimmed (~35% opacity) and unclickable during the 1.5s buffer
+- [ ] Mid-wave firing (holding LMB through wave end) does NOT auto-skip the buffer — clicks land on nothing while buffered
+- [ ] After ~1.5s, subtitle changes to "Click or press SPACE to choose a card"
+- [ ] Clicking (or pressing SPACE/ENTER) once dismisses the prompt and enables card selection — cards become fully opaque and clickable
+- [ ] After the gate, the title swaps to "RESEARCH NOTES RECOVERED" and the Skip Draft button appears
+- [ ] Clicking a card BEFORE the gate is dismissed does nothing (button is non-interactive)
+- [ ] Player weapon does not fire during the buffer or the "awaiting gate" phase (game is paused)
+- [ ] Stats display correct per-wave values (kills/headshots/tokens earned during the just-ended wave, not run totals)
+- [ ] Round number in header matches the wave that just ended
+
+---
+
 ## ⚙️ NEW: Settings + barrier PBR + save versioning
 
 ### Settings menu
