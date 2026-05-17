@@ -11,7 +11,38 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M2b — card system (latest deploy)
+## M2c1 + M2c2 — title screen, shop wall, RD banking (latest deploy)
+
+### Title screen
+- [ ] Page now opens to a black title screen "SITE ECHO 7" instead of straight to game
+- [ ] Lifetime stats visible (kills, best wave, research data) — all 0 on first run
+- [ ] "START RUN" button captures pointer + loads gameplay
+- [ ] After dying or quitting back, title screen reappears with updated lifetime stats
+
+### Shop wall flow (between waves)
+- [ ] Complete wave → card draft appears
+- [ ] Pick (or skip) a card → "REQUISITIONS WALL" appears next
+- [ ] Shop shows 3 random offers from the pool of 5 (Ammo Top-Up, Barrier Repair, Full Resupply, Field Welder, Speed Loader)
+- [ ] Offer buttons display name + description + cost; disabled (grayed out) when you can't afford
+- [ ] Click affordable offer → tokens deduct, effect applies, button disappears
+- [ ] Can buy multiple offers if you can afford
+- [ ] CONTINUE button closes shop → "WAVE COMPLETE" summary panel → NEXT WAVE button
+
+### Shop offer effects
+- [ ] **Ammo Top-Up** (30 tokens): active weapon's reserve refills to max
+- [ ] **Speed Loader** (20 tokens): current mag refills (does not consume reserve normally)
+- [ ] **Barrier Repair** (50 tokens): barrier HP goes up by 30
+- [ ] **Field Welder** (150 tokens): barrier HP goes to full
+- [ ] **Full Resupply** (75 tokens): ALL three weapons' reserves refill to max
+
+### Run end → Research Data
+- [ ] When barrier breaks → "BARRIER BREACHED" appears; tokens convert to Research Data with a small per-round bonus
+- [ ] Title screen "Research Data" stat increases between runs
+- [ ] RETURN TO MENU goes back to title (not retry-in-place)
+
+---
+
+## M2b — card system
 
 ### Card draft flow
 - [ ] Wave 1 completes → a full-screen overlay appears titled "RESEARCH NOTES RECOVERED"
