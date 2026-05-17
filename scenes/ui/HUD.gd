@@ -59,7 +59,8 @@ func _update_ammo_from_weapon(weapon: Node) -> void:
 	if s.get("reloading", false):
 		ammo_label.text = "RELOADING..."
 	else:
-		ammo_label.text = "%d / %d" % [int(s.get("current", 0)), int(s.get("reserve", 0))]
+		var reserve_text: String = "∞" if s.get("infinite_reserve", false) else str(int(s.get("reserve", 0)))
+		ammo_label.text = "%d / %s" % [int(s.get("current", 0)), reserve_text]
 	weapon_label.text = s.get("weapon_name", "")
 
 func _on_barrier_damaged(_amount: float, _attacker: Node) -> void:

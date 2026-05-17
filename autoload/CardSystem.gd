@@ -78,7 +78,13 @@ func offer_cards(count: int) -> void:
 	if available_pool.is_empty():
 		EventBus.card_offered.emit(current_offer)
 		return
+	# Exclude already-drafted cards so the player never sees duplicates.
 	var pool := available_pool.duplicate()
+	for c in active_deck:
+		pool.erase(c)
+	if pool.is_empty():
+		EventBus.card_offered.emit(current_offer)
+		return
 	for i in min(count, pool.size()):
 		var picked := _pick_weighted(pool)
 		if picked != null:

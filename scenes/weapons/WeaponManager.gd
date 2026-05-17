@@ -23,6 +23,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		swap_to(1)
 	elif event.is_action_pressed("swap_tertiary"):
 		swap_to(2)
+	elif event.is_action_pressed("swap_quaternary"):
+		swap_to(3)
 	elif event.is_action_pressed("swap_next"):
 		swap_next()
 

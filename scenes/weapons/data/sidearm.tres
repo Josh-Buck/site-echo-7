@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1sidearmxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"sidearm_backup"
+display_name = "Sidearm"
+description = "Standard-issue backup. Weak and slow, but always loaded. Nothing fancy."
+base_damage = 6.0
+headshot_multiplier = 2.0
+damage_type = 0
+fire_rate = 2.5
+automatic = false
+mag_size = 8
+reserve_ammo_max = 999
+infinite_reserve = true
+pellet_count = 1
+spread_angle_deg = 0.0
+reload_time = 1.6
+recoil_vertical = 1.0
+recoil_horizontal = 0.3
+recoil_recovery = 0.22
