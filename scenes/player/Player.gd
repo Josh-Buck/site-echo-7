@@ -27,6 +27,12 @@ func _ready() -> void:
 	EventBus.weapon_fired.connect(_on_weapon_fired)
 	EventBus.barrier_damaged.connect(_on_barrier_damaged_shake)
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed_shake)
+	camera.fov = MetaProgress.get_fov()
+	EventBus.settings_changed.connect(_on_settings_changed)
+
+func _on_settings_changed(key: String, _value) -> void:
+	if key == "fov":
+		camera.fov = MetaProgress.get_fov()
 
 func _input(event: InputEvent) -> void:
 	# First click anywhere captures the pointer and consumes the event so the

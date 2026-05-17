@@ -12,6 +12,38 @@ const CHALLENGES_DIR: String = "res://scenes/cards/data/challenges"
 const COMPLETED_KEY: String = "challenges_completed"      # Dictionary: id -> true
 const COUNTERS_KEY: String = "challenges_counters"        # Dictionary: counter_name -> int
 
+# Static manifest. DirAccess enumeration of res:// is unreliable in web PCK builds —
+# it silently returns nothing and the game ships with zero challenges. Keep this
+# list in sync when adding new .tres files.
+const CHALLENGE_PATHS: Array[String] = [
+	"res://scenes/cards/data/challenges/clean_round_1.tres",
+	"res://scenes/cards/data/challenges/clean_round_streak_5.tres",
+	"res://scenes/cards/data/challenges/clean_to_r10.tres",
+	"res://scenes/cards/data/challenges/deck_size_8.tres",
+	"res://scenes/cards/data/challenges/deck_size_12.tres",
+	"res://scenes/cards/data/challenges/deck_size_15.tres",
+	"res://scenes/cards/data/challenges/defeat_director.tres",
+	"res://scenes/cards/data/challenges/defeat_subject.tres",
+	"res://scenes/cards/data/challenges/headshots_50.tres",
+	"res://scenes/cards/data/challenges/headshots_250.tres",
+	"res://scenes/cards/data/challenges/headshots_1000.tres",
+	"res://scenes/cards/data/challenges/headshots_5000.tres",
+	"res://scenes/cards/data/challenges/kills_ar_100.tres",
+	"res://scenes/cards/data/challenges/kills_pistol_100.tres",
+	"res://scenes/cards/data/challenges/kills_pistol_500.tres",
+	"res://scenes/cards/data/challenges/kills_shotgun_100.tres",
+	"res://scenes/cards/data/challenges/kills_sidearm_100.tres",
+	"res://scenes/cards/data/challenges/specialist_ar_r10.tres",
+	"res://scenes/cards/data/challenges/specialist_pistol_r10.tres",
+	"res://scenes/cards/data/challenges/specialist_shotgun_r10.tres",
+	"res://scenes/cards/data/challenges/streak_headshots_10.tres",
+	"res://scenes/cards/data/challenges/survive_r5.tres",
+	"res://scenes/cards/data/challenges/survive_r10.tres",
+	"res://scenes/cards/data/challenges/survive_r15.tres",
+	"res://scenes/cards/data/challenges/survive_r20.tres",
+	"res://scenes/cards/data/challenges/survive_r30.tres",
+]
+
 var challenges: Array[ChallengeData] = []                 # all loaded
 var _by_id: Dictionary = {}                               # id -> ChallengeData
 
@@ -39,21 +71,14 @@ func _ready() -> void:
 	EventBus.run_ended.connect(_on_run_ended)
 
 func _load_challenges() -> void:
-	var dir := DirAccess.open(CHALLENGES_DIR)
-	if dir == null:
-		push_warning("[ChallengeTracker] challenges dir missing")
-		return
-	dir.list_dir_begin()
-	var fname := dir.get_next()
-	while fname != "":
-		if not dir.current_is_dir() and fname.ends_with(".tres"):
-			var res: Resource = load(CHALLENGES_DIR + "/" + fname)
-			if res is ChallengeData:
-				var cd: ChallengeData = res
-				challenges.append(cd)
-				_by_id[cd.id] = cd
-		fname = dir.get_next()
-	dir.list_dir_end()
+	for path in CHALLENGE_PATHS:
+		var res: Resource = load(path)
+		if res is ChallengeData:
+			var cd: ChallengeData = res
+			challenges.append(cd)
+			_by_id[cd.id] = cd
+		else:
+			push_warning("[ChallengeTracker] missing or invalid challenge: %s" % path)
 	print("[ChallengeTracker] loaded %d challenges" % challenges.size())
 
 # --- persistence helpers ----------------------------------------------------

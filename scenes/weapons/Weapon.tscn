@@ -42,9 +42,9 @@ shadow_enabled = false
 [node name="FireSfx" type="AudioStreamPlayer3D" parent="."]
 unit_size = 5.0
 max_distance = 40.0
-bus = &"Master"
+bus = &"SFX"
 
 [node name="ReloadSfx" type="AudioStreamPlayer3D" parent="."]
 unit_size = 4.0
 max_distance = 30.0
-bus = &"Master"
+bus = &"SFX"

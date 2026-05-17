@@ -349,6 +349,8 @@ func is_headshot_position(pos: Vector3) -> bool:
 	return pos.y > global_position.y + 1.35
 
 func _spawn_blood_burst(at: Vector3, headshot: bool) -> void:
+	if not MetaProgress.gore_enabled():
+		return
 	var p := at
 	if p == Vector3.ZERO:
 		p = global_position + Vector3(0, 1.0, 0)
