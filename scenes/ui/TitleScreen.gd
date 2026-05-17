@@ -15,7 +15,21 @@ func _ready() -> void:
 	settings_button.pressed.connect(_on_settings_pressed)
 	_refresh_stats()
 	version_label.text = "v0.2.0 — Site Echo 7"
+	# Grab focus so Enter/Space activates Start Run directly.
+	start_button.grab_focus()
 	print("[TitleScreen] ready, start_button=", start_button)
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Fallback 1: any unhandled left-click on the page starts the run.
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("[TitleScreen] fallback click detected, starting run")
+		_on_start_pressed()
+		return
+	# Fallback 2: Enter or Space starts the run.
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE:
+			print("[TitleScreen] fallback keypress detected, starting run")
+			_on_start_pressed()
 
 func _on_meta_pressed() -> void:
 	AudioMan.register_first_gesture()
