@@ -18,6 +18,8 @@ signal research_data_changed(new_total, delta)
 signal run_started()
 signal run_ended(stats)
 signal challenge_completed(challenge_id, rd_payout)
+signal shop_opened()
+signal shop_done()
 
 func _ready() -> void:
 	print("[EventBus] ready")

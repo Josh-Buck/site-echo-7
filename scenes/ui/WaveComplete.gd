@@ -10,14 +10,15 @@ var _is_game_over: bool = false
 
 func _ready() -> void:
 	panel.visible = false
-	# WaveComplete now follows card draft: triggered by card_drafted (after pick) instead of wave_ended directly.
-	EventBus.card_drafted.connect(_on_card_drafted)
+	# WaveComplete is the last step in the between-waves flow:
+	# wave_ended → card draft → shop → WaveComplete → NEXT WAVE
+	EventBus.shop_done.connect(_on_shop_done)
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
 	EventBus.run_ended.connect(_on_run_ended)
 	next_wave_button.pressed.connect(_on_next_wave_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
 
-func _on_card_drafted(_card) -> void:
+func _on_shop_done() -> void:
 	if _is_game_over:
 		return
 	_is_game_over = false

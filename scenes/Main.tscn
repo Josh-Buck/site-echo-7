@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b1mainm1xyz"]
+[gd_scene load_steps=19 format=3 uid="uid://b1mainm1xyz"]
 
 [ext_resource type="Script" path="res://scenes/Main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://b1arenaxyz" path="res://scenes/arena/Arena.tscn" id="2_arena"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://b1hudxyz" path="res://scenes/ui/HUD.tscn" id="15_hud"]
 [ext_resource type="PackedScene" uid="uid://b1wcxyz" path="res://scenes/ui/WaveComplete.tscn" id="16_wc"]
 [ext_resource type="PackedScene" uid="uid://b1carddraftxyz" path="res://scenes/ui/CardDraft.tscn" id="17_cd"]
+[ext_resource type="PackedScene" uid="uid://b1shopxyz" path="res://scenes/ui/Shop.tscn" id="18_shop"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -33,5 +34,7 @@ waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtReso
 [node name="HUD" parent="." instance=ExtResource("15_hud")]
 
 [node name="CardDraft" parent="." instance=ExtResource("17_cd")]
+
+[node name="Shop" parent="." instance=ExtResource("18_shop")]
 
 [node name="WaveComplete" parent="." instance=ExtResource("16_wc")]
