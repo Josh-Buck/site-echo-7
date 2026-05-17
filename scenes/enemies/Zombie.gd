@@ -134,9 +134,36 @@ func _state_attack(delta: float) -> void:
 		return
 	_attack_cooldown -= delta
 	if _attack_cooldown <= 0.0:
-		if _target.has_method("take_damage"):
-			_target.take_damage(data.attack_damage, self)
+		_perform_attack()
 		_attack_cooldown = 1.0 / max(0.1, data.attack_rate)
+
+func _perform_attack() -> void:
+	match data.attack_type:
+		0:  # Melee
+			if _target and _target.has_method("take_damage"):
+				_target.take_damage(data.attack_damage, self)
+		1:  # Ranged
+			_fire_projectile()
+		2:  # Suicide
+			if _target and _target.has_method("take_damage"):
+				_target.take_damage(data.attack_damage, self)
+			# Self-destruct: skip past stagger, go straight to die.
+			state = AIState.DIE
+			_die_timer = 0.05
+			collision_layer = 0
+			EventBus.enemy_killed.emit(self, null, false, global_position)
+
+func _fire_projectile() -> void:
+	if data.projectile_scene == null or _target == null:
+		return
+	var proj := data.projectile_scene.instantiate()
+	get_tree().current_scene.add_child(proj)
+	if proj is Node3D:
+		var origin: Vector3 = global_position + Vector3(0.0, 1.4, 0.0)
+		(proj as Node3D).global_position = origin
+		var dir: Vector3 = (_target.global_position - origin).normalized()
+		if proj.has_method("launch"):
+			proj.launch(dir, data.projectile_speed, data.attack_damage)
 
 func _state_stagger(delta: float) -> void:
 	velocity.x = 0.0

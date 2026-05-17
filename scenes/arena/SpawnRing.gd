@@ -50,6 +50,7 @@ func _start_wave(wd: WaveData) -> void:
 		var count: int = wd.counts[i] if i < wd.counts.size() else 0
 		for _j in count:
 			_spawn_queue.append(enemy)
+	_spawn_queue.shuffle()
 	_total_to_spawn = _spawn_queue.size()
 	_spawn_interval = max(0.4, wd.spawn_window_seconds / float(max(1, _total_to_spawn)))
 	_spawn_timer = 1.0

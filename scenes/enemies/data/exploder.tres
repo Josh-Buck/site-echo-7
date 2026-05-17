@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1exploderxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"exploder"
+display_name = "Exploder"
+max_hp = 14.0
+move_speed = 3.2
+attack_damage = 25.0
+attack_range = 1.2
+attack_rate = 1.0
+headshot_multiplier = 1.5
+armor = false
+attack_type = 2
+token_drop = 3
+scene = ExtResource("2_scene")
+size_scale = 0.9
+body_color = Color(0.55, 0.2, 0.15, 1)
+head_color = Color(0.75, 0.35, 0.2, 1)
+eye_color = Color(1, 0.45, 0.05, 1)

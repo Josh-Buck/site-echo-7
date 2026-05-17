@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1acidspitxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/AcidSpit.gd" id="1_acid"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_acid"]
+radius = 0.18
+
+[sub_resource type="SphereMesh" id="SphereMesh_acid"]
+radius = 0.18
+height = 0.36
+
+[sub_resource type="StandardMaterial3D" id="Mat_acid"]
+albedo_color = Color(0.4, 0.85, 0.25, 1)
+metallic = 0.1
+roughness = 0.4
+emission_enabled = true
+emission = Color(0.5, 1.0, 0.3, 1)
+emission_energy_multiplier = 2.5
+
+[node name="AcidSpit" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_acid")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_acid")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_acid")
+surface_material_override/0 = SubResource("Mat_acid")

@@ -1,15 +1,17 @@
-[gd_resource type="Resource" script_class="WaveData" load_steps=5 format=3 uid="uid://b1wave6xyz"]
+[gd_resource type="Resource" script_class="WaveData" load_steps=6 format=3 uid="uid://b1wave6xyz"]
 
 [ext_resource type="Script" path="res://scenes/arena/data/wave_data.gd" id="1_wave"]
 [ext_resource type="Resource" uid="uid://b1walkerxyz" path="res://scenes/enemies/data/walker.tres" id="2_walker"]
 [ext_resource type="Resource" uid="uid://b1runnerxyz" path="res://scenes/enemies/data/runner.tres" id="3_runner"]
 [ext_resource type="Resource" uid="uid://b1tankxyz" path="res://scenes/enemies/data/tank.tres" id="4_tank"]
+[ext_resource type="Resource" uid="uid://b1exploderxyz" path="res://scenes/enemies/data/exploder.tres" id="5_exploder"]
+[ext_resource type="Resource" uid="uid://b1spitterxyz" path="res://scenes/enemies/data/spitter.tres" id="6_spitter"]
 
 [resource]
 script = ExtResource("1_wave")
 id = &"wave_6"
 round_number = 6
-composition = Array[Resource]([ExtResource("2_walker"), ExtResource("3_runner"), ExtResource("4_tank")])
-counts = Array[int]([16, 12, 2])
-spawn_window_seconds = 42.0
+composition = Array[Resource]([ExtResource("2_walker"), ExtResource("3_runner"), ExtResource("4_tank"), ExtResource("5_exploder"), ExtResource("6_spitter")])
+counts = Array[int]([14, 10, 2, 3, 2])
+spawn_window_seconds = 44.0
 simultaneous_active_cap = 13

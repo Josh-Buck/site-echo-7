@@ -13,6 +13,11 @@ class_name EnemyData extends Resource
 @export var headshot_multiplier: float = 2.0
 @export var armor: bool = false
 
+@export_category("Attack Behavior")
+@export_enum("Melee", "Ranged", "Suicide") var attack_type: int = 0
+@export var projectile_speed: float = 12.0
+@export var projectile_scene: PackedScene
+
 @export_category("Drops")
 @export var token_drop: int = 1
 

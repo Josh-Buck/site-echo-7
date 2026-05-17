@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=4 format=3 uid="uid://b1spitterxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+[ext_resource type="PackedScene" uid="uid://b1acidspitxyz" path="res://scenes/enemies/AcidSpit.tscn" id="3_proj"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"spitter"
+display_name = "Spitter"
+max_hp = 22.0
+move_speed = 1.8
+attack_damage = 8.0
+attack_range = 6.0
+attack_rate = 0.55
+headshot_multiplier = 2.0
+armor = false
+attack_type = 1
+projectile_speed = 14.0
+projectile_scene = ExtResource("3_proj")
+token_drop = 3
+scene = ExtResource("2_scene")
+size_scale = 0.95
+body_color = Color(0.22, 0.4, 0.22, 1)
+head_color = Color(0.35, 0.55, 0.3, 1)
+eye_color = Color(0.5, 1.0, 0.3, 1)

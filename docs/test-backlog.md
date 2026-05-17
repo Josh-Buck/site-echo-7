@@ -11,7 +11,23 @@ Quick reset shortcuts in-game:
 
 ---
 
-## CRITICAL FIX — root scripts now attached (latest deploy)
+## Latest deploys (top is newest)
+
+### M3d — Exploder + Spitter enemies + UI-fire bug fix
+
+- [ ] **Weapon no longer fires when clicking UI menus.** Open Card Draft / Shop / Wave Complete, click around, no muzzle flash or shot sound.
+- [ ] **First click in a fresh run captures the cursor without firing.** Subsequent left-clicks fire normally.
+- [ ] **Exploder** appears wave 4+: smaller, orange eyes, runs faster than Walker, **detonates on barrier contact dealing ~25 damage to the barrier**. Low HP — kill them before they reach you.
+- [ ] **Spitter** appears wave 6+: green tint, stops ~6m from barrier and fires a glowing green acid projectile that hits the barrier for ~8 damage. Slow attack rate but ranged.
+- [ ] **Within a wave, enemy types are interleaved** (not "all walkers then all runners then all tanks") — spawn queue is now shuffled.
+- [ ] Wave 4: 12 walkers + 8 runners + 2 exploders
+- [ ] Wave 6: 14 walkers + 10 runners + 2 tanks + 3 exploders + 2 spitters
+- [ ] Wave 8: 18 walkers + 14 runners + 4 tanks + 5 exploders + 4 spitters
+- [ ] Wave 10: 22 walkers + 18 runners + 6 tanks + 8 exploders + 6 spitters
+
+---
+
+## CRITICAL FIX — root scripts now attached (deployed)
 
 The previous deploys had a bug where TitleScreen.gd / MetaScreen.gd / SettingsScreen.gd were registered but **never attached to their root nodes** — so buttons rendered but did nothing. Fixed now.
 
