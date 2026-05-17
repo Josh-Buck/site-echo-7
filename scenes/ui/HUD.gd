@@ -129,19 +129,42 @@ func _on_enemy_killed(_enemy: Node, _src: Node, headshot: bool, _pos: Vector3) -
 	score_label.text = "%d" % GameState.current_score
 	MetaProgress.lifetime_kills += 1
 	_kill_streak += 1
-	streak_label.text = "STREAK ×%d" % _kill_streak
-	streak_label.visible = _kill_streak >= 3
-	if _kill_streak == 5 or _kill_streak == 10 or _kill_streak == 25 or _kill_streak == 50 or _kill_streak == 100:
-		_flash_streak_milestone()
+	_update_streak_label()
+	if _kill_streak == 3 or _kill_streak == 5 or _kill_streak == 10 or _kill_streak == 20:
+		_pop_streak_tier()
 	if headshot:
 		_hit_pause()
 	# Kill-flavored hit marker stacks on top of the damage-flavored one.
 	_flash_hit_marker(headshot, true)
 
-func _flash_streak_milestone() -> void:
-	streak_label.modulate = Color(1.5, 1.2, 0.4, 1)
+func _streak_tier(streak: int) -> Dictionary:
+	if streak >= 20:
+		return {"label": "ECHO LEGEND", "color": Color(1.0, 0.4, 1.0), "size": 44}
+	if streak >= 10:
+		return {"label": "UNSTOPPABLE", "color": Color(1.0, 0.55, 0.25), "size": 38}
+	if streak >= 5:
+		return {"label": "RAMPAGE", "color": Color(1.0, 0.75, 0.3), "size": 32}
+	if streak >= 3:
+		return {"label": "STREAK", "color": Color(1.0, 0.9, 0.5), "size": 26}
+	return {}
+
+func _update_streak_label() -> void:
+	var tier := _streak_tier(_kill_streak)
+	if tier.is_empty():
+		streak_label.visible = false
+		return
+	streak_label.visible = true
+	streak_label.text = "%s ×%d" % [tier["label"], _kill_streak]
+	streak_label.add_theme_color_override("font_color", tier["color"])
+	streak_label.add_theme_font_size_override("font_size", int(tier["size"]))
+
+func _pop_streak_tier() -> void:
+	streak_label.pivot_offset = streak_label.size * 0.5
+	streak_label.scale = Vector2(1.6, 1.6)
+	streak_label.modulate = Color(1.8, 1.5, 0.6, 1)
 	var tw := create_tween()
-	tw.tween_property(streak_label, "modulate", Color(1, 1, 1, 1), 0.6)
+	tw.tween_property(streak_label, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(streak_label, "modulate", Color(1, 1, 1, 1), 0.45)
 
 func _hit_pause() -> void:
 	# Brief Engine.time_scale dip for "punch" on critical kills.

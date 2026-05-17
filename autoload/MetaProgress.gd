@@ -17,21 +17,13 @@ func add_score(amount: int) -> void:
 	lifetime_score += amount
 	SaveSystem.save_meta()
 
-func record_run_end() -> void:
+func record_run_end() -> int:
 	if GameState.current_round > best_round:
 		best_round = GameState.current_round
-	# Convert remaining tokens to RD at end of run (10:1 with round bonus).
-	var round_mult: float = 1.0 + (float(GameState.current_round) * 0.05)
-	var earned := int(float(GameState.tokens) / 10.0 * round_mult)
-	# Round-milestone bonuses for first-time and ongoing big-round wins.
-	if GameState.current_round >= 20:
-		earned += 300  # final-boss victory bonus
-	elif GameState.current_round >= 15:
-		earned += 100
-	elif GameState.current_round >= 10:
-		earned += 40
+	var earned: int = GameState.compute_rd_payout()
 	research_data += earned
 	SaveSystem.save_meta()
+	return earned
 
 func has_unlock(id: StringName) -> bool:
 	return unlocks.get(id, false)

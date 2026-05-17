@@ -14,7 +14,6 @@ func _ready() -> void:
 	# wave_ended → card draft → shop → WaveComplete → NEXT WAVE
 	EventBus.shop_done.connect(_on_shop_done)
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
-	EventBus.run_ended.connect(_on_run_ended)
 	next_wave_button.pressed.connect(_on_next_wave_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
 
@@ -32,27 +31,9 @@ func _on_shop_done() -> void:
 	_show()
 
 func _on_barrier_destroyed() -> void:
+	# DeathScreen owns the run-over UX. WaveComplete just suppresses itself.
 	_is_game_over = true
-	MetaProgress.record_run_end()
-	title_label.text = "BARRIER BREACHED"
-	stats_label.text = "Survived %d waves    Kills: %d    Tokens banked into Research Data" % [GameState.current_round, GameState.current_score]
-	next_wave_button.visible = false
-	retry_button.visible = true
-	retry_button.text = "RETURN TO MENU"
-	_show()
-
-func _on_run_ended(stats: Dictionary) -> void:
-	_is_game_over = true
-	if stats.get("victory", false):
-		MetaProgress.record_run_end()
-		title_label.text = "ALL WAVES SURVIVED"
-		stats_label.text = "Kills: %d    Run banked to Research Data    Lifetime: %d" % [GameState.current_score, MetaProgress.lifetime_kills]
-	else:
-		return
-	next_wave_button.visible = false
-	retry_button.visible = true
-	retry_button.text = "RETURN TO MENU"
-	_show()
+	panel.visible = false
 
 func _show() -> void:
 	panel.visible = true

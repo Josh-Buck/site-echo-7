@@ -30,6 +30,7 @@
 [ext_resource type="PackedScene" uid="uid://b1shopxyz" path="res://scenes/ui/Shop.tscn" id="18_shop"]
 [ext_resource type="PackedScene" uid="uid://b1pausemenuxyz" path="res://scenes/ui/PauseMenu.tscn" id="19_pause"]
 [ext_resource type="PackedScene" uid="uid://b1tutorialxyz" path="res://scenes/ui/Tutorial.tscn" id="30_tut"]
+[ext_resource type="PackedScene" uid="uid://b1deathxyz" path="res://scenes/ui/DeathScreen.tscn" id="31_death"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -54,3 +55,5 @@ waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtReso
 [node name="PauseMenu" parent="." instance=ExtResource("19_pause")]
 
 [node name="Tutorial" parent="." instance=ExtResource("30_tut")]
+
+[node name="DeathScreen" parent="." instance=ExtResource("31_death")]
