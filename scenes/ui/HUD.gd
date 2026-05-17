@@ -11,9 +11,11 @@ extends CanvasLayer
 @onready var click_hint: Label = $ClickHint
 @onready var hit_marker: Label = $HitMarker
 @onready var boss_banner: Label = $BossBanner
+@onready var streak_label: Label = $StreakLabel
 
 var _active_weapon: Node = null
 var _hit_marker_timer: float = 0.0
+var _kill_streak: int = 0
 
 func _process(delta: float) -> void:
 	click_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
@@ -37,6 +39,7 @@ func _ready() -> void:
 	EventBus.enemy_damaged.connect(_on_enemy_damaged)
 	hit_marker.visible = false
 	boss_banner.visible = false
+	streak_label.visible = false
 	_update_hp(100.0, 100.0)
 	ammo_label.text = "-- / --"
 	weapon_label.text = ""
@@ -68,6 +71,9 @@ func _on_barrier_damaged(_amount: float, _attacker: Node) -> void:
 	if barriers.size() > 0:
 		var b = barriers[0]
 		_update_hp(b.current_hp, b.max_hp)
+	# Reset kill streak when the barrier takes any damage.
+	_kill_streak = 0
+	streak_label.visible = false
 
 func _on_barrier_destroyed() -> void:
 	_update_hp(0.0, 100.0)
@@ -105,10 +111,29 @@ func _show_boss_banner(text: String) -> void:
 	tw.tween_property(boss_banner, "modulate:a", 0.0, 1.5)
 	tw.tween_callback(func(): boss_banner.visible = false)
 
-func _on_enemy_killed(_enemy: Node, _src: Node, _headshot: bool, _pos: Vector3) -> void:
+func _on_enemy_killed(_enemy: Node, _src: Node, headshot: bool, _pos: Vector3) -> void:
 	GameState.current_score += 1
 	score_label.text = "%d" % GameState.current_score
 	MetaProgress.lifetime_kills += 1
+	_kill_streak += 1
+	streak_label.text = "STREAK ×%d" % _kill_streak
+	streak_label.visible = _kill_streak >= 3
+	if _kill_streak == 5 or _kill_streak == 10 or _kill_streak == 25 or _kill_streak == 50 or _kill_streak == 100:
+		_flash_streak_milestone()
+	if headshot:
+		_hit_pause()
+
+func _flash_streak_milestone() -> void:
+	streak_label.modulate = Color(1.5, 1.2, 0.4, 1)
+	var tw := create_tween()
+	tw.tween_property(streak_label, "modulate", Color(1, 1, 1, 1), 0.6)
+
+func _hit_pause() -> void:
+	# Brief Engine.time_scale dip for "punch" on critical kills.
+	# create_timer args: time, process_always, process_in_physics, ignore_time_scale
+	Engine.time_scale = 0.08
+	var t := get_tree().create_timer(0.055, true, false, true)
+	t.timeout.connect(func(): Engine.time_scale = 1.0)
 
 func _on_tokens_changed(new_total: int, _delta: int) -> void:
 	tokens_label.text = "TOKENS: %d" % new_total
