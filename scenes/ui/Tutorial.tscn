@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1tutorialxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/Tutorial.gd" id="1_tut"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tut"]
+bg_color = Color(0.04, 0.05, 0.08, 0.86)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.25, 0.3, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Tutorial" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_tut")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+offset_left = 24.0
+offset_top = 130.0
+offset_right = 360.0
+offset_bottom = 360.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tut")
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="HintLabel" type="Label" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "CONTROLS
+
+Mouse — aim / turn
+Click / SPACE — fire
+R — reload
+1 / 2 / 3 — pistol / shotgun / AR
+4 — sidearm (∞ ammo)
+Q — next weapon
+ESC — pause
+
+Kill zombies for tokens. After each
+wave pick a research card and spend
+tokens at the shop.
+
+(this panel fades after a few kills)"
