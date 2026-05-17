@@ -58,6 +58,17 @@ custom_minimum_size = Vector2(280, 64)
 theme_override_font_sizes/font_size = 28
 text = "START RUN"
 
+[node name="SpacerBetweenButtons" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 12)
+
+[node name="MetaButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 48)
+theme_override_font_sizes/font_size = 20
+text = "META PROGRESSION"
+
 [node name="Spacer2" type="Control" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 32)

@@ -8,6 +8,17 @@ var current_hp: float = 0.0
 var _destroyed: bool = false
 
 func _ready() -> void:
+	# Apply meta-unlocked barrier HP bonuses.
+	var bonus: float = 0.0
+	if MetaProgress.has_unlock(&"barrier_hp_1"):
+		bonus += 10.0
+	if MetaProgress.has_unlock(&"barrier_hp_2"):
+		bonus += 20.0
+	if MetaProgress.has_unlock(&"barrier_hp_3"):
+		bonus += 30.0
+	if MetaProgress.has_unlock(&"perk_reinforced_barrier"):
+		bonus += max_hp * 0.2
+	max_hp += bonus
 	current_hp = max_hp
 	add_to_group("barriers")
 	collision_layer = 2

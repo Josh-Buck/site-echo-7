@@ -11,7 +11,31 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M3a — game feel polish (latest deploy)
+## M3b — meta progression (latest deploy)
+
+### Title screen integration
+- [ ] Title screen now has a **META PROGRESSION** button under START RUN
+- [ ] Click it → MetaScreen loads with Research Data total at top, two sections (Starter Perks, Barrier Upgrades), BACK button at bottom
+- [ ] BACK button returns to title
+
+### Unlocks (need RD to buy — die a few runs first to bank some)
+- [ ] **Combat Veteran** (100 RD) — start runs with +20 tokens
+- [ ] **Quick Draft** (200 RD) — first card draft of every run offers 5 cards instead of 3
+- [ ] **Quartermaster** (250 RD) — start each run with 1 random card already drafted
+- [ ] **Reinforced Barrier** (300 RD) — barrier max HP +20%
+- [ ] **Barrier Plating I/II/III** (150/400/800 RD) — flat +10/+20/+30 max HP each, stacking
+
+### Verification
+- [ ] Buying an unlock subtracts RD immediately, button shows UNLOCKED state
+- [ ] Affordable but unowned → clickable; can't afford → grayed
+- [ ] Start a new run after buying Combat Veteran → HUD shows TOKENS: 20 immediately
+- [ ] Start a new run after buying Reinforced Barrier → barrier HP shows 120/120 instead of 100/100
+- [ ] First card draft after buying Quick Draft → 5 cards instead of 3
+- [ ] First wave after buying Quartermaster → DECK already shows 1 card before any draft
+
+---
+
+## M3a — game feel polish
 
 ### Visual feedback
 - [ ] **Screen shake** on pistol fire (small), shotgun fire (heavy), AR full-auto (constant low-level shake)

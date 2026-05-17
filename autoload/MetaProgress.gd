@@ -25,6 +25,19 @@ func record_run_end() -> void:
 	research_data += earned
 	SaveSystem.save_meta()
 
+func has_unlock(id: StringName) -> bool:
+	return unlocks.get(id, false)
+
+func buy_unlock(id: StringName, cost: int) -> bool:
+	if has_unlock(id):
+		return false
+	if research_data < cost:
+		return false
+	research_data -= cost
+	unlocks[id] = true
+	SaveSystem.save_meta()
+	return true
+
 func reset_all() -> void:
 	lifetime_score = 0
 	lifetime_kills = 0

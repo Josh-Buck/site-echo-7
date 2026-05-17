@@ -40,14 +40,28 @@ func _load_starter_pool() -> void:
 			push_warning("[CardSystem] could not load card: %s" % path)
 	print("[CardSystem] starter pool loaded: %d cards" % available_pool.size())
 
+var _first_draft_done: bool = false
+
 func _on_run_started() -> void:
 	active_deck.clear()
+	_first_draft_done = false
+	# Quartermaster perk: pre-draft one random card.
+	if MetaProgress.has_unlock(&"perk_quartermaster") and not available_pool.is_empty():
+		var card = _pick_weighted(available_pool.duplicate())
+		if card != null:
+			active_deck.append(card)
+			EventBus.card_drafted.emit(card)
 
 func reset_run_deck() -> void:
 	active_deck.clear()
+	_first_draft_done = false
 
 func _on_wave_ended(_round_n: int) -> void:
-	offer_cards(3)
+	var count := 3
+	if not _first_draft_done and MetaProgress.has_unlock(&"perk_quick_draft"):
+		count = 5
+	_first_draft_done = true
+	offer_cards(count)
 
 func offer_cards(count: int) -> void:
 	current_offer.clear()

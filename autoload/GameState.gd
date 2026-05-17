@@ -14,6 +14,9 @@ func start_run() -> void:
 	current_round = 0
 	current_score = 0
 	tokens = 0
+	# Apply meta-unlocked run-start perks.
+	if MetaProgress.has_unlock(&"perk_combat_veteran"):
+		tokens += 20
 	run_active = true
 	EventBus.run_started.emit()
 
