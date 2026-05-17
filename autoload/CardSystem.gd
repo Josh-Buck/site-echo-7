@@ -31,6 +31,16 @@ const STARTER_CARDS: Array[String] = [
 	"res://scenes/cards/data/field_specialist.tres",
 	"res://scenes/cards/data/glass_cannon.tres",
 	"res://scenes/cards/data/field_trauma.tres",
+	"res://scenes/cards/data/field_workshop.tres",
+	"res://scenes/cards/data/hot_loads.tres",
+	"res://scenes/cards/data/hair_trigger.tres",
+	"res://scenes/cards/data/cold_steel.tres",
+	"res://scenes/cards/data/trick_shot.tres",
+	"res://scenes/cards/data/combat_drill.tres",
+	"res://scenes/cards/data/bunker_buster.tres",
+	"res://scenes/cards/data/the_edge.tres",
+	"res://scenes/cards/data/vampire_rounds.tres",
+	"res://scenes/cards/data/gambler.tres",
 ]
 
 func _ready() -> void:
@@ -130,16 +140,23 @@ func mutate_payload(payload: Dictionary) -> Dictionary:
 	return payload
 
 func _on_enemy_killed(_enemy: Node, source_weapon: Node, is_headshot: bool, _pos: Vector3) -> void:
-	if not is_headshot or source_weapon == null:
-		return
+	# Lifesteal: every kill heals the barrier by 1 HP.
 	for card in active_deck:
-		if card.effect_id == &"marksman_refund":
-			# Refund 1 round into reserve (not magazine). Doesn't help bypass reload entirely;
-			# just slows the rate at which reserve depletes for accurate shooters.
-			if "reserve_ammo" in source_weapon:
-				source_weapon.reserve_ammo = int(source_weapon.reserve_ammo) + 1
-				EventBus.weapon_reloaded.emit(source_weapon)
-				break
+		if card.effect_id == &"lifesteal":
+			var barriers := get_tree().get_nodes_in_group("barriers")
+			if barriers.size() > 0:
+				var b = barriers[0]
+				if b.has_method("repair"):
+					b.repair(1.0)
+			break
+	# Marksman: refund 1 reserve round on headshot kill.
+	if is_headshot and source_weapon != null:
+		for card in active_deck:
+			if card.effect_id == &"marksman_refund":
+				if "reserve_ammo" in source_weapon:
+					source_weapon.reserve_ammo = int(source_weapon.reserve_ammo) + 1
+					EventBus.weapon_reloaded.emit(source_weapon)
+					break
 
 func _pick_weighted(pool: Array) -> CardData:
 	var total_w := 0.0
