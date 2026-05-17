@@ -7,6 +7,7 @@ bg_color = Color(0.06, 0.07, 0.04, 0.95)
 
 [node name="Shop" type="CanvasLayer"]
 layer = 11
+process_mode = 3
 script = ExtResource("1_shop")
 
 [node name="Panel" type="PanelContainer" parent="."]

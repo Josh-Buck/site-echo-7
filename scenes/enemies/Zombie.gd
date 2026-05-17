@@ -4,7 +4,6 @@ enum AIState { IDLE, CHASE, ATTACK, STAGGER, DIE }
 
 @export var data: EnemyData
 
-@onready var nav: NavigationAgent3D = $NavigationAgent3D
 @onready var mesh: MeshInstance3D = $Mesh
 
 var current_hp: float = 0.0
@@ -14,8 +13,6 @@ var _attack_cooldown: float = 0.0
 var _idle_timer: float = 0.5
 var _stagger_timer: float = 0.0
 var _die_timer: float = 0.0
-var _nav_update_interval: float = 0.25
-var _nav_update_accum: float = 0.0
 var _gravity: float = 9.8
 var _groan_timer: float = 0.0
 
@@ -30,11 +27,7 @@ func _ready() -> void:
 	collision_layer = 4
 	collision_mask = 2
 	add_to_group("zombies")
-	_nav_update_accum = randf() * _nav_update_interval  # stagger crowd
 	_groan_timer = randf_range(2.0, 6.0)
-	nav.path_desired_distance = 0.5
-	nav.target_desired_distance = data.attack_range + BARRIER_RADIUS
-	nav.avoidance_enabled = false
 	_apply_data_visuals()
 	_find_target()
 
@@ -44,10 +37,10 @@ func _apply_data_visuals() -> void:
 	scale = Vector3.ONE * data.size_scale
 	_tint_mesh($Mesh, data.body_color, false)
 	_tint_mesh($Head, data.head_color, false)
-	_tint_mesh($EyeL, data.eye_color, true)
-	_tint_mesh($EyeR, data.eye_color, true)
+	_tint_mesh($EyeL, data.eye_color, true, 4.0)
+	_tint_mesh($EyeR, data.eye_color, true, 4.0)
 
-func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool) -> void:
+func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength: float = 3.0) -> void:
 	if m == null:
 		return
 	var mat := StandardMaterial3D.new()
@@ -57,7 +50,7 @@ func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool) -> void:
 	if glowy:
 		mat.emission_enabled = true
 		mat.emission = color
-		mat.emission_energy_multiplier = 3.0
+		mat.emission_energy_multiplier = emission_strength
 	m.set_surface_override_material(0, mat)
 
 func _find_target() -> void:
@@ -66,10 +59,6 @@ func _find_target() -> void:
 		_target = barriers[0]
 
 func _physics_process(delta: float) -> void:
-	_nav_update_accum += delta
-	if _nav_update_accum >= _nav_update_interval:
-		_nav_update_accum = 0.0
-		_update_nav_target()
 	_groan_timer -= delta
 	if _groan_timer <= 0.0 and state != AIState.DIE:
 		_groan_timer = randf_range(5.0, 11.0)
@@ -89,11 +78,6 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= _gravity * delta
 	move_and_slide()
 
-func _update_nav_target() -> void:
-	if _target == null:
-		return
-	nav.target_position = _target.global_position
-
 func _state_idle(delta: float) -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
@@ -104,20 +88,21 @@ func _state_idle(delta: float) -> void:
 func _state_chase(_delta: float) -> void:
 	if _target == null:
 		return
-	var dist := global_position.distance_to(_target.global_position)
+	var to_target := _target.global_position - global_position
+	to_target.y = 0.0
+	var dist := to_target.length()
 	if dist <= data.attack_range + BARRIER_RADIUS:
 		state = AIState.ATTACK
 		velocity.x = 0.0
 		velocity.z = 0.0
 		return
-	var next := nav.get_next_path_position()
-	var dir := next - global_position
-	dir.y = 0.0
-	if dir.length_squared() < 0.0001:
+	if dist < 0.001:
 		velocity.x = 0.0
 		velocity.z = 0.0
 		return
-	dir = dir.normalized()
+	# Direct steering — arena is a flat circle with the barrier as the only obstacle.
+	# CharacterBody3D.move_and_slide handles sliding along the barrier collision.
+	var dir := to_target / dist
 	velocity.x = dir.x * data.move_speed
 	velocity.z = dir.z * data.move_speed
 	look_at(global_position + Vector3(dir.x, 0.0, dir.z), Vector3.UP)

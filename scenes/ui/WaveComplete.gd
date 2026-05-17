@@ -57,6 +57,7 @@ func _on_run_ended(stats: Dictionary) -> void:
 func _show() -> void:
 	panel.visible = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	get_tree().paused = true
 	SaveSystem.save_meta()
 
 func _on_next_wave_pressed() -> void:
@@ -64,6 +65,7 @@ func _on_next_wave_pressed() -> void:
 	var spawn_ring := get_tree().current_scene.find_child("SpawnRing", true, false)
 	if spawn_ring != null and spawn_ring.has_method("start_next_wave"):
 		panel.visible = false
+		get_tree().paused = false
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		spawn_ring.start_next_wave()
 	else:
@@ -71,5 +73,6 @@ func _on_next_wave_pressed() -> void:
 
 func _on_retry_pressed() -> void:
 	AudioMan.play_sfx("ui_click")
+	get_tree().paused = false
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

@@ -128,10 +128,10 @@ func _on_enemy_killed(_enemy: Node, source_weapon: Node, is_headshot: bool, _pos
 		return
 	for card in active_deck:
 		if card.effect_id == &"marksman_refund":
-			if "current_ammo" in source_weapon and source_weapon.has_method("get_ammo_state"):
-				var s: Dictionary = source_weapon.get_ammo_state()
-				var mag_size: int = int(s.get("mag_size", 0))
-				source_weapon.current_ammo = min(mag_size, int(source_weapon.current_ammo) + 2)
+			# Refund 1 round into reserve (not magazine). Doesn't help bypass reload entirely;
+			# just slows the rate at which reserve depletes for accurate shooters.
+			if "reserve_ammo" in source_weapon:
+				source_weapon.reserve_ammo = int(source_weapon.reserve_ammo) + 1
 				EventBus.weapon_reloaded.emit(source_weapon)
 				break
 

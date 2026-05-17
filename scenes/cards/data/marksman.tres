@@ -6,7 +6,7 @@
 script = ExtResource("1_cd")
 id = &"marksman"
 display_name = "Marksman"
-description = "Reward precision. Headshot kills refund 2 rounds to the magazine."
+description = "Reward precision. Headshot kills refund 1 round to your reserve ammo."
 rarity = 1
 draft_weight = 0.7
 effect_id = &"marksman_refund"

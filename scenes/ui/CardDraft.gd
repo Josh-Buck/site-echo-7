@@ -28,6 +28,7 @@ func _on_card_offered(cards: Array) -> void:
 	_populate(cards)
 	panel.visible = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	get_tree().paused = true
 
 func _populate(cards: Array) -> void:
 	# Clear existing children

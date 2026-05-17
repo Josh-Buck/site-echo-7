@@ -26,6 +26,7 @@ func _on_card_drafted(_card) -> void:
 	_populate()
 	panel.visible = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	get_tree().paused = true
 	_update_tokens()
 	EventBus.shop_opened.emit()
 
@@ -130,4 +131,5 @@ func _on_tokens_changed(_total: int, _delta: int) -> void:
 func _on_continue_pressed() -> void:
 	AudioMan.play_sfx("ui_click")
 	panel.visible = false
+	# Stay paused — WaveComplete is the next overlay and will re-affirm pause.
 	EventBus.shop_done.emit()
