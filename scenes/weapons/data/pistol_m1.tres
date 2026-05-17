@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1pistolm1xyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"pistol_m1"
+display_name = "M1 Pistol"
+description = "Standard-issue sidearm. Semi-auto, reliable, rewards headshots."
+base_damage = 15.0
+headshot_multiplier = 2.0
+damage_type = 0
+fire_rate = 4.0
+automatic = false
+mag_size = 12
+reserve_ammo_max = 120
+reload_time = 1.5
+recoil_vertical = 1.5
+recoil_horizontal = 0.4
+recoil_recovery = 0.3

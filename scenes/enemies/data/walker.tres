@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1walkerxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"walker"
+display_name = "Walker"
+max_hp = 30.0
+move_speed = 1.5
+attack_damage = 5.0
+attack_range = 1.5
+attack_rate = 1.0
+headshot_multiplier = 2.0
+armor = false
+token_drop = 1
+scene = ExtResource("2_scene")
