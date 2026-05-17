@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardftxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"field_trauma"
+display_name = "Field Trauma"
+description = "CURSE: Fire rate +50% but mag size halved. Reload, reload, reload."
+rarity = 3
+draft_weight = 0.4
+fire_rate_mult = 1.5
+mag_size_mult = 0.5

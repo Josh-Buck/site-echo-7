@@ -11,7 +11,33 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M3b — meta progression (latest deploy)
+## M3c — settings + 10 new cards (latest deploy)
+
+### Settings menu
+- [ ] Title screen now has a **SETTINGS** button (below META PROGRESSION)
+- [ ] Settings shows two sliders: Mouse Sensitivity (0.0005 – 0.006) and Master Volume (0–100%)
+- [ ] Sensitivity slider takes effect immediately on next run (next mouse motion in-game uses the new value)
+- [ ] Volume slider takes effect immediately (test by clicking the slider, hear a UI click at new volume)
+- [ ] Settings persist across browser reloads
+- [ ] BACK button returns to title
+
+### New cards (10 added — pool is now 20)
+- [ ] **Stockpile** (common, reserve ×2) appears in drafts
+- [ ] **Heavy Mag** (rare, mag ×2 / reload ×1.5) — visible tradeoff
+- [ ] **Lightweight Components** (rare, fire rate +40% / damage -15%)
+- [ ] **Magnum Frame** (rare, damage +50% / mag -25%)
+- [ ] **Surgical** (rare, headshot +60% / damage -10%)
+- [ ] **Berserker** (rare, fire rate +50% / recoil +40%)
+- [ ] **Sniper** (legendary, headshot +75% / fire rate -20%)
+- [ ] **Field Specialist** (legendary, +20% to fire rate / damage / mag, -20% recoil)
+- [ ] **Glass Cannon** (curse, damage ×2 / recoil +75%) — purple border
+- [ ] **Field Trauma** (curse, fire rate +50% / mag ×0.5)
+- [ ] Legendary cards render in gold, Curse cards in purple
+- [ ] Pool feels distinctly more varied — multiple runs produce different drafts
+
+---
+
+## M3b — meta progression
 
 ### Title screen integration
 - [ ] Title screen now has a **META PROGRESSION** button under START RUN

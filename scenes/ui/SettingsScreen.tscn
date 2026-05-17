@@ -1,0 +1,107 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1settingsxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/SettingsScreen.gd" id="1_set"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.03, 0.04, 0.07, 1)
+
+[node name="SettingsScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -240.0
+offset_right = 360.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="SensRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(700, 50)
+
+[node name="SensLabel" type="Label" parent="VBox/SensRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Mouse Sensitivity"
+
+[node name="SensSlider" type="HSlider" parent="VBox/SensRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 40)
+
+[node name="SensValueLabel" type="Label" parent="VBox/SensRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+theme_override_font_sizes/font_size = 20
+text = "0.002"
+horizontal_alignment = 2
+
+[node name="Spacer2" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="VolRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(700, 50)
+
+[node name="VolLabel" type="Label" parent="VBox/VolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Master Volume"
+
+[node name="VolSlider" type="HSlider" parent="VBox/VolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 40)
+
+[node name="VolValueLabel" type="Label" parent="VBox/VolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+theme_override_font_sizes/font_size = 20
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Spacer3" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+
+[node name="BackButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(220, 48)
+theme_override_font_sizes/font_size = 20
+text = "BACK TO MENU"

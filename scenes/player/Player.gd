@@ -4,6 +4,9 @@ extends Node3D
 @export var pitch_min_deg: float = -85.0
 @export var pitch_max_deg: float = 85.0
 
+func _get_sensitivity() -> float:
+	return float(MetaProgress.get_setting("mouse_sensitivity", mouse_sensitivity))
+
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
 
@@ -35,8 +38,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_yaw -= event.relative.x * mouse_sensitivity
-		_pitch -= event.relative.y * mouse_sensitivity
+		var sens := _get_sensitivity()
+		_yaw -= event.relative.x * sens
+		_pitch -= event.relative.y * sens
 		_pitch = clamp(_pitch, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
 	elif event.is_action_pressed("pause"):
 		# Toggle pointer lock — useful for debugging in browser

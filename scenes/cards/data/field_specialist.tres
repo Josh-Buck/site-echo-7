@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardfsxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"field_specialist"
+display_name = "Field Specialist"
+description = "Everything tuned to spec. +20% fire rate, +20% damage, -20% recoil, +20% mag."
+rarity = 2
+draft_weight = 0.3
+fire_rate_mult = 1.2
+damage_mult = 1.2
+recoil_mult = 0.8
+mag_size_mult = 1.2

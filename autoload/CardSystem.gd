@@ -17,10 +17,20 @@ const STARTER_CARDS: Array[String] = [
 	"res://scenes/cards/data/reload_speed.tres",
 	"res://scenes/cards/data/recoil_down.tres",
 	"res://scenes/cards/data/reserve_boost.tres",
+	"res://scenes/cards/data/stockpile.tres",
 	"res://scenes/cards/data/headstrong.tres",
 	"res://scenes/cards/data/marksman.tres",
 	"res://scenes/cards/data/last_round.tres",
 	"res://scenes/cards/data/adrenaline.tres",
+	"res://scenes/cards/data/heavy_mag.tres",
+	"res://scenes/cards/data/lightweight.tres",
+	"res://scenes/cards/data/magnum.tres",
+	"res://scenes/cards/data/surgical.tres",
+	"res://scenes/cards/data/berserker.tres",
+	"res://scenes/cards/data/sniper.tres",
+	"res://scenes/cards/data/field_specialist.tres",
+	"res://scenes/cards/data/glass_cannon.tres",
+	"res://scenes/cards/data/field_trauma.tres",
 ]
 
 func _ready() -> void:

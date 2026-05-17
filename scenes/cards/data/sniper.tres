@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardsnpxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"sniper"
+display_name = "Sniper"
+description = "One shot, one kill. Headshot damage +75%. Fire rate -20%."
+rarity = 2
+draft_weight = 0.35
+headshot_mult_mult = 1.75
+fire_rate_mult = 0.8

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardgcxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"glass_cannon"
+display_name = "Glass Cannon"
+description = "CURSE: Damage +100% but recoil +75%. Pray you can aim."
+rarity = 3
+draft_weight = 0.4
+damage_mult = 2.0
+recoil_mult = 1.75

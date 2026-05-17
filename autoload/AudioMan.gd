@@ -16,6 +16,8 @@ var _3d_idx: int = 0
 func _ready() -> void:
 	print("[AudioMan] ready")
 	_build_pools()
+	# Apply master volume from saved settings (after MetaProgress loads in its _ready).
+	call_deferred("_apply_master_volume")
 	EventBus.weapon_fired.connect(_on_weapon_fired)
 	EventBus.weapon_reloaded.connect(_on_weapon_reloaded)
 	EventBus.enemy_killed.connect(_on_enemy_killed)
@@ -43,6 +45,21 @@ func register_first_gesture() -> void:
 		return
 	_gesture_received = true
 	print("[AudioMan] first user gesture registered, audio enabled")
+
+func _apply_master_volume() -> void:
+	var vol: float = float(MetaProgress.get_setting("master_volume", 1.0))
+	set_master_volume(vol)
+
+func set_master_volume(linear: float) -> void:
+	var bus := AudioServer.get_bus_index("Master")
+	if bus < 0:
+		return
+	linear = clamp(linear, 0.0, 1.0)
+	if linear <= 0.0001:
+		AudioServer.set_bus_mute(bus, true)
+		return
+	AudioServer.set_bus_mute(bus, false)
+	AudioServer.set_bus_volume_db(bus, linear_to_db(linear))
 
 func can_play() -> bool:
 	return _gesture_received

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardhmxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"heavy_mag"
+display_name = "Heavy Mag"
+description = "Drum-fed conversion. Mag size +100% but reloads 50% slower."
+rarity = 1
+draft_weight = 0.7
+mag_size_mult = 2.0
+reload_time_mult = 1.5

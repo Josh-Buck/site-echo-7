@@ -7,6 +7,7 @@ var lifetime_kills: int = 0
 var best_round: int = 0
 var research_data: int = 0
 var unlocks: Dictionary = {}  # unlock_id -> true
+var settings: Dictionary = {}  # key -> value
 
 func _ready() -> void:
 	print("[MetaProgress] ready")
@@ -44,6 +45,7 @@ func reset_all() -> void:
 	best_round = 0
 	research_data = 0
 	unlocks = {}
+	settings = {}
 	SaveSystem.save_meta()
 
 func to_dict() -> Dictionary:
@@ -53,6 +55,7 @@ func to_dict() -> Dictionary:
 		"best_round": best_round,
 		"research_data": research_data,
 		"unlocks": unlocks,
+		"settings": settings,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -61,3 +64,11 @@ func from_dict(data: Dictionary) -> void:
 	best_round = data.get("best_round", 0)
 	research_data = data.get("research_data", 0)
 	unlocks = data.get("unlocks", {})
+	settings = data.get("settings", {})
+
+func get_setting(key: String, default_value):
+	return settings.get(key, default_value)
+
+func set_setting(key: String, value) -> void:
+	settings[key] = value
+	SaveSystem.save_meta()

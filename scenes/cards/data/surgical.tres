@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardsurgxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"surgical"
+display_name = "Surgical"
+description = "Aim small, miss small. Headshot damage +60%, body damage -10%."
+rarity = 1
+draft_weight = 0.65
+headshot_mult_mult = 1.6
+damage_mult = 0.9

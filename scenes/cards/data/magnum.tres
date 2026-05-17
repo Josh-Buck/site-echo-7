@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardmagnxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"magnum_frame"
+display_name = "Magnum Frame"
+description = "Reworked caliber: damage +50% but mag size -25%."
+rarity = 1
+draft_weight = 0.7
+damage_mult = 1.5
+mag_size_mult = 0.75
