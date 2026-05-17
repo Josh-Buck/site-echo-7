@@ -11,7 +11,36 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M2c1 + M2c2 — title screen, shop wall, RD banking (latest deploy)
+## M2c3 — procedural audio (latest deploy)
+
+All sounds are GDScript-synthesized AudioStreamWAVs (no external assets). Should work in the browser after the first click (audio gating).
+
+### Audio inventory
+- [ ] **Pistol fire** — sharp crack, plays per shot
+- [ ] **Shotgun fire** — deeper boom with low-end thump
+- [ ] **AR fire** — short rapid pops during full-auto
+- [ ] **Reload** — two clicks + slide sound on R
+- [ ] **Zombie groan** — periodic low growl from each zombie (every 5–11s, only while alive). 3D positional — should sound louder when zombies are close.
+- [ ] **Zombie death** — descending groan on kill
+- [ ] **Barrier hit** — metallic clang when zombies attack the barrier
+- [ ] **Barrier destroyed** — low rumble + crash when barrier hits 0 HP
+- [ ] **Wave start sting** — rising tone when a new wave begins
+- [ ] **Card pick** — ascending chirp on card selection
+- [ ] **Shop open** — chord on opening the shop
+- [ ] **UI clicks** — short blip on Start Run, card pick, shop buy, continue, next wave, retry
+
+### Verification checks
+- [ ] First click on title screen → quiet UI click. Subsequent UI interactions all click.
+- [ ] Wave 1 starts → rising tone audible
+- [ ] Walker zombies groan with positional pan (spin the player toward/away from one — should change)
+- [ ] Pistol vs Shotgun vs AR have distinctly different fire sounds
+- [ ] Zombie death sound plays on every kill at the zombie's location
+- [ ] No audio plays before the very first user click (web autoplay gate)
+- [ ] No audio crashes / no Console errors related to AudioStreamWAV
+
+---
+
+## M2c1 + M2c2 — title screen, shop wall, RD banking
 
 ### Title screen
 - [x] Page now opens to a black title screen "SITE ECHO 7" ← verified

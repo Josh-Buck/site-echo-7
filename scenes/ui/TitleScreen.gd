@@ -37,6 +37,7 @@ func _on_start_pressed() -> void:
 	_starting = true
 	print("[TitleScreen] start pressed, loading Main.tscn")
 	AudioMan.register_first_gesture()
+	AudioMan.play_sfx("ui_click")
 	GameState.start_run()
 	var err := get_tree().change_scene_to_file("res://scenes/Main.tscn")
 	if err != OK:

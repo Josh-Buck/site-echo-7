@@ -60,6 +60,7 @@ func _show() -> void:
 	SaveSystem.save_meta()
 
 func _on_next_wave_pressed() -> void:
+	AudioMan.play_sfx("ui_click")
 	var spawn_ring := get_tree().current_scene.find_child("SpawnRing", true, false)
 	if spawn_ring != null and spawn_ring.has_method("start_next_wave"):
 		panel.visible = false
@@ -69,6 +70,6 @@ func _on_next_wave_pressed() -> void:
 		push_warning("[WaveComplete] SpawnRing not found")
 
 func _on_retry_pressed() -> void:
-	# Return to title screen so lifetime stats update visibly between runs.
+	AudioMan.play_sfx("ui_click")
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

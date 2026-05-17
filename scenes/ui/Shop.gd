@@ -61,10 +61,10 @@ func _on_buy(idx: int) -> void:
 	var cost: int = int(offer["cost"])
 	if GameState.tokens < cost:
 		return
+	AudioMan.play_sfx("ui_click")
 	GameState.tokens -= cost
 	EventBus.tokens_changed.emit(GameState.tokens, -cost)
 	_apply_effect(String(offer["id"]))
-	# Remove the purchased offer so it can't be bought twice in the same visit.
 	_current_offers.remove_at(idx)
 	_populate()
 
@@ -121,5 +121,6 @@ func _on_tokens_changed(_total: int, _delta: int) -> void:
 	_populate()
 
 func _on_continue_pressed() -> void:
+	AudioMan.play_sfx("ui_click")
 	panel.visible = false
 	EventBus.shop_done.emit()

@@ -64,9 +64,11 @@ func _make_card_button(card: CardData, index: int) -> Button:
 	return btn
 
 func _on_card_picked(idx: int) -> void:
+	AudioMan.play_sfx("ui_click")
 	panel.visible = false
 	CardSystem.pick_card(idx)
 
 func _on_skip_pressed() -> void:
+	AudioMan.play_sfx("ui_click")
 	panel.visible = false
 	CardSystem.skip_draft()

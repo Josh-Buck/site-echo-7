@@ -17,6 +17,7 @@ var _die_timer: float = 0.0
 var _nav_update_interval: float = 0.25
 var _nav_update_accum: float = 0.0
 var _gravity: float = 9.8
+var _groan_timer: float = 0.0
 
 const BARRIER_RADIUS: float = 3.0
 
@@ -30,6 +31,7 @@ func _ready() -> void:
 	collision_mask = 2
 	add_to_group("zombies")
 	_nav_update_accum = randf() * _nav_update_interval  # stagger crowd
+	_groan_timer = randf_range(2.0, 6.0)
 	nav.path_desired_distance = 0.5
 	nav.target_desired_distance = data.attack_range + BARRIER_RADIUS
 	nav.avoidance_enabled = false
@@ -68,6 +70,10 @@ func _physics_process(delta: float) -> void:
 	if _nav_update_accum >= _nav_update_interval:
 		_nav_update_accum = 0.0
 		_update_nav_target()
+	_groan_timer -= delta
+	if _groan_timer <= 0.0 and state != AIState.DIE:
+		_groan_timer = randf_range(5.0, 11.0)
+		AudioMan.play_sfx("zombie_groan", global_position)
 	match state:
 		AIState.IDLE:
 			_state_idle(delta)
