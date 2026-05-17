@@ -73,7 +73,9 @@ func try_fire() -> bool:
 	return true
 
 func try_reload() -> bool:
-	if _reloading or reserve_ammo <= 0 or current_ammo >= get_effective_mag_size():
+	if _reloading or current_ammo >= get_effective_mag_size():
+		return false
+	if not data.infinite_reserve and reserve_ammo <= 0:
 		return false
 	_reloading = true
 	_reload_timer = get_effective_reload_time()
@@ -89,6 +91,7 @@ func get_ammo_state() -> Dictionary:
 		"mag_size": get_effective_mag_size() if data else 0,
 		"reloading": _reloading,
 		"weapon_name": data.display_name if data else "",
+		"infinite_reserve": data.infinite_reserve if data else false,
 	}
 
 func _fire() -> void:
@@ -157,9 +160,11 @@ func _resolve_pellet(cam: Camera3D, payload: Dictionary) -> void:
 
 func _finish_reload() -> void:
 	var needed: int = get_effective_mag_size() - current_ammo
-	var taken: int = min(needed, reserve_ammo)
+	var taken: int = needed
+	if not data.infinite_reserve:
+		taken = min(needed, reserve_ammo)
+		reserve_ammo -= taken
 	current_ammo += taken
-	reserve_ammo -= taken
 	_reloading = false
 	EventBus.weapon_reloaded.emit(self)
 
