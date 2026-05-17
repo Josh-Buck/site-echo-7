@@ -17,6 +17,19 @@ const ENEMY_MASK: int = 4  # physics layer 3
 const RAY_MASK: int = 4 | 2  # zombies + world (barrier/floor) for tracer/impact endpoint
 const TRACER_SCENE := preload("res://scenes/weapons/vfx/BulletTracer.tscn")
 const SPARKS_SCENE := preload("res://scenes/weapons/vfx/ImpactSparks.tscn")
+const WEAPON_METAL_MAT := preload("res://art/materials/weapon_metal/material.tres")
+const WEAPON_POLYMER_MAT := preload("res://art/materials/weapon_polymer/material.tres")
+
+# Viewmodel kick spring state (local-space, lerped each frame).
+var _kick_offset: Vector3 = Vector3.ZERO
+var _kick_pitch: float = 0.0
+var _rest_position: Vector3 = Vector3.ZERO
+var _kick_recovery: float = 0.12
+const KICK_BACK_M: float = 0.06
+const KICK_PITCH_DEG: float = 3.0
+
+# Polymer surface name hints — grip/stock/pump get polymer; everything else gets metal.
+const POLYMER_NAME_HINTS := ["grip", "stock", "pump", "handle", "foregrip", "magazine"]
 
 func _ready() -> void:
 	if data == null:
@@ -28,6 +41,8 @@ func _ready() -> void:
 		_fire_sfx_player.stream = data.fire_sfx
 	if _reload_sfx_player and data.reload_sfx:
 		_reload_sfx_player.stream = data.reload_sfx
+	_rest_position = position
+	_apply_pbr_materials()
 
 func get_effective_mag_size() -> int:
 	return int(data.mag_size * CardSystem.get_modifier(&"mag_size"))
@@ -42,6 +57,7 @@ func get_effective_fire_rate() -> float:
 	return data.fire_rate * CardSystem.get_modifier(&"fire_rate")
 
 func _process(delta: float) -> void:
+	_update_kick(delta)
 	if _fire_cooldown > 0.0:
 		_fire_cooldown = max(0.0, _fire_cooldown - delta)
 	if _reloading:
@@ -109,6 +125,10 @@ func _fire() -> void:
 	_fire_cooldown = 1.0 / max(0.1, get_effective_fire_rate())
 	_flash_muzzle()
 	_play_fire_sfx()
+	_kick()
+	# Pellet weapons (shotgun) eject one shell at reload-end, not per-fire.
+	if data.pellet_count <= 1:
+		_eject_casing("right")
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		EventBus.weapon_fired.emit(self, _build_payload())
@@ -191,6 +211,8 @@ func _finish_reload() -> void:
 		reserve_ammo -= taken
 	current_ammo += taken
 	_reloading = false
+	if data.pellet_count > 1:
+		_eject_casing("down")
 	EventBus.weapon_reloaded.emit(self)
 
 func _play_fire_sfx() -> void:
@@ -247,3 +269,50 @@ func _spawn_sparks(at: Vector3, normal: Vector3) -> void:
 	var right := ref.cross(up).normalized()
 	var fwd := up.cross(right).normalized()
 	s.global_transform.basis = Basis(right, up, fwd)
+
+func _kick() -> void:
+	# Instantly add the kick; _update_kick springs it back to rest.
+	_kick_offset.z = KICK_BACK_M
+	_kick_pitch = deg_to_rad(KICK_PITCH_DEG)
+
+func _update_kick(delta: float) -> void:
+	var decay := exp(-delta / max(0.02, _kick_recovery))
+	_kick_offset *= decay
+	_kick_pitch *= decay
+	position = _rest_position + _kick_offset
+	# Negative X rotation pitches the muzzle (-Z) upward.
+	rotation.x = -_kick_pitch
+
+func _eject_casing(mode: String) -> void:
+	var pool := _find_casing_pool()
+	if pool == null:
+		return
+	pool.eject(_muzzle_origin(), global_transform.basis, mode)
+
+func _find_casing_pool() -> CasingPool:
+	var pools := get_tree().get_nodes_in_group("casing_pool")
+	if pools.is_empty():
+		return null
+	var p := pools[0]
+	if p is CasingPool:
+		return p
+	return null
+
+func _apply_pbr_materials() -> void:
+	for mi in _collect_mesh_instances(self):
+		var lower := String(mi.name).to_lower()
+		var is_polymer := false
+		for hint in POLYMER_NAME_HINTS:
+			if lower.find(hint) != -1:
+				is_polymer = true
+				break
+		var mat: Material = WEAPON_POLYMER_MAT if is_polymer else WEAPON_METAL_MAT
+		mi.set_surface_override_material(0, mat)
+
+func _collect_mesh_instances(n: Node) -> Array[MeshInstance3D]:
+	var out: Array[MeshInstance3D] = []
+	for child in n.get_children():
+		if child is MeshInstance3D:
+			out.append(child)
+		out.append_array(_collect_mesh_instances(child))
+	return out

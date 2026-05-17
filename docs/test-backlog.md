@@ -322,3 +322,27 @@ When CRITICAL is all green, the next building targets:
 2. Real art pass on weapons / zombies / barrier
 3. Performance pass if needed
 4. Polish (kill streak combo, hit pause on crits, more particles)
+
+## Weapon game-feel polish
+
+### Hit pause on headshot kills
+- [ ] Landing a headshot kill produces a brief (~70ms) slow-mo punctuation; non-headshot kills do not
+- [ ] HUD elements (hit marker, score popup, ammo counter tweens) keep running at normal speed during the pause
+- [ ] Rapid chained headshot kills don't compound into a long freeze (single-pause-at-a-time feel)
+
+### Brass casings
+- [ ] Pistol/AR/Sidearm eject a small brass casing to the right of the weapon on every shot
+- [ ] Casings tumble realistically and rest on the floor for ~3s before despawning
+- [ ] Sustained AR full-auto burst does not exceed ~24 alive casings (older ones recycle, no runaway physics cost)
+- [ ] Shotgun ejects a single shell downward at the end of reload (not per-pellet on fire)
+- [ ] Casings have the weapon_metal PBR look (not flat grey)
+
+### Viewmodel kick
+- [ ] On every shot the viewmodel translates back ~6cm and tilts the muzzle up ~3°, springing back over ~0.12s
+- [ ] Full-auto AR shows continuous additive kick (doesn't fully settle between shots at 10 rps)
+- [ ] Reloading and weapon-swap don't leave the viewmodel stuck out of rest position
+
+### Weapon PBR materials
+- [ ] Weapon bodies/barrels/magazines display the weapon_metal PBR (visible normal map + roughness variation), not flat StandardMaterial3D colors
+- [ ] Grip / pump / stock surfaces (if named that way) display the weapon_polymer PBR with a duller, less metallic look
+- [ ] No console errors about missing material/texture resources on weapon spawn
