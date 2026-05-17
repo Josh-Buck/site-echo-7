@@ -114,6 +114,7 @@ See `docs/ideas.md`. Stuff that's *not* in v1 goes here, not into the code.
 - **Hand-written `.tscn`: the `script = ExtResource(...)` line on the root node is required for any script to run.** Just registering the script as an `[ext_resource]` is not enough — the root `[node ...]` declaration must include `script = ExtResource("id")`. Missing this means `_ready` never fires, signals never connect, and buttons render but do nothing — with **zero error output**. Cost a session to find this once; check every hand-written `.tscn` before pushing.
 - **Default `mouse_filter = STOP` on Control nodes blocks clicks** from reaching children/siblings. Background panels covering the screen need `mouse_filter = 2` (IGNORE).
 - **Removing a function while adding others is easy to do by accident** — when adding `_on_meta_pressed` next to `_input` in a single Edit, I deleted `_input`. Re-read the file before pushing if I've edited the same function block twice.
+- **`:=` type inference fails when chained through `Node`.** `var x := some_node.specific_method()` errors at parse time with "Cannot infer the type" if `some_node` is statically `Node` but `specific_method` lives on a subclass. Fixes: type the function's return value to the actual subclass (`-> Weapon` not `-> Node`), OR use explicit `var x: int = ...` to bypass inference. Bytecode export silently ships these and they only show as Parse Errors in the browser console at runtime.
 
 ## Operating cadence (user preferences)
 
