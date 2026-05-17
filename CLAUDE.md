@@ -108,3 +108,19 @@ See `docs/non-negotiables.md`. Read it before touching scope.
 ## Ideas parking lot
 
 See `docs/ideas.md`. Stuff that's *not* in v1 goes here, not into the code.
+
+## Agent team
+
+Project-level Claude Code subagents live in `.claude/agents/`. Each has a focused lane; route work to the right one rather than to a generalist.
+
+| Agent | Lane | Invoke when… |
+|---|---|---|
+| `zombie-gameplay-dev` | Player controller + weapons code (under `scenes/player/`, `scenes/weapons/`) | Adding/tuning the player camera, mouse-look spin, firing logic, raycast/projectile weapons, recoil physics, reload behavior |
+| `zombie-ai-architect` | Enemy AI + wave spawning (under `scenes/enemies/`, spawn ring) | Building/tuning Walker, Runner, Tank, Spitter, Exploder, bosses; state machines; NavigationAgent3D; wave composition execution |
+| `zombie-ui-manager` | UI, menus, HUD + custom Resource schemas | HUD elements, card draft UI, shop, meta progression screen, settings, schema for `WeaponData`/`CardData`/`EnemyData`/etc. |
+| `godot-engineer` | Cross-cutting / autoloads / arena / barrier / card effect internals | Anything not in a specialist's lane: autoload internals, barrier behavior, arena geometry, CardSystem internals, save schema migrations |
+| `game-designer` | Cards, balance, economy, challenges, difficulty curve | Designing new cards (proposes 3 candidates), tuning numbers, designing challenges, balancing the RD economy. Hands off implementation. |
+| `art-scout` | Sourcing CC0 PBR assets + audio | Finding materials, models, SFX, music. License-verifies. Respects the art budget. |
+| `web-export-doctor` | Godot web build diagnostics | A feature works in editor but breaks in browser; deploy fails; browser console error; build-size blowup |
+
+**Routing rule of thumb:** code-in-a-specific-folder → folder's specialist; cross-cutting/glue → `godot-engineer`; design questions → `game-designer`; "is this broken?" web issues → `web-export-doctor`; assets → `art-scout`.
