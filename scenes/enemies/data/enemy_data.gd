@@ -18,3 +18,7 @@ class_name EnemyData extends Resource
 
 @export_category("Visual")
 @export var scene: PackedScene
+@export var size_scale: float = 1.0
+@export var body_color: Color = Color(0.36, 0.3, 0.26)
+@export var head_color: Color = Color(0.55, 0.42, 0.36)
+@export var eye_color: Color = Color(0.9, 0.18, 0.12)

@@ -1,12 +1,21 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1mainm1xyz"]
+[gd_scene load_steps=17 format=3 uid="uid://b1mainm1xyz"]
 
 [ext_resource type="Script" path="res://scenes/Main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://b1arenaxyz" path="res://scenes/arena/Arena.tscn" id="2_arena"]
 [ext_resource type="PackedScene" uid="uid://b1playerxyz" path="res://scenes/player/Player.tscn" id="3_player"]
 [ext_resource type="Script" path="res://scenes/arena/SpawnRing.gd" id="4_spawn"]
-[ext_resource type="Resource" uid="uid://b1wave1xyz" path="res://scenes/arena/data/wave_1.tres" id="5_wave"]
-[ext_resource type="PackedScene" uid="uid://b1hudxyz" path="res://scenes/ui/HUD.tscn" id="6_hud"]
-[ext_resource type="PackedScene" uid="uid://b1wcxyz" path="res://scenes/ui/WaveComplete.tscn" id="7_wc"]
+[ext_resource type="Resource" uid="uid://b1wave1xyz" path="res://scenes/arena/data/wave_1.tres" id="5_wave1"]
+[ext_resource type="Resource" uid="uid://b1wave2xyz" path="res://scenes/arena/data/wave_2.tres" id="6_wave2"]
+[ext_resource type="Resource" uid="uid://b1wave3xyz" path="res://scenes/arena/data/wave_3.tres" id="7_wave3"]
+[ext_resource type="Resource" uid="uid://b1wave4xyz" path="res://scenes/arena/data/wave_4.tres" id="8_wave4"]
+[ext_resource type="Resource" uid="uid://b1wave5xyz" path="res://scenes/arena/data/wave_5.tres" id="9_wave5"]
+[ext_resource type="Resource" uid="uid://b1wave6xyz" path="res://scenes/arena/data/wave_6.tres" id="10_wave6"]
+[ext_resource type="Resource" uid="uid://b1wave7xyz" path="res://scenes/arena/data/wave_7.tres" id="11_wave7"]
+[ext_resource type="Resource" uid="uid://b1wave8xyz" path="res://scenes/arena/data/wave_8.tres" id="12_wave8"]
+[ext_resource type="Resource" uid="uid://b1wave9xyz" path="res://scenes/arena/data/wave_9.tres" id="13_wave9"]
+[ext_resource type="Resource" uid="uid://b1wave10xyz" path="res://scenes/arena/data/wave_10.tres" id="14_wave10"]
+[ext_resource type="PackedScene" uid="uid://b1hudxyz" path="res://scenes/ui/HUD.tscn" id="15_hud"]
+[ext_resource type="PackedScene" uid="uid://b1wcxyz" path="res://scenes/ui/WaveComplete.tscn" id="16_wc"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -18,8 +27,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
 [node name="SpawnRing" type="Node3D" parent="."]
 script = ExtResource("4_spawn")
-wave_data = ExtResource("5_wave")
+waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtResource("7_wave3"), ExtResource("8_wave4"), ExtResource("9_wave5"), ExtResource("10_wave6"), ExtResource("11_wave7"), ExtResource("12_wave8"), ExtResource("13_wave9"), ExtResource("14_wave10")])
 
-[node name="HUD" parent="." instance=ExtResource("6_hud")]
+[node name="HUD" parent="." instance=ExtResource("15_hud")]
 
-[node name="WaveComplete" parent="." instance=ExtResource("7_wc")]
+[node name="WaveComplete" parent="." instance=ExtResource("16_wc")]

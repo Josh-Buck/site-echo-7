@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1arscxyz"]
+
+[ext_resource type="PackedScene" uid="uid://b1weaponxyz" path="res://scenes/weapons/Weapon.tscn" id="1_base"]
+[ext_resource type="Resource" uid="uid://b1arxyz" path="res://scenes/weapons/data/ar.tres" id="2_data"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_mag"]
+size = Vector3(0.05, 0.14, 0.05)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_arbarrel"]
+top_radius = 0.018
+bottom_radius = 0.018
+height = 0.38
+
+[sub_resource type="StandardMaterial3D" id="Mat_ar"]
+albedo_color = Color(0.24, 0.26, 0.24, 1)
+metallic = 0.75
+roughness = 0.38
+emission_enabled = true
+emission = Color(0.04, 0.04, 0.04, 1)
+emission_energy_multiplier = 1.0
+
+[node name="AR" instance=ExtResource("1_base")]
+data = ExtResource("2_data")
+
+[node name="Magazine" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.05)
+mesh = SubResource("BoxMesh_mag")
+surface_material_override/0 = SubResource("Mat_ar")
+
+[node name="LongBarrel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.04, -0.22)
+mesh = SubResource("CylinderMesh_arbarrel")
+surface_material_override/0 = SubResource("Mat_ar")

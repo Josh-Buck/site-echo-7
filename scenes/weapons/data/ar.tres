@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1arxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"ar_standard"
+display_name = "Assault Rifle"
+description = "Full-auto. Bursty damage at range. Manage your recoil pattern."
+base_damage = 11.0
+headshot_multiplier = 2.0
+damage_type = 0
+fire_rate = 9.0
+automatic = true
+mag_size = 30
+reserve_ammo_max = 180
+pellet_count = 1
+spread_angle_deg = 0.0
+reload_time = 2.0
+recoil_vertical = 1.1
+recoil_horizontal = 0.6
+recoil_recovery = 0.18

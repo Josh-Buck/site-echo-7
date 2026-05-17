@@ -33,7 +33,30 @@ func _ready() -> void:
 	nav.path_desired_distance = 0.5
 	nav.target_desired_distance = data.attack_range + BARRIER_RADIUS
 	nav.avoidance_enabled = false
+	_apply_data_visuals()
 	_find_target()
+
+func _apply_data_visuals() -> void:
+	if data == null:
+		return
+	scale = Vector3.ONE * data.size_scale
+	_tint_mesh($Mesh, data.body_color, false)
+	_tint_mesh($Head, data.head_color, false)
+	_tint_mesh($EyeL, data.eye_color, true)
+	_tint_mesh($EyeR, data.eye_color, true)
+
+func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool) -> void:
+	if m == null:
+		return
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.metallic = 0.0
+	mat.roughness = 0.85
+	if glowy:
+		mat.emission_enabled = true
+		mat.emission = color
+		mat.emission_energy_multiplier = 3.0
+	m.set_surface_override_material(0, mat)
 
 func _find_target() -> void:
 	var barriers := get_tree().get_nodes_in_group("barriers")
@@ -126,12 +149,18 @@ func _state_die(delta: float) -> void:
 func take_damage(amount: float, source: Node = null, is_headshot: bool = false, hit_position: Vector3 = Vector3.ZERO) -> void:
 	if state == AIState.DIE:
 		return
+	# Armor: non-headshot hits reduced by 50%. Headshots punch through armor.
+	if data and data.armor and not is_headshot:
+		amount *= 0.5
 	current_hp -= amount
 	EventBus.enemy_damaged.emit(self, amount, source)
 	if current_hp <= 0.0:
 		state = AIState.DIE
 		_die_timer = 0.6
 		collision_layer = 0
+		if data:
+			GameState.tokens += data.token_drop
+			EventBus.tokens_changed.emit(GameState.tokens, data.token_drop)
 		EventBus.enemy_killed.emit(self, source, is_headshot, hit_position)
 
 func is_headshot_position(pos: Vector3) -> bool:

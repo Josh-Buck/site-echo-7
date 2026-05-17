@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1runnerxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"runner"
+display_name = "Runner"
+max_hp = 18.0
+move_speed = 4.5
+attack_damage = 3.0
+attack_range = 1.5
+attack_rate = 1.4
+headshot_multiplier = 2.0
+armor = false
+token_drop = 2
+scene = ExtResource("2_scene")
+size_scale = 0.85
+body_color = Color(0.42, 0.34, 0.28, 1)
+head_color = Color(0.58, 0.45, 0.36, 1)
+eye_color = Color(1, 0.65, 0.1, 1)

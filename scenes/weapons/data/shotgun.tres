@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1shotgunxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"shotgun_combat"
+display_name = "Combat Shotgun"
+description = "Spread shot. Devastating at close range, useless at distance. Slow reload."
+base_damage = 9.0
+headshot_multiplier = 1.5
+damage_type = 0
+fire_rate = 1.4
+automatic = false
+mag_size = 6
+reserve_ammo_max = 48
+pellet_count = 8
+spread_angle_deg = 7.0
+reload_time = 2.4
+recoil_vertical = 4.5
+recoil_horizontal = 1.2
+recoil_recovery = 0.5

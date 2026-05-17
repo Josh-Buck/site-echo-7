@@ -8,7 +8,7 @@ var _fire_cooldown: float = 0.0
 var _reloading: bool = false
 var _reload_timer: float = 0.0
 
-const ENEMY_MASK: int = 4  # physics layer 3 = bit (1 << 2)
+const ENEMY_MASK: int = 4  # physics layer 3
 
 func _ready() -> void:
 	if data == null:
@@ -24,13 +24,18 @@ func _process(delta: float) -> void:
 		_reload_timer -= delta
 		if _reload_timer <= 0.0:
 			_finish_reload()
-
-func _unhandled_input(event: InputEvent) -> void:
+		return
 	if data == null:
 		return
-	if event.is_action_pressed("shoot"):
+	# Polling-based fire so automatic weapons can hold-to-fire.
+	var wants_fire := false
+	if data.automatic:
+		wants_fire = Input.is_action_pressed("shoot")
+	else:
+		wants_fire = Input.is_action_just_pressed("shoot")
+	if wants_fire:
 		try_fire()
-	elif event.is_action_pressed("reload"):
+	if Input.is_action_just_pressed("reload"):
 		try_reload()
 
 func try_fire() -> bool:
@@ -58,16 +63,26 @@ func get_ammo_state() -> Dictionary:
 		"reserve": reserve_ammo,
 		"mag_size": data.mag_size if data else 0,
 		"reloading": _reloading,
+		"weapon_name": data.display_name if data else "",
 	}
 
 func _fire() -> void:
 	current_ammo -= 1
 	_fire_cooldown = 1.0 / max(0.1, data.fire_rate)
-	var payload := _build_payload()
-	if CardSystem and CardSystem.has_method("mutate_payload"):
-		payload = CardSystem.mutate_payload(payload)
-	_resolve_hit(payload)
-	EventBus.weapon_fired.emit(self, payload)
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		EventBus.weapon_fired.emit(self, _build_payload())
+		return
+	var pellets: int = max(1, data.pellet_count)
+	for i in pellets:
+		var pellet_payload := _build_payload()
+		if pellets > 1:
+			pellet_payload["damage"] = data.base_damage  # per-pellet damage stays at base
+		if CardSystem and CardSystem.has_method("mutate_payload"):
+			pellet_payload = CardSystem.mutate_payload(pellet_payload)
+		_resolve_pellet(cam, pellet_payload)
+	# Emit one weapon_fired per trigger pull (not per pellet) so HUD updates once.
+	EventBus.weapon_fired.emit(self, _build_payload())
 
 func _build_payload() -> Dictionary:
 	return {
@@ -82,12 +97,18 @@ func _build_payload() -> Dictionary:
 		"knockback_force": 0.0,
 	}
 
-func _resolve_hit(payload: Dictionary) -> void:
-	var cam := get_viewport().get_camera_3d()
-	if cam == null:
-		return
+func _resolve_pellet(cam: Camera3D, payload: Dictionary) -> void:
+	var forward := -cam.global_transform.basis.z
+	var right := cam.global_transform.basis.x
+	var up := cam.global_transform.basis.y
+	var dir := forward
+	if data.spread_angle_deg > 0.0:
+		var spread_rad := deg_to_rad(data.spread_angle_deg)
+		var yaw := randf_range(-spread_rad, spread_rad)
+		var pitch := randf_range(-spread_rad, spread_rad)
+		dir = forward.rotated(up, yaw).rotated(right, pitch).normalized()
 	var from := cam.global_transform.origin
-	var to := from + (-cam.global_transform.basis.z) * 100.0
+	var to := from + dir * 100.0
 	var query := PhysicsRayQueryParameters3D.create(from, to, ENEMY_MASK)
 	query.collide_with_areas = false
 	query.collide_with_bodies = true

@@ -16,3 +16,7 @@ headshot_multiplier = 2.0
 armor = false
 token_drop = 1
 scene = ExtResource("2_scene")
+size_scale = 1.0
+body_color = Color(0.36, 0.3, 0.26, 1)
+head_color = Color(0.55, 0.42, 0.36, 1)
+eye_color = Color(0.9, 0.18, 0.12, 1)

@@ -15,6 +15,8 @@ class_name WeaponData extends Resource
 @export var automatic: bool = false
 @export var mag_size: int = 12
 @export var reserve_ammo_max: int = 120
+@export_range(1, 16) var pellet_count: int = 1
+@export_range(0.0, 30.0, 0.1) var spread_angle_deg: float = 0.0
 
 @export_category("Reload")
 @export_range(0.1, 5.0, 0.05) var reload_time: float = 1.5

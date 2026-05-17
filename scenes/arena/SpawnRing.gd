@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var wave_data: WaveData
+@export var waves: Array[Resource] = []  # of WaveData
 @export var auto_start: bool = true
 
 var _spawn_points: Array = []
@@ -11,23 +11,38 @@ var _wave_active: bool = false
 var _spawn_timer: float = 0.0
 var _spawn_interval: float = 1.0
 var _last_spawn_index: int = -1
+var _current_wave_index: int = -1
+var _current_wave: WaveData = null
 var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	_rng.randomize()
 	EventBus.enemy_killed.connect(_on_enemy_killed)
-	# Defer one frame so Arena's spawn_points group is populated.
 	await get_tree().process_frame
 	_spawn_points = get_tree().get_nodes_in_group("spawn_points")
 	if _spawn_points.is_empty():
 		push_warning("[SpawnRing] no spawn_points group members found")
-	if auto_start and wave_data != null:
-		start_wave(wave_data)
+	if auto_start and not waves.is_empty():
+		start_next_wave()
 
-func start_wave(wd: WaveData) -> void:
+func start_next_wave() -> void:
+	_current_wave_index += 1
+	if _current_wave_index >= waves.size():
+		EventBus.run_ended.emit({"victory": true, "rounds": waves.size()})
+		return
+	var wd = waves[_current_wave_index]
+	if wd is WaveData:
+		_start_wave(wd)
+	else:
+		push_warning("[SpawnRing] wave at index %d is not WaveData" % _current_wave_index)
+
+func has_next_wave() -> bool:
+	return _current_wave_index + 1 < waves.size()
+
+func _start_wave(wd: WaveData) -> void:
 	if wd == null or wd.composition.is_empty():
 		return
-	wave_data = wd
+	_current_wave = wd
 	_spawn_queue.clear()
 	_active_count = 0
 	for i in wd.composition.size():
@@ -39,6 +54,7 @@ func start_wave(wd: WaveData) -> void:
 	_spawn_interval = max(0.4, wd.spawn_window_seconds / float(max(1, _total_to_spawn)))
 	_spawn_timer = 1.0
 	_wave_active = true
+	GameState.current_round = wd.round_number
 	EventBus.wave_started.emit(wd.round_number, wd.composition)
 	print("[SpawnRing] wave %d: %d zombies, interval=%.2fs" % [wd.round_number, _total_to_spawn, _spawn_interval])
 
@@ -46,7 +62,7 @@ func _process(delta: float) -> void:
 	if not _wave_active:
 		return
 	_spawn_timer -= delta
-	if _spawn_timer <= 0.0 and not _spawn_queue.is_empty() and _active_count < wave_data.simultaneous_active_cap:
+	if _spawn_timer <= 0.0 and not _spawn_queue.is_empty() and _active_count < _current_wave.simultaneous_active_cap:
 		_spawn_next()
 		_spawn_timer = _spawn_interval
 
@@ -80,4 +96,4 @@ func _on_enemy_killed(_enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> voi
 	_active_count = max(0, _active_count - 1)
 	if _spawn_queue.is_empty() and _active_count == 0:
 		_wave_active = false
-		EventBus.wave_ended.emit(wave_data.round_number)
+		EventBus.wave_ended.emit(_current_wave.round_number)

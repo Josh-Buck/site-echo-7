@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WaveData" load_steps=3 format=3 uid="uid://b1wave2xyz"]
+
+[ext_resource type="Script" path="res://scenes/arena/data/wave_data.gd" id="1_wave"]
+[ext_resource type="Resource" uid="uid://b1walkerxyz" path="res://scenes/enemies/data/walker.tres" id="2_walker"]
+
+[resource]
+script = ExtResource("1_wave")
+id = &"wave_2"
+round_number = 2
+composition = Array[Resource]([ExtResource("2_walker")])
+counts = Array[int]([14])
+spawn_window_seconds = 32.0
+simultaneous_active_cap = 9

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1tankxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"tank"
+display_name = "Tank"
+max_hp = 110.0
+move_speed = 0.9
+attack_damage = 12.0
+attack_range = 1.6
+attack_rate = 0.7
+headshot_multiplier = 1.8
+armor = true
+token_drop = 5
+scene = ExtResource("2_scene")
+size_scale = 1.4
+body_color = Color(0.22, 0.24, 0.22, 1)
+head_color = Color(0.3, 0.28, 0.25, 1)
+eye_color = Color(0.5, 0.85, 1, 1)
