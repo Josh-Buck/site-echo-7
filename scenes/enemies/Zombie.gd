@@ -2,6 +2,9 @@ class_name Zombie extends CharacterBody3D
 
 enum AIState { IDLE, CHASE, ATTACK, STAGGER, DIE }
 
+const BLOOD_BURST_SCENE := preload("res://scenes/enemies/vfx/BloodBurst.tscn")
+const DISSOLVE_TIME: float = 0.55
+
 @export var data: EnemyData
 
 @onready var mesh: MeshInstance3D = $Mesh
@@ -172,10 +175,14 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 		amount *= 0.5
 	current_hp -= amount
 	EventBus.enemy_damaged.emit(self, amount, source, hit_position, is_headshot)
+	_spawn_blood_burst(hit_position, is_headshot)
 	if current_hp <= 0.0:
 		state = AIState.DIE
-		_die_timer = 0.6
+		_die_timer = DISSOLVE_TIME
 		collision_layer = 0
+		# Extra spray on the kill blow.
+		_spawn_blood_burst(hit_position, is_headshot)
+		_begin_dissolve()
 		if data:
 			GameState.tokens += data.token_drop
 			EventBus.tokens_changed.emit(GameState.tokens, data.token_drop)
@@ -184,3 +191,35 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 func is_headshot_position(pos: Vector3) -> bool:
 	# Head sphere is centered at +1.55, radius 0.2. Anything in the head sphere zone counts.
 	return pos.y > global_position.y + 1.35
+
+func _spawn_blood_burst(at: Vector3, headshot: bool) -> void:
+	var p := at
+	if p == Vector3.ZERO:
+		p = global_position + Vector3(0, 1.0, 0)
+	var b := BLOOD_BURST_SCENE.instantiate() as Node3D
+	get_tree().current_scene.add_child(b)
+	b.global_position = p
+	if b.has_method("setup"):
+		b.setup(headshot)
+
+func _begin_dissolve() -> void:
+	# Slump + fade. Avoid replacing every surface material — just override on the whole
+	# CharacterBody3D's child MeshInstance3Ds with a transparency-enabled copy.
+	for child in _all_mesh_instances(self):
+		var mat: Material = child.get_active_material(0)
+		var sm := mat as StandardMaterial3D
+		var dup: StandardMaterial3D = sm.duplicate() if sm else StandardMaterial3D.new()
+		dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		child.set_surface_override_material(0, dup)
+		var tw := create_tween()
+		tw.tween_property(dup, "albedo_color:a", 0.0, DISSOLVE_TIME)
+	var tw2 := create_tween()
+	tw2.tween_property(self, "scale:y", scale.y * 0.15, DISSOLVE_TIME).set_trans(Tween.TRANS_CUBIC)
+
+func _all_mesh_instances(n: Node) -> Array:
+	var out: Array = []
+	for c in n.get_children():
+		if c is MeshInstance3D:
+			out.append(c)
+		out.append_array(_all_mesh_instances(c))
+	return out

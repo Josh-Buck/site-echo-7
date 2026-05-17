@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://bvfxbloodxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/vfx/BloodBurst.gd" id="1_bb"]
+
+[sub_resource type="Gradient" id="Gradient_bb"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.55, 0.05, 0.05, 1, 0.32, 0.02, 0.02, 1, 0.15, 0.0, 0.0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradTex_bb"]
+gradient = SubResource("Gradient_bb")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_bb"]
+emission_shape = 1
+emission_sphere_radius = 0.1
+direction = Vector3(0, 1, 0)
+spread = 75.0
+initial_velocity_min = 2.5
+initial_velocity_max = 5.0
+gravity = Vector3(0, -9, 0)
+damping_min = 0.5
+damping_max = 1.5
+scale_min = 0.5
+scale_max = 1.2
+color_ramp = SubResource("GradTex_bb")
+
+[sub_resource type="SphereMesh" id="SphereMesh_bb"]
+radius = 0.05
+height = 0.1
+radial_segments = 6
+rings = 3
+
+[node name="BloodBurst" type="GPUParticles3D"]
+amount = 12
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("PPM_bb")
+draw_pass_1 = SubResource("SphereMesh_bb")
+script = ExtResource("1_bb")
