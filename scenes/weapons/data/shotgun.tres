@@ -1,6 +1,8 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1shotgunxyz"]
+[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3 uid="uid://b1shotgunxyz"]
 
 [ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+[ext_resource type="AudioStream" uid="uid://bhvqsnpxcg8tk" path="res://audio/sfx/weapons/shotgun_shoot.ogg" id="2_fire"]
+[ext_resource type="AudioStream" uid="uid://dygi4vk2xbvxn" path="res://audio/sfx/weapons/shotgun_reload.ogg" id="3_reload"]
 
 [resource]
 script = ExtResource("1_wd")
@@ -20,3 +22,5 @@ reload_time = 2.4
 recoil_vertical = 4.5
 recoil_horizontal = 1.2
 recoil_recovery = 0.5
+fire_sfx = ExtResource("2_fire")
+reload_sfx = ExtResource("3_reload")

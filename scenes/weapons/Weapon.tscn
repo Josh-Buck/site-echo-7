@@ -38,3 +38,13 @@ light_color = Color(1, 0.78, 0.5, 1)
 light_energy = 0.0
 omni_range = 4.0
 shadow_enabled = false
+
+[node name="FireSfx" type="AudioStreamPlayer3D" parent="."]
+unit_size = 5.0
+max_distance = 40.0
+bus = &"Master"
+
+[node name="ReloadSfx" type="AudioStreamPlayer3D" parent="."]
+unit_size = 4.0
+max_distance = 30.0
+bus = &"Master"

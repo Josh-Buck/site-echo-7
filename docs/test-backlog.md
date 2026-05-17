@@ -170,6 +170,24 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🔊 Audio wire-up
+
+- [ ] Pistol — firing plays the CC0 pistol_shoot sample (no longer the synth white-noise pop)
+- [ ] AR — firing plays the ar_shoot sample on every bullet, full-auto sequences sound varied (pitch jitter)
+- [ ] Shotgun — firing plays the shotgun_shoot sample (one play per trigger pull, not per pellet)
+- [ ] Sidearm — firing plays the sidearm_shoot sample
+- [ ] Back-to-back shots sound non-mechanical (±5% pitch randomization audibly present)
+- [ ] Reload sound starts the moment R is pressed, not when the reload completes
+- [ ] Swapping weapons mid-reload cuts the reload sound (no orphan reload audio after swap-cancel)
+- [ ] Each weapon's reload sound matches the weapon (pistol vs shotgun vs AR vs sidearm)
+- [ ] No double-sound (no synth fire SFX layered on top of the real sample)
+- [ ] Audio levels reasonable — fire SFX not crushing other sounds; master-volume slider still controls them
+
+### Handoff (NOT done in this pass)
+- Zombie footstep audio — Zombie.tscn already has a NavigationAgent3D + AudioPlayer3D + sample ext_resources wired by the AI architect, but Zombie.gd hasn't caught up. Skipped to avoid colliding mid-edit. Route to `zombie-ai-architect`.
+
+---
+
 ## 📋 STRESS / OPS
 
 - Wave 17–20 with 22 active enemies — framerate hold?

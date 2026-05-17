@@ -1,6 +1,8 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1pistolm1xyz"]
+[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3 uid="uid://b1pistolm1xyz"]
 
 [ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+[ext_resource type="AudioStream" uid="uid://cy2r1b61c1px6" path="res://audio/sfx/weapons/pistol_shoot.ogg" id="2_fire"]
+[ext_resource type="AudioStream" uid="uid://dy3scxse6s40e" path="res://audio/sfx/weapons/pistol_reload.ogg" id="3_reload"]
 
 [resource]
 script = ExtResource("1_wd")
@@ -18,3 +20,5 @@ reload_time = 1.5
 recoil_vertical = 1.5
 recoil_horizontal = 0.4
 recoil_recovery = 0.3
+fire_sfx = ExtResource("2_fire")
+reload_sfx = ExtResource("3_reload")

@@ -6,12 +6,20 @@ extends Node
 const SAMPLE_RATE: int = 22050
 const POOL_SIZE: int = 16
 
+# Pre-loaded streams for the curated SFX set.
+const UI_CLICK_PATH := "res://audio/sfx/ui/click.ogg"
+const UI_HOVER_PATH := "res://audio/sfx/ui/hover.ogg"
+const UI_CONFIRM_PATH := "res://audio/sfx/ui/confirm.ogg"
+const CARD_FLIP_PATH := "res://audio/sfx/ui/card_flip.ogg"
+const DRAFT_APPEAR_PATH := "res://audio/sfx/ui/draft_appear.ogg"
+
 var _gesture_received: bool = false
 var _cache: Dictionary = {}  # String id -> AudioStreamWAV
 var _2d_pool: Array[AudioStreamPlayer] = []
 var _3d_pool: Array[AudioStreamPlayer3D] = []
 var _2d_idx: int = 0
 var _3d_idx: int = 0
+var _stream_cache: Dictionary = {}  # path -> AudioStream
 
 func _ready() -> void:
 	print("[AudioMan] ready")
@@ -94,6 +102,62 @@ func _play_3d(stream: AudioStreamWAV, pos: Vector3) -> void:
 	p.pitch_scale = randf_range(0.92, 1.08)
 	p.global_position = pos
 	p.play()
+
+# --- General-purpose stream players (for loaded .ogg assets) ---
+
+func play_2d(stream: AudioStream, volume_db: float = 0.0, pitch_jitter: float = 0.0) -> void:
+	if stream == null or not _gesture_received:
+		return
+	var p := _2d_pool[_2d_idx]
+	_2d_idx = (_2d_idx + 1) % _2d_pool.size()
+	p.stream = stream
+	p.volume_db = volume_db
+	if pitch_jitter > 0.0:
+		p.pitch_scale = 1.0 + randf_range(-pitch_jitter, pitch_jitter)
+	else:
+		p.pitch_scale = 1.0
+	p.play()
+
+func play_3d_at(stream: AudioStream, pos: Vector3, volume_db: float = 0.0, max_distance: float = 30.0, pitch_jitter: float = 0.0) -> void:
+	if stream == null or not _gesture_received:
+		return
+	var p := _3d_pool[_3d_idx]
+	_3d_idx = (_3d_idx + 1) % _3d_pool.size()
+	p.stream = stream
+	p.volume_db = volume_db
+	p.max_distance = max_distance
+	if pitch_jitter > 0.0:
+		p.pitch_scale = 1.0 + randf_range(-pitch_jitter, pitch_jitter)
+	else:
+		p.pitch_scale = 1.0
+	p.global_position = pos
+	p.play()
+
+func _load_stream(path: String) -> AudioStream:
+	if _stream_cache.has(path):
+		return _stream_cache[path]
+	if not ResourceLoader.exists(path):
+		return null
+	var s: AudioStream = load(path)
+	_stream_cache[path] = s
+	return s
+
+# --- UI helper hooks (exposed; UI layer calls these) ---
+
+func play_ui_click() -> void:
+	play_2d(_load_stream(UI_CLICK_PATH), -4.0, 0.04)
+
+func play_ui_hover() -> void:
+	play_2d(_load_stream(UI_HOVER_PATH), -10.0, 0.06)
+
+func play_ui_confirm() -> void:
+	play_2d(_load_stream(UI_CONFIRM_PATH), -3.0, 0.0)
+
+func play_card_flip() -> void:
+	play_2d(_load_stream(CARD_FLIP_PATH), -5.0, 0.05)
+
+func play_draft_appear() -> void:
+	play_2d(_load_stream(DRAFT_APPEAR_PATH), -4.0, 0.0)
 
 func _get_sfx(id: String) -> AudioStreamWAV:
 	if not _cache.has(id):
@@ -313,6 +377,9 @@ func _synth_shop_open() -> AudioStreamWAV:
 func _on_weapon_fired(weapon: Node, _payload: Dictionary) -> void:
 	if weapon == null or not ("data" in weapon) or weapon.data == null:
 		return
+	# Weapon plays its own positional fire SFX when a real sample is assigned.
+	if weapon.data.fire_sfx != null:
+		return
 	play_sfx(_weapon_fire_sfx_id(weapon.data.id))
 
 func _weapon_fire_sfx_id(weapon_id: StringName) -> String:
@@ -322,7 +389,11 @@ func _weapon_fire_sfx_id(weapon_id: StringName) -> String:
 		&"ar_standard": return "ar_fire"
 		_: return "pistol_fire"
 
-func _on_weapon_reloaded(_weapon: Node) -> void:
+func _on_weapon_reloaded(weapon: Node) -> void:
+	# Reload SFX now plays at reload-start from the weapon itself when a real sample is
+	# assigned. This synth fallback only fires for weapons without one.
+	if weapon != null and ("data" in weapon) and weapon.data != null and weapon.data.reload_sfx != null:
+		return
 	play_sfx("reload")
 
 func _on_enemy_killed(enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> void:
@@ -331,11 +402,9 @@ func _on_enemy_killed(enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> void
 		pos = (enemy as Node3D).global_position
 	play_sfx("zombie_death", pos)
 
-func _on_barrier_damaged(_amount: float, attacker: Node) -> void:
-	var pos := Vector3.ZERO
-	if attacker is Node3D:
-		pos = (attacker as Node3D).global_position
-	play_sfx("barrier_hit", pos)
+func _on_barrier_damaged(_amount: float, _attacker: Node) -> void:
+	# Barrier.gd plays the curated impact streams itself with damage-tier routing.
+	pass
 
 func _on_barrier_destroyed() -> void:
 	play_sfx("barrier_destroyed")

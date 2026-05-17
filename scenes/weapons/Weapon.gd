@@ -10,6 +10,8 @@ var _reload_timer: float = 0.0
 var _suppress_until_release: bool = true  # block fire until cursor captured + trigger released
 
 @onready var muzzle_light: Node = get_node_or_null("MuzzleLight")
+@onready var _fire_sfx_player: AudioStreamPlayer3D = get_node_or_null("FireSfx")
+@onready var _reload_sfx_player: AudioStreamPlayer3D = get_node_or_null("ReloadSfx")
 
 const ENEMY_MASK: int = 4  # physics layer 3
 const RAY_MASK: int = 4 | 2  # zombies + world (barrier/floor) for tracer/impact endpoint
@@ -22,6 +24,10 @@ func _ready() -> void:
 		return
 	current_ammo = get_effective_mag_size()
 	reserve_ammo = get_effective_reserve_max()
+	if _fire_sfx_player and data.fire_sfx:
+		_fire_sfx_player.stream = data.fire_sfx
+	if _reload_sfx_player and data.reload_sfx:
+		_reload_sfx_player.stream = data.reload_sfx
 
 func get_effective_mag_size() -> int:
 	return int(data.mag_size * CardSystem.get_modifier(&"mag_size"))
@@ -82,6 +88,7 @@ func try_reload() -> bool:
 		return false
 	_reloading = true
 	_reload_timer = get_effective_reload_time()
+	_play_reload_sfx()
 	return true
 
 func is_reloading() -> bool:
@@ -101,6 +108,7 @@ func _fire() -> void:
 	current_ammo -= 1
 	_fire_cooldown = 1.0 / max(0.1, get_effective_fire_rate())
 	_flash_muzzle()
+	_play_fire_sfx()
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		EventBus.weapon_fired.emit(self, _build_payload())
@@ -184,6 +192,18 @@ func _finish_reload() -> void:
 	current_ammo += taken
 	_reloading = false
 	EventBus.weapon_reloaded.emit(self)
+
+func _play_fire_sfx() -> void:
+	if _fire_sfx_player == null or _fire_sfx_player.stream == null:
+		return
+	_fire_sfx_player.pitch_scale = randf_range(0.95, 1.05)
+	_fire_sfx_player.play()
+
+func _play_reload_sfx() -> void:
+	if _reload_sfx_player == null or _reload_sfx_player.stream == null:
+		return
+	_reload_sfx_player.pitch_scale = randf_range(0.97, 1.03)
+	_reload_sfx_player.play()
 
 func _flash_muzzle() -> void:
 	if muzzle_light == null or not (muzzle_light is OmniLight3D):
