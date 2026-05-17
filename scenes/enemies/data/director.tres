@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1directorxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"director"
+display_name = "The Director"
+max_hp = 850.0
+move_speed = 2.2
+attack_damage = 55.0
+attack_range = 2.0
+attack_rate = 0.7
+headshot_multiplier = 1.3
+armor = true
+attack_type = 0
+token_drop = 200
+scene = ExtResource("2_scene")
+size_scale = 2.2
+body_color = Color(0.18, 0.05, 0.08, 1)
+head_color = Color(0.28, 0.08, 0.12, 1)
+eye_color = Color(1, 0.05, 0.1, 1)

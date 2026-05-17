@@ -86,8 +86,15 @@ func _on_weapon_swapped(_old: Node, new_weapon: Node) -> void:
 
 func _on_wave_started(round_n: int, _composition: Array) -> void:
 	wave_label.text = "WAVE %d" % round_n
-	if round_n == 10:
-		_show_boss_banner("⚠  MINI-BOSS: THE SUBJECT  ⚠")
+	match round_n:
+		10:
+			_show_boss_banner("⚠  MINI-BOSS: THE SUBJECT  ⚠")
+		15:
+			_show_boss_banner("⚠  THE SUBJECT RETURNS  ⚠")
+		19:
+			_show_boss_banner("⚠  TWO OF THEM  ⚠")
+		20:
+			_show_boss_banner("☢  FINAL BOSS: THE DIRECTOR  ☢")
 
 func _show_boss_banner(text: String) -> void:
 	boss_banner.text = text

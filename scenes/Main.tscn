@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b1mainm1xyz"]
+[gd_scene load_steps=30 format=3 uid="uid://b1mainm1xyz"]
 
 [ext_resource type="Script" path="res://scenes/Main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://b1arenaxyz" path="res://scenes/arena/Arena.tscn" id="2_arena"]
@@ -14,6 +14,16 @@
 [ext_resource type="Resource" uid="uid://b1wave8xyz" path="res://scenes/arena/data/wave_8.tres" id="12_wave8"]
 [ext_resource type="Resource" uid="uid://b1wave9xyz" path="res://scenes/arena/data/wave_9.tres" id="13_wave9"]
 [ext_resource type="Resource" uid="uid://b1wave10xyz" path="res://scenes/arena/data/wave_10.tres" id="14_wave10"]
+[ext_resource type="Resource" uid="uid://b1wave11xyz" path="res://scenes/arena/data/wave_11.tres" id="20_wave11"]
+[ext_resource type="Resource" uid="uid://b1wave12xyz" path="res://scenes/arena/data/wave_12.tres" id="21_wave12"]
+[ext_resource type="Resource" uid="uid://b1wave13xyz" path="res://scenes/arena/data/wave_13.tres" id="22_wave13"]
+[ext_resource type="Resource" uid="uid://b1wave14xyz" path="res://scenes/arena/data/wave_14.tres" id="23_wave14"]
+[ext_resource type="Resource" uid="uid://b1wave15xyz" path="res://scenes/arena/data/wave_15.tres" id="24_wave15"]
+[ext_resource type="Resource" uid="uid://b1wave16xyz" path="res://scenes/arena/data/wave_16.tres" id="25_wave16"]
+[ext_resource type="Resource" uid="uid://b1wave17xyz" path="res://scenes/arena/data/wave_17.tres" id="26_wave17"]
+[ext_resource type="Resource" uid="uid://b1wave18xyz" path="res://scenes/arena/data/wave_18.tres" id="27_wave18"]
+[ext_resource type="Resource" uid="uid://b1wave19xyz" path="res://scenes/arena/data/wave_19.tres" id="28_wave19"]
+[ext_resource type="Resource" uid="uid://b1wave20xyz" path="res://scenes/arena/data/wave_20.tres" id="29_wave20"]
 [ext_resource type="PackedScene" uid="uid://b1hudxyz" path="res://scenes/ui/HUD.tscn" id="15_hud"]
 [ext_resource type="PackedScene" uid="uid://b1wcxyz" path="res://scenes/ui/WaveComplete.tscn" id="16_wc"]
 [ext_resource type="PackedScene" uid="uid://b1carddraftxyz" path="res://scenes/ui/CardDraft.tscn" id="17_cd"]
@@ -30,7 +40,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
 [node name="SpawnRing" type="Node3D" parent="."]
 script = ExtResource("4_spawn")
-waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtResource("7_wave3"), ExtResource("8_wave4"), ExtResource("9_wave5"), ExtResource("10_wave6"), ExtResource("11_wave7"), ExtResource("12_wave8"), ExtResource("13_wave9"), ExtResource("14_wave10")])
+waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtResource("7_wave3"), ExtResource("8_wave4"), ExtResource("9_wave5"), ExtResource("10_wave6"), ExtResource("11_wave7"), ExtResource("12_wave8"), ExtResource("13_wave9"), ExtResource("14_wave10"), ExtResource("20_wave11"), ExtResource("21_wave12"), ExtResource("22_wave13"), ExtResource("23_wave14"), ExtResource("24_wave15"), ExtResource("25_wave16"), ExtResource("26_wave17"), ExtResource("27_wave18"), ExtResource("28_wave19"), ExtResource("29_wave20")])
 
 [node name="HUD" parent="." instance=ExtResource("15_hud")]
 
