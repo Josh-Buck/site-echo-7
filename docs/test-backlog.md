@@ -6,6 +6,34 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🎆 NEW: Visual feel pass (this session)
+
+### Weapon VFX
+- [ ] **Muzzle flash** is bright and visible at the barrel each shot (not just a faint glow)
+- [ ] **Bullet tracer** — golden line streaks from gun to hit point on every shot (shotgun = one per pellet)
+- [ ] **Impact sparks** burst on the floor / barrier where shots land (no sparks on zombie hits — those are blood)
+
+### Enemy VFX
+- [ ] **Blood burst** on every zombie hit, intensified on headshots
+- [ ] **Death dissolve** — zombies slump, fade alpha to 0, and shrink instead of vanishing
+- [ ] Headshot kills feel noticeably more visceral than body kills
+
+### Arena atmosphere
+- [ ] **Fog** — distant spawn points are hazy / atmospheric, not crisp against void
+- [ ] **Perimeter walls** — ring of grey wall segments visible around the arena, with a few gaps suggesting corridors
+- [ ] **Dust motes** — faint floating particles in the air around the barrier
+- [ ] **Fluorescent flicker** — east/west ceiling lights stutter briefly every few seconds
+
+### HUD juice
+- [ ] **Hit marker** flashes white on hit, red+bigger on kill, yellow+biggest on headshot kill
+- [ ] **Low-HP vignette** — red haze pulses around screen edge when barrier HP < 30%, fades out when repaired above 30%
+- [ ] **Damage direction arrow** — red ▲ briefly appears near screen edge pointing toward the zombie that hit the barrier (test by letting a zombie attack from behind / sides)
+
+### Perf
+- [ ] Wave 17–20 still holds framerate with all the new particles + dust + tracers active
+
+---
+
 ## 🔴 CRITICAL — verify these end-to-end then we can polish
 
 ### The fixes you reported broken
