@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://bvfxsparksxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/vfx/ImpactSparks.gd" id="1_spk"]
+
+[sub_resource type="Gradient" id="Gradient_spk"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(1, 1, 0.5, 1, 1, 0.55, 0.15, 1, 0.6, 0.2, 0.05, 0)
+
+[sub_resource type="GradientTexture1D" id="GradTex_spk"]
+gradient = SubResource("Gradient_spk")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_spk"]
+emission_shape = 1
+emission_sphere_radius = 0.05
+direction = Vector3(0, 1, 0)
+spread = 60.0
+initial_velocity_min = 2.0
+initial_velocity_max = 5.5
+gravity = Vector3(0, -7, 0)
+damping_min = 1.5
+damping_max = 3.0
+scale_min = 0.4
+scale_max = 1.0
+color_ramp = SubResource("GradTex_spk")
+
+[sub_resource type="BoxMesh" id="BoxMesh_spk"]
+size = Vector3(0.04, 0.04, 0.04)
+
+[node name="ImpactSparks" type="GPUParticles3D"]
+amount = 14
+lifetime = 0.45
+one_shot = true
+explosiveness = 0.95
+process_material = SubResource("PPM_spk")
+draw_pass_1 = SubResource("BoxMesh_spk")
+script = ExtResource("1_spk")

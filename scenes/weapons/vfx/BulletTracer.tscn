@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvfxtracerxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/vfx/BulletTracer.gd" id="1_tracer"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tr"]
+size = Vector3(0.025, 0.025, 1.0)
+
+[node name="BulletTracer" type="MeshInstance3D"]
+mesh = SubResource("BoxMesh_tr")
+cast_shadow = 0
+script = ExtResource("1_tracer")

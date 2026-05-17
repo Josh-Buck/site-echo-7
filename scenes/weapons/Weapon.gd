@@ -12,6 +12,9 @@ var _suppress_until_release: bool = true  # block fire until cursor captured + t
 @onready var muzzle_light: Node = get_node_or_null("MuzzleLight")
 
 const ENEMY_MASK: int = 4  # physics layer 3
+const RAY_MASK: int = 4 | 2  # zombies + world (barrier/floor) for tracer/impact endpoint
+const TRACER_SCENE := preload("res://scenes/weapons/vfx/BulletTracer.tscn")
+const SPARKS_SCENE := preload("res://scenes/weapons/vfx/ImpactSparks.tscn")
 
 func _ready() -> void:
 	if data == null:
@@ -138,15 +141,29 @@ func _resolve_pellet(cam: Camera3D, payload: Dictionary) -> void:
 		dir = forward.rotated(up, yaw).rotated(right, pitch).normalized()
 	var from := cam.global_transform.origin
 	var to := from + dir * 100.0
-	var query := PhysicsRayQueryParameters3D.create(from, to, ENEMY_MASK)
+	# Broad ray (zombies + world) so we always get a tracer endpoint, even on a "miss".
+	var query := PhysicsRayQueryParameters3D.create(from, to, RAY_MASK)
 	query.collide_with_areas = false
 	query.collide_with_bodies = true
 	var result := cam.get_world_3d().direct_space_state.intersect_ray(query)
-	if result.is_empty():
+	var endpoint: Vector3 = to
+	var endpoint_normal: Vector3 = -dir
+	var hit_node: Node = null
+	if not result.is_empty():
+		endpoint = result.position
+		endpoint_normal = result.normal
+		hit_node = result.collider
+	_spawn_tracer(from, endpoint)
+	if hit_node == null:
 		return
-	var hit: Node = result.collider
-	payload["hit_position"] = result.position
-	payload["hit_normal"] = result.normal
+	payload["hit_position"] = endpoint
+	payload["hit_normal"] = endpoint_normal
+	var is_enemy := hit_node.has_method("take_damage") and hit_node.is_in_group("zombies")
+	if not is_enemy:
+		# Hit world (barrier/floor) — sparks, no damage path.
+		_spawn_sparks(endpoint, endpoint_normal)
+		return
+	var hit: Node = hit_node
 	if not hit.has_method("take_damage"):
 		return
 	var is_headshot := false
@@ -172,6 +189,41 @@ func _flash_muzzle() -> void:
 	if muzzle_light == null or not (muzzle_light is OmniLight3D):
 		return
 	var ml: OmniLight3D = muzzle_light
-	ml.light_energy = 3.5
+	ml.light_energy = 6.5
+	ml.omni_range = 5.0
 	var tw := create_tween()
-	tw.tween_property(ml, "light_energy", 0.0, 0.08)
+	tw.tween_property(ml, "light_energy", 0.0, 0.09)
+
+func _muzzle_origin() -> Vector3:
+	if muzzle_light is Node3D:
+		return (muzzle_light as Node3D).global_position
+	return global_position
+
+func _spawn_tracer(from: Vector3, to: Vector3) -> void:
+	# Anchor the tracer at the muzzle for visual fidelity. Camera is the true ray source,
+	# but the eye reads it from the gun.
+	var muzzle := _muzzle_origin()
+	var dir_to_target := (to - muzzle)
+	var dist := dir_to_target.length()
+	if dist < 0.05:
+		return
+	var t := TRACER_SCENE.instantiate()
+	get_tree().current_scene.add_child(t)
+	if t.has_method("setup"):
+		t.setup(muzzle, to)
+
+func _spawn_sparks(at: Vector3, normal: Vector3) -> void:
+	var s := SPARKS_SCENE.instantiate() as Node3D
+	get_tree().current_scene.add_child(s)
+	s.global_position = at
+	# Aim the spark cone along the surface normal.
+	if normal.length() > 0.001 and absf(normal.dot(Vector3.UP)) < 0.99:
+		s.look_at(at + normal, Vector3.UP)
+	# Rotate so process material's local +Y points along the normal:
+	# our PPM has direction (0,1,0), so we want local Y aligned with normal.
+	# Easiest: rotate so basis.y = normal.
+	var up := normal.normalized()
+	var ref := Vector3.UP if absf(up.dot(Vector3.UP)) < 0.99 else Vector3.RIGHT
+	var right := ref.cross(up).normalized()
+	var fwd := up.cross(right).normalized()
+	s.global_transform.basis = Basis(right, up, fwd)
