@@ -1,103 +1,25 @@
-[gd_scene load_steps=8 format=3 uid="uid://main_scene_m0"]
+[gd_scene load_steps=8 format=3 uid="uid://b1mainm1xyz"]
 
 [ext_resource type="Script" path="res://scenes/Main.gd" id="1_main"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_cube"]
-size = Vector3(1.5, 1.5, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_cube"]
-albedo_color = Color(0.85, 0.3, 0.25, 1)
-metallic = 0.4
-metallic_specular = 0.5
-roughness = 0.4
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
-size = Vector2(20, 20)
-
-[sub_resource type="StandardMaterial3D" id="Mat_floor"]
-albedo_color = Color(0.12, 0.13, 0.15, 1)
-roughness = 0.85
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
-sky_top_color = Color(0.05, 0.06, 0.09, 1)
-sky_horizon_color = Color(0.18, 0.12, 0.15, 1)
-ground_bottom_color = Color(0.02, 0.02, 0.03, 1)
-ground_horizon_color = Color(0.1, 0.08, 0.1, 1)
-
-[sub_resource type="Sky" id="Sky_main"]
-sky_material = SubResource("ProceduralSkyMaterial_sky")
-
-[sub_resource type="Environment" id="Environment_main"]
-background_mode = 2
-sky = SubResource("Sky_main")
-ambient_light_source = 3
-ambient_light_color = Color(0.4, 0.45, 0.55, 1)
-ambient_light_energy = 0.4
-tonemap_mode = 2
+[ext_resource type="PackedScene" uid="uid://b1arenaxyz" path="res://scenes/arena/Arena.tscn" id="2_arena"]
+[ext_resource type="PackedScene" uid="uid://b1playerxyz" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scenes/arena/SpawnRing.gd" id="4_spawn"]
+[ext_resource type="Resource" uid="uid://b1wave1xyz" path="res://scenes/arena/data/wave_1.tres" id="5_wave"]
+[ext_resource type="PackedScene" uid="uid://b1hudxyz" path="res://scenes/ui/HUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://b1wcxyz" path="res://scenes/ui/WaveComplete.tscn" id="7_wc"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_main")
+[node name="Arena" parent="." instance=ExtResource("2_arena")]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 5, 0)
-light_color = Color(1, 0.95, 0.85, 1)
-light_energy = 1.2
-shadow_enabled = true
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
-[node name="CameraPivot" type="Node3D" parent="."]
+[node name="SpawnRing" type="Node3D" parent="."]
+script = ExtResource("4_spawn")
+wave_data = ExtResource("5_wave")
 
-[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 2.5, 6)
-fov = 60.0
+[node name="HUD" parent="." instance=ExtResource("6_hud")]
 
-[node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.76, 0)
-mesh = SubResource("PlaneMesh_floor")
-surface_material_override/0 = SubResource("Mat_floor")
-
-[node name="Cube" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_cube")
-surface_material_override/0 = SubResource("Mat_cube")
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="ScoreLabel" type="Label" parent="UI"]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 600.0
-offset_bottom = 64.0
-theme_override_font_sizes/font_size = 28
-text = "Lifetime score: 0"
-
-[node name="HintLabel" type="Label" parent="UI"]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -440.0
-offset_top = 24.0
-offset_right = -24.0
-offset_bottom = 56.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 2
-text = "SPACE / click to score    R to reset"
-
-[node name="TitleLabel" type="Label" parent="UI"]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -64.0
-offset_right = 300.0
-offset_bottom = -24.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 20
-horizontal_alignment = 1
-text = "Site Echo 7 — M0 scaffold"
+[node name="WaveComplete" parent="." instance=ExtResource("7_wc")]
