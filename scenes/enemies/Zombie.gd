@@ -18,6 +18,7 @@ const DISSOLVE_TIME: float = 0.55
 
 @onready var mesh: MeshInstance3D = $Mesh
 @onready var _audio: AudioStreamPlayer3D = $AudioPlayer
+@onready var _foot_audio: AudioStreamPlayer3D = $FootstepPlayer
 
 var _base_pitch: float = 1.0
 
@@ -30,8 +31,29 @@ var _stagger_timer: float = 0.0
 var _die_timer: float = 0.0
 var _gravity: float = 9.8
 var _groan_timer: float = 0.0
+var _footstep_timer: float = 0.0
+var _footstep_interval: float = 0.45
+var _footstep_pool: Array = []
 
 const BARRIER_RADIUS: float = 3.0
+# Cap on simultaneous footstep emitters per tick — nearest-N to listener.
+const FOOTSTEP_AUDIBLE_CAP: int = 6
+
+const FOOTSTEPS_CONCRETE := [
+	preload("res://audio/sfx/footsteps/concrete/a_1.ogg"),
+	preload("res://audio/sfx/footsteps/concrete/a_2.ogg"),
+	preload("res://audio/sfx/footsteps/concrete/a_3.ogg"),
+	preload("res://audio/sfx/footsteps/concrete/a_4.ogg"),
+]
+const FOOTSTEPS_METAL := [
+	preload("res://audio/sfx/footsteps/metal/grate_1.ogg"),
+	preload("res://audio/sfx/footsteps/metal/grate_2.ogg"),
+	preload("res://audio/sfx/footsteps/metal/grate_3.ogg"),
+	preload("res://audio/sfx/footsteps/metal/grate_4.ogg"),
+]
+
+const BODY_MAT_PATH := "res://art/materials/weapon_polymer/material.tres"
+const TANK_BODY_MAT_PATH := "res://art/materials/rusty_steel/material.tres"
 
 func _ready() -> void:
 	if data == null:
@@ -44,8 +66,32 @@ func _ready() -> void:
 	add_to_group("zombies")
 	_groan_timer = randf_range(2.0, 6.0)
 	_init_audio_pitch()
+	_init_footsteps()
 	_apply_data_visuals()
+	_apply_pbr_body_material()
 	_find_target()
+
+func _init_footsteps() -> void:
+	# Cadence scales with archetype: faster mover = quicker step.
+	var id: StringName = data.id if data else &""
+	match id:
+		&"runner": _footstep_interval = 0.22
+		&"tank", &"director": _footstep_interval = 0.6
+		&"subject": _footstep_interval = 0.5
+		_: _footstep_interval = 0.45
+	# Surface pool chosen once at spawn — the arena doesn't change mid-run.
+	_footstep_pool = _pick_footstep_pool()
+	# Stagger initial offset so a wave doesn't fire footsteps in lockstep.
+	_footstep_timer = randf_range(0.0, _footstep_interval)
+
+func _pick_footstep_pool() -> Array:
+	var scene_path := ""
+	var cs := get_tree().current_scene
+	if cs:
+		scene_path = cs.scene_file_path
+	if "CoolingTower" in scene_path:
+		return FOOTSTEPS_METAL
+	return FOOTSTEPS_CONCRETE
 
 func _init_audio_pitch() -> void:
 	# Per-zombie variance so a horde isn't monotonous, biased by archetype.
@@ -91,6 +137,30 @@ func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength:
 		mat.emission_energy_multiplier = emission_strength
 	m.set_surface_override_material(0, mat)
 
+func _apply_pbr_body_material() -> void:
+	# Body + head get a PBR base (polymer for grunts, rusty steel for armored Tanks)
+	# while preserving the per-archetype tint that distinguishes the silhouette.
+	# Eye glow logic is untouched.
+	if data == null:
+		return
+	var id: StringName = data.id
+	var path := TANK_BODY_MAT_PATH if (id == &"tank" or id == &"director") else BODY_MAT_PATH
+	if not ResourceLoader.exists(path):
+		return
+	var base: StandardMaterial3D = load(path)
+	if base == null:
+		return
+	_apply_tinted_pbr($Mesh, base, data.body_color)
+	_apply_tinted_pbr($Head, base, data.head_color)
+
+func _apply_tinted_pbr(m: MeshInstance3D, base: StandardMaterial3D, tint: Color) -> void:
+	if m == null:
+		return
+	var dup := base.duplicate() as StandardMaterial3D
+	# Modulate albedo with the team tint so PBR detail reads but identification holds.
+	dup.albedo_color = tint
+	m.set_surface_override_material(0, dup)
+
 func _find_target() -> void:
 	var barriers := get_tree().get_nodes_in_group("barriers")
 	if barriers.size() > 0:
@@ -101,6 +171,11 @@ func _physics_process(delta: float) -> void:
 	if _groan_timer <= 0.0 and state != AIState.DIE and state != AIState.ATTACK:
 		_groan_timer = randf_range(4.0, 10.0)
 		_play_random_groan()
+	if state == AIState.CHASE:
+		_footstep_timer -= delta
+		if _footstep_timer <= 0.0:
+			_footstep_timer = _footstep_interval
+			_try_play_footstep()
 	match state:
 		AIState.IDLE:
 			_state_idle(delta)
@@ -180,6 +255,29 @@ func _perform_attack() -> void:
 			collision_layer = 0
 			_play_random_death()
 			EventBus.enemy_killed.emit(self, null, false, global_position)
+
+func _try_play_footstep() -> void:
+	if _foot_audio == null or _footstep_pool.is_empty():
+		return
+	# Listener is the locked player at origin (player is stationary by design).
+	var self_d2: float = global_position.x * global_position.x + global_position.z * global_position.z
+	# Rank ourselves by distance among living chasers. Skip if not in nearest N.
+	var closer_count: int = 0
+	for z in get_tree().get_nodes_in_group("zombies"):
+		if z == self:
+			continue
+		var zz := z as Node3D
+		if zz == null:
+			continue
+		var d2: float = zz.global_position.x * zz.global_position.x + zz.global_position.z * zz.global_position.z
+		if d2 < self_d2:
+			closer_count += 1
+			if closer_count >= FOOTSTEP_AUDIBLE_CAP:
+				return
+	var stream: AudioStream = _footstep_pool[randi() % _footstep_pool.size()]
+	_foot_audio.stream = stream
+	_foot_audio.pitch_scale = _base_pitch * randf_range(0.92, 1.08)
+	_foot_audio.play()
 
 func _play_random_groan() -> void:
 	var pool: Array[AudioStream] = []

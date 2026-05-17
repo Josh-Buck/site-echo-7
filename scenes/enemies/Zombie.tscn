@@ -77,11 +77,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 1.6, -0.18)
 mesh = SubResource("EyeMesh_zombie")
 surface_material_override/0 = SubResource("Mat_eyes")
 
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_desired_distance = 0.5
-target_desired_distance = 4.5
-
 [node name="AudioPlayer" type="AudioStreamPlayer3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 max_distance = 30.0
 unit_size = 3.0
+
+[node name="FootstepPlayer" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+max_distance = 22.0
+unit_size = 2.0
+volume_db = -4.0

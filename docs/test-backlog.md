@@ -6,6 +6,32 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🧟 NEW: Zombie footsteps + PBR + perf audit
+
+### Footsteps
+- [ ] Walkers produce footsteps roughly every 0.45s while chasing (no steps in IDLE/ATTACK/STAGGER/DIE)
+- [ ] Runners are noticeably quicker (~0.22s cadence)
+- [ ] Tanks/Directors are slower (~0.6s cadence)
+- [ ] Containment Lab (Arena 1) uses concrete samples (a_1..a_4); audibly different from grates
+- [ ] Cooling Tower (round 11+) uses metal grate samples (grate_1..grate_4)
+- [ ] At peak horde (20+ zombies), the mix is clean — only the closest ~6 zombies emit footsteps; far ones stay silent
+- [ ] Footsteps are positional (left/right pan correctly as zombies arc around the barrier)
+- [ ] No footsteps from dying zombies during dissolve
+
+### Zombie PBR bodies
+- [ ] Walker/Runner/Spitter/Exploder bodies show polymer (matte dark) PBR detail at close range while still reading as their team tint
+- [ ] Tank + Director bodies show rusty_steel PBR detail while still reading as their team tint
+- [ ] Eye glow (red emissive) is preserved on all archetypes
+- [ ] No magenta/missing material warnings at spawn
+
+### Perf audit notes (FYI)
+- Per-frame `get_nodes_in_group` audit: only fires inside `_try_play_footstep`, throttled by the footstep interval (≥0.22s), bounded by FOOTSTEP_AUDIBLE_CAP early-out. Acceptable.
+- Removed dormant `NavigationAgent3D` from Zombie.tscn — direct steering only, the agent was never used.
+- BloodBurst still instances + queue_free per hit. At 25 zombies under sustained fire this is the next perf hotspot — pool candidate if frame time regresses, not refactoring now.
+- No AudioStreamPlayer churn; both groan and footstep players are persistent children.
+
+---
+
 ## 🔊 NEW: Barrier/arena audio + PBR materials
 
 ### Barrier audio
