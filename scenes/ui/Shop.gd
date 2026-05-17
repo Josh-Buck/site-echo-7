@@ -72,21 +72,22 @@ func _apply_effect(effect_id: String) -> void:
 	match effect_id:
 		"ammo_topup":
 			var w := _get_active_weapon()
-			if w and "reserve_ammo" in w:
+			if w != null:
 				w.reserve_ammo = w.get_effective_reserve_max()
 				EventBus.weapon_reloaded.emit(w)
 		"all_ammo":
 			var wm := _get_weapon_manager()
-			if wm:
+			if wm != null:
 				for child in wm.get_children():
 					if child is Weapon:
-						child.reserve_ammo = child.get_effective_reserve_max()
-						EventBus.weapon_reloaded.emit(child)
+						var weapon: Weapon = child
+						weapon.reserve_ammo = weapon.get_effective_reserve_max()
+						EventBus.weapon_reloaded.emit(weapon)
 		"mag_refill":
 			var w := _get_active_weapon()
-			if w and "current_ammo" in w:
-				var mag := w.get_effective_mag_size()
-				var needed := mag - w.current_ammo
+			if w != null:
+				var mag: int = w.get_effective_mag_size()
+				var needed: int = mag - w.current_ammo
 				if needed > 0:
 					var taken: int = min(needed, w.reserve_ammo)
 					w.current_ammo += taken
@@ -95,21 +96,27 @@ func _apply_effect(effect_id: String) -> void:
 		"barrier_repair":
 			var barriers := get_tree().get_nodes_in_group("barriers")
 			if barriers.size() > 0:
-				barriers[0].repair(30.0)
+				var b: Node = barriers[0]
+				if b.has_method("repair"):
+					b.repair(30.0)
 		"barrier_full":
 			var barriers := get_tree().get_nodes_in_group("barriers")
 			if barriers.size() > 0:
-				var b = barriers[0]
-				b.repair(b.max_hp)
+				var b: Node = barriers[0]
+				if "max_hp" in b and b.has_method("repair"):
+					b.repair(b.max_hp)
 
-func _get_weapon_manager() -> Node:
-	return get_tree().current_scene.find_child("WeaponHolder", true, false)
-
-func _get_active_weapon() -> Node:
-	var wm := _get_weapon_manager()
-	if wm and wm.has_method("get_active_weapon"):
-		return wm.get_active_weapon()
+func _get_weapon_manager() -> WeaponManager:
+	var n := get_tree().current_scene.find_child("WeaponHolder", true, false)
+	if n is WeaponManager:
+		return n as WeaponManager
 	return null
+
+func _get_active_weapon() -> Weapon:
+	var wm := _get_weapon_manager()
+	if wm == null:
+		return null
+	return wm.get_active_weapon()
 
 func _update_tokens() -> void:
 	tokens_label.text = "Tokens Available: %d" % GameState.tokens
