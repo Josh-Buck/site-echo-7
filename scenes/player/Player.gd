@@ -54,6 +54,7 @@ func _on_weapon_fired(weapon: Node, _payload: Dictionary) -> void:
 	var w: Weapon = weapon
 	if w.data == null:
 		return
-	_recoil_pitch += deg_to_rad(w.data.recoil_vertical)
-	_recoil_yaw += deg_to_rad(w.data.recoil_horizontal) * randf_range(-1.0, 1.0)
+	var recoil_mult := CardSystem.get_modifier(&"recoil")
+	_recoil_pitch += deg_to_rad(w.data.recoil_vertical * recoil_mult)
+	_recoil_yaw += deg_to_rad(w.data.recoil_horizontal * recoil_mult) * randf_range(-1.0, 1.0)
 	_recoil_recovery = w.data.recoil_recovery

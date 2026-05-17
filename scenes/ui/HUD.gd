@@ -7,6 +7,7 @@ extends CanvasLayer
 @onready var wave_label: Label = $WaveLabel
 @onready var score_label: Label = $ScoreLabel
 @onready var tokens_label: Label = $TokensLabel
+@onready var deck_label: Label = $DeckLabel
 @onready var click_hint: Label = $ClickHint
 
 var _active_weapon: Node = null
@@ -26,12 +27,14 @@ func _ready() -> void:
 	EventBus.wave_started.connect(_on_wave_started)
 	EventBus.enemy_killed.connect(_on_enemy_killed)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
+	EventBus.card_drafted.connect(_on_card_drafted)
 	_update_hp(100.0, 100.0)
 	ammo_label.text = "-- / --"
 	weapon_label.text = ""
 	wave_label.text = "WAVE 0"
 	score_label.text = "0"
 	tokens_label.text = "TOKENS: 0"
+	_update_deck_display()
 
 func _update_hp(current: float, max_val: float) -> void:
 	hp_bar.max_value = max_val
@@ -81,3 +84,18 @@ func _on_enemy_killed(_enemy: Node, _src: Node, _headshot: bool, _pos: Vector3) 
 
 func _on_tokens_changed(new_total: int, _delta: int) -> void:
 	tokens_label.text = "TOKENS: %d" % new_total
+
+func _on_card_drafted(_card) -> void:
+	_update_deck_display()
+
+func _update_deck_display() -> void:
+	if deck_label == null:
+		return
+	var deck = CardSystem.active_deck
+	if deck.is_empty():
+		deck_label.text = "DECK: (empty)"
+		return
+	var names: Array[String] = []
+	for c in deck:
+		names.append(c.display_name)
+	deck_label.text = "DECK: " + " · ".join(names)

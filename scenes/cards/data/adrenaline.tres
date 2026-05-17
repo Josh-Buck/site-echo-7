@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardadrxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"adrenaline"
+display_name = "Adrenaline"
+description = "More of everything. +15% damage and +15% fire rate."
+rarity = 1
+draft_weight = 0.6
+fire_rate_mult = 1.15
+damage_mult = 1.15

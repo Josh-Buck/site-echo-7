@@ -14,8 +14,20 @@ func _ready() -> void:
 	if data == null:
 		push_error("[Weapon] no WeaponData assigned")
 		return
-	current_ammo = data.mag_size
-	reserve_ammo = data.reserve_ammo_max
+	current_ammo = get_effective_mag_size()
+	reserve_ammo = get_effective_reserve_max()
+
+func get_effective_mag_size() -> int:
+	return int(data.mag_size * CardSystem.get_modifier(&"mag_size"))
+
+func get_effective_reserve_max() -> int:
+	return int(data.reserve_ammo_max * CardSystem.get_modifier(&"reserve"))
+
+func get_effective_reload_time() -> float:
+	return data.reload_time * CardSystem.get_modifier(&"reload_time")
+
+func get_effective_fire_rate() -> float:
+	return data.fire_rate * CardSystem.get_modifier(&"fire_rate")
 
 func _process(delta: float) -> void:
 	if _fire_cooldown > 0.0:
@@ -48,10 +60,10 @@ func try_fire() -> bool:
 	return true
 
 func try_reload() -> bool:
-	if _reloading or reserve_ammo <= 0 or current_ammo >= data.mag_size:
+	if _reloading or reserve_ammo <= 0 or current_ammo >= get_effective_mag_size():
 		return false
 	_reloading = true
-	_reload_timer = data.reload_time
+	_reload_timer = get_effective_reload_time()
 	return true
 
 func is_reloading() -> bool:
@@ -61,14 +73,14 @@ func get_ammo_state() -> Dictionary:
 	return {
 		"current": current_ammo,
 		"reserve": reserve_ammo,
-		"mag_size": data.mag_size if data else 0,
+		"mag_size": get_effective_mag_size() if data else 0,
 		"reloading": _reloading,
 		"weapon_name": data.display_name if data else "",
 	}
 
 func _fire() -> void:
 	current_ammo -= 1
-	_fire_cooldown = 1.0 / max(0.1, data.fire_rate)
+	_fire_cooldown = 1.0 / max(0.1, get_effective_fire_rate())
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		EventBus.weapon_fired.emit(self, _build_payload())
@@ -130,7 +142,7 @@ func _resolve_pellet(cam: Camera3D, payload: Dictionary) -> void:
 	hit.take_damage(dmg, self, is_headshot, result.position)
 
 func _finish_reload() -> void:
-	var needed: int = data.mag_size - current_ammo
+	var needed: int = get_effective_mag_size() - current_ammo
 	var taken: int = min(needed, reserve_ammo)
 	current_ammo += taken
 	reserve_ammo -= taken

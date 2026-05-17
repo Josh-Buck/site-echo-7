@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1carddraftxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/CardDraft.gd" id="1_cd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.04, 0.05, 0.08, 0.94)
+
+[node name="CardDraft" type="CanvasLayer"]
+layer = 12
+script = ExtResource("1_cd")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "RESEARCH NOTES RECOVERED"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Pick one to permanently modify your loadout for this run."
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 32)
+
+[node name="CardRow" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(900, 380)
+alignment = 1
+
+[node name="Spacer2" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+
+[node name="SkipButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(180, 40)
+theme_override_font_sizes/font_size = 16
+text = "Skip Draft"

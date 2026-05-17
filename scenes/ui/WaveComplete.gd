@@ -10,14 +10,18 @@ var _is_game_over: bool = false
 
 func _ready() -> void:
 	panel.visible = false
-	EventBus.wave_ended.connect(_on_wave_ended)
+	# WaveComplete now follows card draft: triggered by card_drafted (after pick) instead of wave_ended directly.
+	EventBus.card_drafted.connect(_on_card_drafted)
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
 	EventBus.run_ended.connect(_on_run_ended)
 	next_wave_button.pressed.connect(_on_next_wave_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
 
-func _on_wave_ended(round_n: int) -> void:
+func _on_card_drafted(_card) -> void:
+	if _is_game_over:
+		return
 	_is_game_over = false
+	var round_n := GameState.current_round
 	title_label.text = "WAVE %d COMPLETE" % round_n
 	stats_label.text = "Kills: %d    Tokens: %d    Lifetime: %d" % [GameState.current_score, GameState.tokens, MetaProgress.lifetime_kills]
 	next_wave_button.visible = true

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardmkxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"marksman"
+display_name = "Marksman"
+description = "Reward precision. Headshot kills refund 2 rounds to the magazine."
+rarity = 1
+draft_weight = 0.7
+effect_id = &"marksman_refund"

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardlrxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"last_round"
+display_name = "Last Round"
+description = "The final round in the mag deals 3× damage. Don't waste it."
+rarity = 1
+draft_weight = 0.7
+effect_id = &"last_round"
