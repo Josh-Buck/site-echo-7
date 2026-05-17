@@ -29,7 +29,7 @@ const KICK_BACK_M: float = 0.06
 const KICK_PITCH_DEG: float = 3.0
 
 # Polymer surface name hints — grip/stock/pump get polymer; everything else gets metal.
-const POLYMER_NAME_HINTS := ["grip", "stock", "pump", "handle", "foregrip", "magazine"]
+const POLYMER_NAME_HINTS := ["grip", "stock", "pump", "handle", "foregrip", "magazine", "frame", "lower", "handguard", "trigger"]
 
 func _ready() -> void:
 	if data == null:
@@ -123,8 +123,9 @@ func get_ammo_state() -> Dictionary:
 func _fire() -> void:
 	current_ammo -= 1
 	_fire_cooldown = 1.0 / max(0.1, get_effective_fire_rate())
-	_flash_muzzle()
+	# SFX first so the ear gets the leading edge on the same frame as the visual.
 	_play_fire_sfx()
+	_flash_muzzle()
 	_kick()
 	# Pellet weapons (shotgun) eject one shell at reload-end, not per-fire.
 	if data.pellet_count <= 1:
@@ -216,10 +217,19 @@ func _finish_reload() -> void:
 	EventBus.weapon_reloaded.emit(self)
 
 func _play_fire_sfx() -> void:
-	if _fire_sfx_player == null or _fire_sfx_player.stream == null:
+	# Route through the AudioMan 3D pool (round-robin across 16 players) so rapid fire
+	# never clips a prior shot's attack transient. Calling .play() on a single shared
+	# AudioStreamPlayer3D at high RPM (e.g. AR ~10/s vs ~90 ms sample) cut the previous
+	# play mid-attack, which read as audio "lag" against the muzzle flash.
+	var stream: AudioStream = null
+	if _fire_sfx_player != null and _fire_sfx_player.stream != null:
+		stream = _fire_sfx_player.stream
+	elif data != null and data.fire_sfx != null:
+		stream = data.fire_sfx
+	if stream == null:
+		# Synth fallback in AudioMan handles the no-stream case via weapon_fired signal.
 		return
-	_fire_sfx_player.pitch_scale = randf_range(0.95, 1.05)
-	_fire_sfx_player.play()
+	AudioMan.play_3d_at(stream, _muzzle_origin(), 0.0, 40.0, 0.05)
 
 func _play_reload_sfx() -> void:
 	if _reload_sfx_player == null or _reload_sfx_player.stream == null:

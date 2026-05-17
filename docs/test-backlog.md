@@ -153,6 +153,37 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🔫 NEW: Real-gun viewmodels + fire-audio sync (this session)
+
+### Pistol silhouette
+- [ ] Pistol reads as a recognizable pistol shape (slide on top, frame+grip below, barrel poking past slide, mag in grip, trigger guard ring, front+rear iron sights on slide)
+- [ ] Slide / barrel show weapon_metal PBR; grip / frame / magazine show weapon_polymer
+- [ ] Pistol still sits in the lower-right of the camera (existing framing preserved)
+
+### AR silhouette
+- [ ] AR reads as a rifle (long upper receiver with stock behind, handguard wrapping barrel forward, curved magazine angled down, pistol grip, charging handle nub on top, front+rear sights)
+- [ ] Upper receiver / barrel / sights are metal; lower / handguard / stock / magazine / pistol grip are polymer
+- [ ] AR sits comfortably in lower-right of view, doesn't clip into the floor or HUD
+
+### Shotgun silhouette
+- [ ] Shotgun reads as a pump-action (long heavy barrel, wider pump under the barrel, receiver block, stock back, side ejection port detail, bead front sight at muzzle)
+- [ ] Pump and stock are polymer; barrel + receiver are metal
+- [ ] Shotgun still ejects one shell at reload-end (visual unchanged)
+
+### Sidearm silhouette
+- [ ] Sidearm reads as a smaller, blockier pistol (short barrel, smaller mag) — clearly the fallback gun, distinct from the Pistol slot
+- [ ] No longer looks like the default Weapon.tscn blockout (Sidearm scene now has its own body)
+
+### Fire-audio sync
+- [ ] AR full-auto: every shot's bang lines up tightly with the muzzle flash — no shot feels late or weak (regression: previously each `.play()` cut the previous attack transient)
+- [ ] Pistol rapid-fire: same — every click of the trigger has an audible bang on the exact same frame as the flash
+- [ ] Shotgun: single bang per trigger pull lines up with the flash (one pull = one play, not per-pellet)
+- [ ] Sidearm: same as pistol
+- [ ] Held-fire AR (full mag dump) doesn't audibly drop / mute any individual shot in the burst
+- [ ] No double-fire SFX layered (synth fallback in AudioMan still suppressed when data.fire_sfx is set)
+
+---
+
 ## 🆕 NEW: Death screen + combo UI (this session)
 
 ### Death screen
