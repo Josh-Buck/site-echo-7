@@ -7,6 +7,7 @@ var reserve_ammo: int = 0
 var _fire_cooldown: float = 0.0
 var _reloading: bool = false
 var _reload_timer: float = 0.0
+var _suppress_until_release: bool = true  # block fire until cursor captured + trigger released
 
 @onready var muzzle_light: Node = get_node_or_null("MuzzleLight")
 
@@ -41,7 +42,17 @@ func _process(delta: float) -> void:
 		return
 	if data == null:
 		return
-	# Polling-based fire so automatic weapons can hold-to-fire.
+	# Block all weapon input while the cursor is loose — that means a menu is open
+	# (card draft, shop, wave complete, etc.) or the player hasn't engaged yet.
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		_suppress_until_release = true
+		return
+	# After returning to gameplay, require the trigger to be released before firing.
+	# This eats the click that captures the pointer or closes a UI panel.
+	if _suppress_until_release:
+		if Input.is_action_pressed("shoot"):
+			return
+		_suppress_until_release = false
 	var wants_fire := false
 	if data.automatic:
 		wants_fire = Input.is_action_pressed("shoot")
