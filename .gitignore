@@ -1,0 +1,38 @@
+# Godot 4.x .gitignore
+
+# Godot generated files
+.godot/
+.import/
+
+# Imported translations
+*.translation
+
+# Mono / .NET (we're not using these, but standard)
+.mono/
+data_*/
+mono_crash.*.json
+
+# System
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Build outputs
+build/
+export/
+*.zip
+*.tpz
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS / editor backups
+*.bak
+*.tmp
+*.old
+
+# Local-only Godot files
+override.cfg
