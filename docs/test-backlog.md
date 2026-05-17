@@ -11,7 +11,42 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M2a — weapons, enemies, waves, tokens (latest deploy)
+## M2b — card system (latest deploy)
+
+### Card draft flow
+- [ ] Wave 1 completes → a full-screen overlay appears titled "RESEARCH NOTES RECOVERED"
+- [ ] 3 cards are displayed side-by-side, each with a rarity tag (COMMON / RARE), name, description, and effect summary
+- [ ] Common cards display in light gray, Rare cards display in **blue**
+- [ ] Clicking a card picks it; overlay closes; WAVE COMPLETE summary panel appears
+- [ ] After the draft pick, the DECK line at bottom-left of HUD shows the picked card's name
+- [ ] Each subsequent wave (2, 3, 4, ...) offers a fresh draft of 3 cards
+- [ ] "Skip Draft" button at the bottom passes without picking (deck doesn't grow)
+- [ ] Deck accumulates across waves — by wave 5 the DECK line should have 4+ cards in it (skip a few if you want fewer)
+
+### Stat-card effects (pick the card, then verify the effect)
+- [ ] **Quick Trigger I** (Fire Rate +25%): weapons fire noticeably faster after pick
+- [ ] **Hollow Points** (Damage +30%): hits drop zombies in fewer shots
+- [ ] **Extended Mag** (Mag +50%): pistol HUD shows 18 / N instead of 12 / N after reload
+- [ ] **Quick Hands** (Reload +67%): reload animation/timer noticeably shorter
+- [ ] **Steady Hand** (Recoil -50%): pistol viewmodel kicks half as much; AR is much more controllable
+- [ ] **Bandolier** (Reserve +50%): pistol HUD shows higher reserve cap (e.g. 180 instead of 120)
+- [ ] **Headstrong** (Headshot +40%): visible spike in damage on a headshot
+
+### Conditional cards
+- [ ] **Marksman** (headshot kills refund 2 ammo): kill a zombie with a headshot, watch current_ammo go UP by 2 after the kill
+- [ ] **Last Round** (final bullet 3× damage): fire down to current_ammo == 1, then fire — that last shot should one-shot a Walker even without other damage cards
+
+### Combos
+- [ ] Pick Quick Trigger + Hollow Points + Steady Hand → dramatically smoother+stronger weapon feel
+- [ ] Pick Adrenaline + Quick Trigger → noticeable double fire rate boost (compound multiplication: 1.15 × 1.25 = ~1.44)
+
+### Edge cases
+- [ ] Card draft works after the very last wave (wave 10 → ALL WAVES SURVIVED) — currently the run-ends overlay should still appear
+- [ ] Reloading after picking Extended Mag fills you to 18, not 12
+
+---
+
+## M2a — weapons, enemies, waves, tokens
 
 ### Weapons
 - [ ] Pistol (slot 1) fires single shot, 12 mag, semi-auto

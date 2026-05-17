@@ -32,23 +32,25 @@ func _on_card_drafted(_card) -> void:
 
 func _on_barrier_destroyed() -> void:
 	_is_game_over = true
+	MetaProgress.record_run_end()
 	title_label.text = "BARRIER BREACHED"
-	stats_label.text = "Survived %d waves    Kills: %d    Tokens: %d" % [GameState.current_round, GameState.current_score, GameState.tokens]
+	stats_label.text = "Survived %d waves    Kills: %d    Tokens banked into Research Data" % [GameState.current_round, GameState.current_score]
 	next_wave_button.visible = false
 	retry_button.visible = true
-	retry_button.text = "RETRY"
+	retry_button.text = "RETURN TO MENU"
 	_show()
 
 func _on_run_ended(stats: Dictionary) -> void:
 	_is_game_over = true
 	if stats.get("victory", false):
+		MetaProgress.record_run_end()
 		title_label.text = "ALL WAVES SURVIVED"
-		stats_label.text = "Kills: %d    Tokens: %d    Lifetime: %d" % [GameState.current_score, GameState.tokens, MetaProgress.lifetime_kills]
+		stats_label.text = "Kills: %d    Run banked to Research Data    Lifetime: %d" % [GameState.current_score, MetaProgress.lifetime_kills]
 	else:
-		return  # barrier_destroyed already handled
+		return
 	next_wave_button.visible = false
 	retry_button.visible = true
-	retry_button.text = "PLAY AGAIN"
+	retry_button.text = "RETURN TO MENU"
 	_show()
 
 func _show() -> void:
@@ -66,4 +68,6 @@ func _on_next_wave_pressed() -> void:
 		push_warning("[WaveComplete] SpawnRing not found")
 
 func _on_retry_pressed() -> void:
-	get_tree().reload_current_scene()
+	# Return to title screen so lifetime stats update visibly between runs.
+	SaveSystem.save_meta()
+	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

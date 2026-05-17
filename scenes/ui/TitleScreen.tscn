@@ -1,0 +1,84 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1titlexyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/TitleScreen.gd" id="1_title"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.03, 0.04, 0.07, 1)
+
+[node name="TitleScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -240.0
+offset_right = 300.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 80
+text = "SITE ECHO 7"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Stand. Spin. Survive. Draft research notes.  Round-based zombie defense."
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+
+[node name="StartButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 64)
+theme_override_font_sizes/font_size = 28
+text = "START RUN"
+
+[node name="Spacer2" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 32)
+
+[node name="StatsLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Lifetime stats\n\nKills:           0\nBest Wave:       0\nResearch Data:   0"
+horizontal_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -40.0
+offset_right = -16.0
+offset_bottom = -12.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 14
+text = "v0.2.0 — Site Echo 7"
+horizontal_alignment = 2

@@ -16,6 +16,15 @@ func add_score(amount: int) -> void:
 	lifetime_score += amount
 	SaveSystem.save_meta()
 
+func record_run_end() -> void:
+	if GameState.current_round > best_round:
+		best_round = GameState.current_round
+	# Convert remaining tokens to RD at end of run (10:1 with round bonus).
+	var round_mult: float = 1.0 + (float(GameState.current_round) * 0.05)
+	var earned := int(float(GameState.tokens) / 10.0 * round_mult)
+	research_data += earned
+	SaveSystem.save_meta()
+
 func reset_all() -> void:
 	lifetime_score = 0
 	lifetime_kills = 0
