@@ -5,6 +5,10 @@ extends CanvasLayer
 @onready var ammo_label: Label = $AmmoLabel
 @onready var wave_label: Label = $WaveLabel
 @onready var score_label: Label = $ScoreLabel
+@onready var click_hint: Label = $ClickHint
+
+func _process(_delta: float) -> void:
+	click_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
 
 func _ready() -> void:
 	EventBus.barrier_damaged.connect(_on_barrier_damaged)

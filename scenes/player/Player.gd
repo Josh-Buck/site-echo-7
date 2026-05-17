@@ -14,11 +14,19 @@ var _recoil_yaw: float = 0.0
 var _recoil_recovery: float = 0.3
 
 func _ready() -> void:
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	AudioMan.register_first_gesture()
+	# Browsers block pointer lock without a user gesture — we wait for the first click.
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	EventBus.weapon_fired.connect(_on_weapon_fired)
 
 func _input(event: InputEvent) -> void:
+	# First click anywhere captures the pointer and consumes the event so the
+	# weapon doesn't fire on the activation click.
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			AudioMan.register_first_gesture()
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_yaw -= event.relative.x * mouse_sensitivity
 		_pitch -= event.relative.y * mouse_sensitivity

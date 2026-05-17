@@ -12,6 +12,15 @@ script = ExtResource("1_player")
 fov = 75.0
 near = 0.05
 
+[node name="WeaponLight" type="SpotLight3D" parent="CameraPivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 3.0
+spot_range = 40.0
+spot_angle = 28.0
+spot_angle_attenuation = 0.6
+shadow_enabled = false
+
 [node name="WeaponHolder" type="Node3D" parent="CameraPivot/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, -0.22, -0.5)
 

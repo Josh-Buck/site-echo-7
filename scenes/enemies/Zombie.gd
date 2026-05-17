@@ -135,5 +135,5 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 		EventBus.enemy_killed.emit(self, source, is_headshot, hit_position)
 
 func is_headshot_position(pos: Vector3) -> bool:
-	# Capsule center is at +0.9; head top is +1.8. Treat upper ~30% as headshot zone.
-	return pos.y > global_position.y + 1.45
+	# Head sphere is centered at +1.55, radius 0.2. Anything in the head sphere zone counts.
+	return pos.y > global_position.y + 1.35
