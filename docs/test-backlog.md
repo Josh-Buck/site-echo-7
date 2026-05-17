@@ -6,6 +6,21 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🏭 NEW: Cooling Tower arena (second map)
+
+- [ ] **Round 10 → 11 transition**: when wave 10 ends, the arena visibly swaps — floor + walls + lighting all change before wave 11 begins
+- [ ] **Cooling Tower look**: bluish ambient, tall cylindrical shell visible above, central overhead vent fan with two spinning blades, perimeter pipes ring the floor, low metallic outer walls
+- [ ] **Vent fan animation**: blades rotate continuously, overhead vent lamp pulses brighter/dimmer as the fan sweeps shadow across it
+- [ ] **Vent flicker**: occasional brief stutter on the overhead lamp (replaces fluorescent flicker)
+- [ ] **Bluish dust motes** floating in air (vs warm motes in Containment Lab)
+- [ ] **Spawn ring still works** — zombies on wave 11 spawn from the new arena's 8 spawn points (not the destroyed old arena's)
+- [ ] **Barrier still at center**, full HP after swap (because lull auto-repair already brought it to 100% before swap)
+- [ ] **No console errors** during the arena swap
+- [ ] **Run from wave 1 to wave 11 unbroken** — no softlock, gameplay loop identical (cards, shop, HUD)
+- [ ] **Performance** holds in Cooling Tower at peak wave 17–20 (more geometry than Lab — verify no FPS regression)
+
+---
+
 ## 🎆 NEW: Visual feel pass (this session)
 
 ### Weapon VFX

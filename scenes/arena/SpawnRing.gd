@@ -25,6 +25,11 @@ func _ready() -> void:
 	if auto_start and not waves.is_empty():
 		start_next_wave()
 
+func refresh_spawn_points() -> void:
+	_spawn_points = get_tree().get_nodes_in_group("spawn_points")
+	_last_spawn_index = -1
+	print("[SpawnRing] refreshed spawn_points=%d" % _spawn_points.size())
+
 func start_next_wave() -> void:
 	_current_wave_index += 1
 	if _current_wave_index >= waves.size():
