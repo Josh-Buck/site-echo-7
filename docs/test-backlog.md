@@ -11,7 +11,25 @@ Quick reset shortcuts in-game:
 
 ---
 
-## M2c3 — procedural audio (latest deploy)
+## M3a — game feel polish (latest deploy)
+
+### Visual feedback
+- [ ] **Screen shake** on pistol fire (small), shotgun fire (heavy), AR full-auto (constant low-level shake)
+- [ ] **Screen shake** on barrier damage scales with hit size
+- [ ] **Big screen shake** on barrier destruction
+- [ ] **Muzzle flash** — warm orange light pulses from weapon barrel on each shot (visible especially on shotgun in dark areas)
+- [ ] **Damage numbers** — white numbers float up from each zombie hit, fade out over ~0.8s
+- [ ] **Headshot damage numbers** — render orange and larger
+- [ ] **Hit marker** — red `x` appears briefly at crosshair when you successfully hit a zombie
+- [ ] Hit feedback feels responsive (not delayed)
+
+### Combo testing
+- [ ] Pick "Steady Hand" card (recoil -50%) → screen shake noticeably reduced
+- [ ] Headshot a Tank → big orange "55" or so damage number with hit marker
+
+---
+
+## M2c3 — procedural audio
 
 All sounds are GDScript-synthesized AudioStreamWAVs (no external assets). Should work in the browser after the first click (audio gating).
 

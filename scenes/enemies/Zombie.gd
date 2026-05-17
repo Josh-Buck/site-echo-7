@@ -159,7 +159,7 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 	if data and data.armor and not is_headshot:
 		amount *= 0.5
 	current_hp -= amount
-	EventBus.enemy_damaged.emit(self, amount, source)
+	EventBus.enemy_damaged.emit(self, amount, source, hit_position, is_headshot)
 	if current_hp <= 0.0:
 		state = AIState.DIE
 		_die_timer = 0.6

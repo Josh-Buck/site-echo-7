@@ -9,14 +9,19 @@ extends CanvasLayer
 @onready var tokens_label: Label = $TokensLabel
 @onready var deck_label: Label = $DeckLabel
 @onready var click_hint: Label = $ClickHint
+@onready var hit_marker: Label = $HitMarker
 
 var _active_weapon: Node = null
+var _hit_marker_timer: float = 0.0
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	click_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
-	# Poll active weapon ammo for in-between-fire reload progress.
 	if _active_weapon and _active_weapon.has_method("get_ammo_state"):
 		_update_ammo_from_weapon(_active_weapon)
+	if _hit_marker_timer > 0.0:
+		_hit_marker_timer -= delta
+		if _hit_marker_timer <= 0.0:
+			hit_marker.visible = false
 
 func _ready() -> void:
 	EventBus.barrier_damaged.connect(_on_barrier_damaged)
@@ -28,6 +33,8 @@ func _ready() -> void:
 	EventBus.enemy_killed.connect(_on_enemy_killed)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
 	EventBus.card_drafted.connect(_on_card_drafted)
+	EventBus.enemy_damaged.connect(_on_enemy_damaged)
+	hit_marker.visible = false
 	_update_hp(100.0, 100.0)
 	ammo_label.text = "-- / --"
 	weapon_label.text = ""
@@ -99,3 +106,27 @@ func _update_deck_display() -> void:
 	for c in deck:
 		names.append(c.display_name)
 	deck_label.text = "DECK: " + " · ".join(names)
+
+func _on_enemy_damaged(_enemy, amount: float, _src, hit_position: Vector3, is_headshot: bool) -> void:
+	hit_marker.visible = true
+	_hit_marker_timer = 0.12
+	_spawn_damage_number(amount, hit_position, is_headshot)
+
+func _spawn_damage_number(amount: float, world_pos: Vector3, headshot: bool) -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	if cam.is_position_behind(world_pos):
+		return
+	var screen_pos := cam.unproject_position(world_pos)
+	var label := Label.new()
+	label.text = str(int(round(amount)))
+	label.position = screen_pos + Vector2(randf_range(-12, 12), -16)
+	label.add_theme_font_size_override("font_size", 26 if headshot else 18)
+	label.add_theme_color_override("font_color", Color(1, 0.6, 0.2) if headshot else Color(1, 1, 1))
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(label)
+	var tw := create_tween()
+	tw.tween_property(label, "position:y", label.position.y - 50.0, 0.8)
+	tw.parallel().tween_property(label, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(label.queue_free)

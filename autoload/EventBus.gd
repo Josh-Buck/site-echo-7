@@ -3,7 +3,7 @@ extends Node
 # Decoupled signal hub. Systems emit and listen here, never reach across the tree.
 
 signal enemy_killed(enemy, source_weapon, headshot, position)
-signal enemy_damaged(enemy, amount, source_weapon)
+signal enemy_damaged(enemy, amount, source_weapon, hit_position, is_headshot)
 signal wave_started(round_number, composition)
 signal wave_ended(round_number)
 signal card_drafted(card_data)

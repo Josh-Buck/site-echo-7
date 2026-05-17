@@ -31,3 +31,10 @@ surface_material_override/0 = SubResource("Mat_gun")
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.04, -0.13)
 mesh = SubResource("CylinderMesh_barrel")
 surface_material_override/0 = SubResource("Mat_gun")
+
+[node name="MuzzleLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, -0.28)
+light_color = Color(1, 0.78, 0.5, 1)
+light_energy = 0.0
+omni_range = 4.0
+shadow_enabled = false

@@ -8,6 +8,8 @@ var _fire_cooldown: float = 0.0
 var _reloading: bool = false
 var _reload_timer: float = 0.0
 
+@onready var muzzle_light: Node = get_node_or_null("MuzzleLight")
+
 const ENEMY_MASK: int = 4  # physics layer 3
 
 func _ready() -> void:
@@ -81,6 +83,7 @@ func get_ammo_state() -> Dictionary:
 func _fire() -> void:
 	current_ammo -= 1
 	_fire_cooldown = 1.0 / max(0.1, get_effective_fire_rate())
+	_flash_muzzle()
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		EventBus.weapon_fired.emit(self, _build_payload())
@@ -148,3 +151,11 @@ func _finish_reload() -> void:
 	reserve_ammo -= taken
 	_reloading = false
 	EventBus.weapon_reloaded.emit(self)
+
+func _flash_muzzle() -> void:
+	if muzzle_light == null or not (muzzle_light is OmniLight3D):
+		return
+	var ml: OmniLight3D = muzzle_light
+	ml.light_energy = 3.5
+	var tw := create_tween()
+	tw.tween_property(ml, "light_energy", 0.0, 0.08)
