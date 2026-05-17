@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GODOT_VERSION: 4.6
+  GODOT_VERSION: 4.6.2
   GODOT_STATUS: stable
 
 jobs:
@@ -73,8 +73,10 @@ jobs:
       - name: Add .nojekyll safety belt
         run: touch build/web/.nojekyll
 
-      - name: Setup Pages
+      - name: Setup Pages (auto-enables if not configured)
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
