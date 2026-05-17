@@ -1,6 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1zombiexyz"]
+[gd_scene load_steps=15 format=3 uid="uid://b1zombiexyz"]
 
 [ext_resource type="Script" path="res://scenes/enemies/Zombie.gd" id="1_zombie"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/groan_01.ogg" id="2_groan1"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/groan_02.ogg" id="3_groan2"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/groan_03.ogg" id="4_groan3"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/attack_growl.ogg" id="5_growl"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/attack_hit.ogg" id="6_hit"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/death_01.ogg" id="7_death1"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombies/death_02.ogg" id="8_death2"]
 
 [sub_resource type="CapsuleShape3D" id="Cap_zombie"]
 height = 1.8
@@ -38,6 +45,13 @@ emission_energy_multiplier = 2.5
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_zombie")
+groan_01 = ExtResource("2_groan1")
+groan_02 = ExtResource("3_groan2")
+groan_03 = ExtResource("4_groan3")
+attack_growl = ExtResource("5_growl")
+attack_hit = ExtResource("6_hit")
+death_01 = ExtResource("7_death1")
+death_02 = ExtResource("8_death2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -66,3 +80,8 @@ surface_material_override/0 = SubResource("Mat_eyes")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.5
 target_desired_distance = 4.5
+
+[node name="AudioPlayer" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+max_distance = 30.0
+unit_size = 3.0

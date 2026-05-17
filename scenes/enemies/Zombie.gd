@@ -7,7 +7,19 @@ const DISSOLVE_TIME: float = 0.55
 
 @export var data: EnemyData
 
+@export_group("Audio")
+@export var groan_01: AudioStream
+@export var groan_02: AudioStream
+@export var groan_03: AudioStream
+@export var attack_growl: AudioStream
+@export var attack_hit: AudioStream
+@export var death_01: AudioStream
+@export var death_02: AudioStream
+
 @onready var mesh: MeshInstance3D = $Mesh
+@onready var _audio: AudioStreamPlayer3D = $AudioPlayer
+
+var _base_pitch: float = 1.0
 
 var current_hp: float = 0.0
 var state: int = AIState.IDLE
@@ -31,8 +43,31 @@ func _ready() -> void:
 	collision_mask = 2
 	add_to_group("zombies")
 	_groan_timer = randf_range(2.0, 6.0)
+	_init_audio_pitch()
 	_apply_data_visuals()
 	_find_target()
+
+func _init_audio_pitch() -> void:
+	# Per-zombie variance so a horde isn't monotonous, biased by archetype.
+	var bias: float = 1.0
+	var id: StringName = data.id if data else &""
+	match id:
+		&"tank", &"director": bias = 0.85
+		&"runner": bias = 1.10
+		&"subject": bias = 0.9
+		_:
+			# Node-name fallback when data isn't keyed conventionally.
+			var n := name.to_lower()
+			if "tank" in n: bias = 0.85
+			elif "runner" in n: bias = 1.10
+	_base_pitch = bias * randf_range(0.9, 1.1)
+
+func _play_audio(stream: AudioStream) -> void:
+	if stream == null or _audio == null:
+		return
+	_audio.stream = stream
+	_audio.pitch_scale = _base_pitch * randf_range(0.97, 1.03)
+	_audio.play()
 
 func _apply_data_visuals() -> void:
 	if data == null:
@@ -63,9 +98,9 @@ func _find_target() -> void:
 
 func _physics_process(delta: float) -> void:
 	_groan_timer -= delta
-	if _groan_timer <= 0.0 and state != AIState.DIE:
-		_groan_timer = randf_range(5.0, 11.0)
-		AudioMan.play_sfx("zombie_groan", global_position)
+	if _groan_timer <= 0.0 and state != AIState.DIE and state != AIState.ATTACK:
+		_groan_timer = randf_range(4.0, 10.0)
+		_play_random_groan()
 	match state:
 		AIState.IDLE:
 			_state_idle(delta)
@@ -128,18 +163,40 @@ func _state_attack(delta: float) -> void:
 func _perform_attack() -> void:
 	match data.attack_type:
 		0:  # Melee
+			_play_audio(attack_growl)
 			if _target and _target.has_method("take_damage"):
 				_target.take_damage(data.attack_damage, self)
+				_play_audio(attack_hit)
 		1:  # Ranged
+			_play_audio(attack_growl)
 			_fire_projectile()
 		2:  # Suicide
 			if _target and _target.has_method("take_damage"):
 				_target.take_damage(data.attack_damage, self)
+				_play_audio(attack_hit)
 			# Self-destruct: skip past stagger, go straight to die.
 			state = AIState.DIE
 			_die_timer = 0.05
 			collision_layer = 0
+			_play_random_death()
 			EventBus.enemy_killed.emit(self, null, false, global_position)
+
+func _play_random_groan() -> void:
+	var pool: Array[AudioStream] = []
+	if groan_01: pool.append(groan_01)
+	if groan_02: pool.append(groan_02)
+	if groan_03: pool.append(groan_03)
+	if pool.is_empty():
+		return
+	_play_audio(pool[randi() % pool.size()])
+
+func _play_random_death() -> void:
+	var pool: Array[AudioStream] = []
+	if death_01: pool.append(death_01)
+	if death_02: pool.append(death_02)
+	if pool.is_empty():
+		return
+	_play_audio(pool[randi() % pool.size()])
 
 func _fire_projectile() -> void:
 	if data.projectile_scene == null or _target == null:
@@ -182,6 +239,7 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 		collision_layer = 0
 		# Extra spray on the kill blow.
 		_spawn_blood_burst(hit_position, is_headshot)
+		_play_random_death()
 		_begin_dissolve()
 		if data:
 			GameState.tokens += data.token_drop

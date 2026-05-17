@@ -47,6 +47,22 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🔊 NEW: Zombie audio
+
+- [ ] Idle zombies emit groan sounds at varied 4–10s intervals (positional 3D — louder when close, panned)
+- [ ] Three distinct groan samples cycle randomly (no obvious repetition)
+- [ ] Groans suppress while a zombie is mid-attack and after death (no groans from corpses)
+- [ ] Each melee attack plays a growl on the swing
+- [ ] When the swing connects with the barrier, an "attack_hit" sound plays in addition to the growl
+- [ ] Suicide (exploder) plays its hit sound + a death sound on detonation
+- [ ] Death plays one of two death samples (randomized)
+- [ ] Tank/Director sound noticeably lower-pitched than Walkers
+- [ ] Runners sound noticeably higher-pitched than Walkers
+- [ ] A horde of walkers sounds varied (per-zombie pitch jitter, not monotone)
+- [ ] Distant zombies audibly quieter than near ones (positional falloff with max_distance ~30)
+
+---
+
 ## 🆕 NEW: Death screen + combo UI (this session)
 
 ### Death screen
