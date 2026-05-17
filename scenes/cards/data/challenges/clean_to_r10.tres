@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch018crt10"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"clean_to_r10"
+display_name = "Flawless Defense"
+description = "Reach round 10 in a single run without ever taking barrier damage."
+tier = 2
+rd_payout = 75
+tracking_kind = &"rounds_reached_clean"
+target_value = 10

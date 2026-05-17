@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch006hs50"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"headshots_50"
+display_name = "Steady Hand"
+description = "Land 50 lifetime headshot kills."
+tier = 0
+rd_payout = 10
+tracking_kind = &"headshots_total"
+target_value = 50

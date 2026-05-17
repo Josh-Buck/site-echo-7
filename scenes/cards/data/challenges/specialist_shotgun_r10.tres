@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch023spsh"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"specialist_shotgun_r10"
+display_name = "Close Quarters Only"
+description = "Reach round 10 firing only the Combat Shotgun."
+tier = 2
+rd_payout = 75
+tracking_kind = &"specialist_round"
+target_value = 10
+weapon_filter = &"shotgun"

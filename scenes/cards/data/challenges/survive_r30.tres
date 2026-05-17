@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch005sr30"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"survive_r30"
+display_name = "Off the Charts"
+description = "Reach round 30 in endless mode."
+tier = 3
+rd_payout = 200
+tracking_kind = &"rounds_reached"
+target_value = 30

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch004sr20"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"survive_r20"
+display_name = "Site Cleared"
+description = "Reach round 20 and clear the Director."
+tier = 2
+rd_payout = 75
+tracking_kind = &"rounds_reached"
+target_value = 20

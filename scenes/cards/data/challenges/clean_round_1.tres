@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch016cr1"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"clean_round_1"
+display_name = "Untouched"
+description = "Complete a round without barrier damage."
+tier = 0
+rd_payout = 10
+tracking_kind = &"no_damage_round"
+target_value = 1

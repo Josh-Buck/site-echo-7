@@ -24,6 +24,8 @@ EventBus="*res://autoload/EventBus.gd"
 AudioMan="*res://autoload/AudioMan.gd"
 SaveSystem="*res://autoload/SaveSystem.gd"
 CardSystem="*res://autoload/CardSystem.gd"
+ChallengeTracker="*res://autoload/ChallengeTracker.gd"
+ChallengeToast="*res://scenes/ui/ChallengeToast.tscn"
 
 [display]
 

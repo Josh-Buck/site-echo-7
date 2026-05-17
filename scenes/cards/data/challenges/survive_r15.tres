@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch003sr15"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"survive_r15"
+display_name = "Deep Containment"
+description = "Reach round 15."
+tier = 2
+rd_payout = 75
+tracking_kind = &"rounds_reached"
+target_value = 15

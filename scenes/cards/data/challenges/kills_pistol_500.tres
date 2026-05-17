@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch012kp500"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"kills_pistol_500"
+display_name = "Pistol Mastery"
+description = "Kill 500 zombies with the M1 Pistol."
+tier = 1
+rd_payout = 30
+tracking_kind = &"weapon_kills"
+target_value = 500
+weapon_filter = &"pistol_m1"

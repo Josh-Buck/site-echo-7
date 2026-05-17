@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch008hs1k"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"headshots_1000"
+display_name = "Headhunter"
+description = "Land 1000 lifetime headshot kills."
+tier = 2
+rd_payout = 75
+tracking_kind = &"headshots_total"
+target_value = 1000

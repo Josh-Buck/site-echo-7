@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch002sr10"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"survive_r10"
+display_name = "Halfway Out"
+description = "Reach round 10."
+tier = 1
+rd_payout = 30
+tracking_kind = &"rounds_reached"
+target_value = 10

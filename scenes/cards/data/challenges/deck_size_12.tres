@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch020ds12"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"deck_size_12"
+display_name = "Annotated"
+description = "Hold 12 cards in your deck during a single run."
+tier = 1
+rd_payout = 30
+tracking_kind = &"deck_size_in_run"
+target_value = 12

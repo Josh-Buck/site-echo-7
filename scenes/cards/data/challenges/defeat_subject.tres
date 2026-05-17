@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch025dsub"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"defeat_subject"
+display_name = "Containment Breach"
+description = "Defeat The Subject mini-boss."
+tier = 1
+rd_payout = 30
+tracking_kind = &"boss_killed"
+target_value = 1
+enemy_filter = &"subject"

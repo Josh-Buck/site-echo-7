@@ -6,6 +6,71 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🏅 NEW: Challenge system (M3 first pass)
+
+### Bronze tier
+- [ ] Reach round 5 → "First Steps" toast slides in from right, +10 RD
+- [ ] First clean round → "Untouched" toast (+10 RD)
+- [ ] Land 50 lifetime headshots → "Steady Hand" toast (+10 RD)
+- [ ] Hit 100 kills with the M1 Pistol → "Pistol Drills" toast (+10 RD)
+- [ ] Hit 100 kills with the Shotgun / AR / Sidearm → respective bronze toast each
+- [ ] Hold 8 cards in one run → "Field Library" toast (+10 RD)
+
+### Silver tier
+- [ ] Reach round 10 → "Halfway Out" toast (+30 RD)
+- [ ] 5 consecutive clean rounds → "Iron Perimeter" toast (+30 RD)
+- [ ] 10 headshots in a single round → "On Tap" toast (+30 RD)
+- [ ] 250 lifetime headshots → "Marksman" toast
+- [ ] Defeat The Subject mini-boss → "Containment Breach" toast
+- [ ] Hold 12 cards in one run → "Annotated" toast
+- [ ] Hit 500 kills with the Pistol → "Pistol Mastery" toast
+
+### Gold tier
+- [ ] Reach round 15 → "Deep Containment" (+75 RD)
+- [ ] Reach round 20 → "Site Cleared" (+75 RD)
+- [ ] 1000 lifetime headshots → "Headhunter"
+- [ ] Reach round 10 without ever taking barrier damage → "Flawless Defense"
+- [ ] Hold 15 cards in one run → "Full Dossier"
+- [ ] Pistol-only run to round 10 → "Pistol Purist" (and equivalents for shotgun / AR)
+
+### Platinum tier
+- [ ] Reach round 30 → "Off the Charts" (+200 RD)
+- [ ] Defeat The Director (round 20 boss) → "Site Cleared" platinum toast (+200 RD)
+- [ ] 5000 lifetime headshots → "Surgical Strike"
+
+### System / UX
+- [ ] Toast slides in from the **right edge**, holds ~3s, fades out
+- [ ] Multiple completions in one wave queue and play one after another (no overlap)
+- [ ] Each challenge fires **only once** — survives page reload + new run without re-triggering
+- [ ] RD payout appears on title screen lifetime stats after completion
+- [ ] Wiping save (F12) resets completion state
+
+---
+
+## 🆕 NEW: Death screen + combo UI (this session)
+
+### Death screen
+- [ ] When barrier hits 0, a dedicated **DeathScreen** overlay shows (red-bordered panel, not the old WaveComplete)
+- [ ] Title reads "BARRIER BREACHED" with subtitle "Site Echo 7 lost containment."
+- [ ] Stats grid shows: Rounds Survived, Total Kills, Tokens Earned, Tokens Unspent
+- [ ] "Kills by type" line lists each enemy display name with ×N count
+- [ ] "Top cards" line lists up to 3 most-used cards (cards equipped during the most kills)
+- [ ] "Research Data banked" line **counts up** from 0 to the final earned amount
+- [ ] RD earned matches `floor(tokens/10) × (1 + 0.05·round)` + milestone bonus (40 / 100 / 300 at rounds 10 / 15 / 20)
+- [ ] Pressing **BANK & RETURN TO TITLE** returns to title screen, and the title's lifetime RD reflects the new total
+- [ ] Reaching wave 20 victory also shows DeathScreen with "SITE ECHO 7 CONTAINED" title
+- [ ] Old WaveComplete no longer appears on death (only the new DeathScreen does)
+
+### Kill-streak combo UI
+- [ ] Streak label appears at **3 kills** with text "STREAK ×3" (yellow)
+- [ ] At **5 kills** it flips to "RAMPAGE ×5" (orange, larger) with a tween-in pop
+- [ ] At **10 kills** it flips to "UNSTOPPABLE ×10" (darker orange, even larger) with pop
+- [ ] At **20 kills** it flips to "ECHO LEGEND ×20" (magenta, biggest) with pop
+- [ ] Any barrier_damaged event **silently resets** the streak (label vanishes, no audio)
+- [ ] Streak label doesn't visually overlap the WAVE counter or boss banner
+
+---
+
 ## 🏭 NEW: Cooling Tower arena (second map)
 
 - [ ] **Round 10 → 11 transition**: when wave 10 ends, the arena visibly swaps — floor + walls + lighting all change before wave 11 begins

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch017crs5"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"clean_round_streak_5"
+display_name = "Iron Perimeter"
+description = "Complete 5 consecutive rounds without barrier damage."
+tier = 1
+rd_payout = 30
+tracking_kind = &"no_damage_streak"
+target_value = 5

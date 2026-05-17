@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch014kar100"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"kills_ar_100"
+display_name = "Rifle Qualified"
+description = "Kill 100 zombies with the Assault Rifle."
+tier = 0
+rd_payout = 10
+tracking_kind = &"weapon_kills"
+target_value = 100
+weapon_filter = &"ar"

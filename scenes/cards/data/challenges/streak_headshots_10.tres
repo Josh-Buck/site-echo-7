@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch010hsstreak"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"streak_headshots_10"
+display_name = "On Tap"
+description = "Land 10 headshots in a single round."
+tier = 1
+rd_payout = 30
+tracking_kind = &"headshots_in_round"
+target_value = 10

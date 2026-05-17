@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ChallengeData" load_steps=2 format=3 uid="uid://b1ch026ddir"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/challenges/challenge_data.gd" id="1_ch"]
+
+[resource]
+script = ExtResource("1_ch")
+id = &"defeat_director"
+display_name = "Site Cleared"
+description = "Defeat The Director final boss on round 20."
+tier = 3
+rd_payout = 200
+tracking_kind = &"boss_killed"
+target_value = 1
+enemy_filter = &"director"

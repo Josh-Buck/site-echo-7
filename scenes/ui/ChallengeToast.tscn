@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1chtoast001"]
+
+[ext_resource type="Script" path="res://scenes/ui/ChallengeToast.gd" id="1_ct"]
+
+[sub_resource type="StyleBoxFlat" id="SB_toast"]
+bg_color = Color(0.08, 0.1, 0.12, 0.92)
+border_width_left = 4
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.95, 0.78, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+
+[node name="ChallengeToast" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_ct")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -340.0
+offset_top = 96.0
+offset_right = -20.0
+offset_bottom = 180.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("SB_toast")
+
+[node name="V" type="VBoxContainer" parent="Panel"]
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Panel/V"]
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.78, 0.25, 1)
+text = "BRONZE CHALLENGE"
+
+[node name="Name" type="Label" parent="Panel/V"]
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Challenge Name"
+
+[node name="Payout" type="Label" parent="Panel/V"]
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.6, 0.95, 0.6, 1)
+text = "+10 RD"
