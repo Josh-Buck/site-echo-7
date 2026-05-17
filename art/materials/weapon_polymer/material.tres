@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3]
+
+[ext_resource type="Texture2D" uid="" path="res://art/materials/weapon_polymer/color.jpg" id="1"]
+[ext_resource type="Texture2D" uid="" path="res://art/materials/weapon_polymer/normal_gl.jpg" id="2"]
+[ext_resource type="Texture2D" uid="" path="res://art/materials/weapon_polymer/roughness.jpg" id="3"]
+
+[resource]
+resource_name = "weapon_polymer"
+albedo_texture = ExtResource("1")
+normal_enabled = true
+normal_texture = ExtResource("2")
+roughness_texture = ExtResource("3")
+roughness_texture_channel = 1
+uv1_triplanar = false
