@@ -1,0 +1,60 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1pausemenuxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/PauseMenu.gd" id="1_pause"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.03, 0.04, 0.07, 0.94)
+
+[node name="PauseMenu" type="CanvasLayer"]
+layer = 20
+process_mode = 3
+script = ExtResource("1_pause")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "ESC to resume"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="ResumeButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(260, 56)
+theme_override_font_sizes/font_size = 22
+text = "RESUME"
+
+[node name="Spacer2" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 12)
+
+[node name="MenuButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(260, 48)
+theme_override_font_sizes/font_size = 18
+text = "RETURN TO MENU"

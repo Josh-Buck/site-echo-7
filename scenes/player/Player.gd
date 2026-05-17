@@ -42,12 +42,6 @@ func _input(event: InputEvent) -> void:
 		_yaw -= event.relative.x * sens
 		_pitch -= event.relative.y * sens
 		_pitch = clamp(_pitch, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
-	elif event.is_action_pressed("pause"):
-		# Toggle pointer lock — useful for debugging in browser
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		else:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	elif event.is_action_pressed("dev_reset"):
 		SaveSystem.wipe_meta()
 

@@ -15,6 +15,8 @@ var _3d_idx: int = 0
 
 func _ready() -> void:
 	print("[AudioMan] ready")
+	# Keep playing audio through pause-tree (so UI sounds work in pause menu).
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_pools()
 	# Apply master volume from saved settings (after MetaProgress loads in its _ready).
 	call_deferred("_apply_master_volume")
@@ -31,12 +33,14 @@ func _build_pools() -> void:
 	for i in POOL_SIZE:
 		var p2d := AudioStreamPlayer.new()
 		p2d.bus = &"Master"
+		p2d.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(p2d)
 		_2d_pool.append(p2d)
 		var p3d := AudioStreamPlayer3D.new()
 		p3d.bus = &"Master"
 		p3d.max_distance = 40.0
 		p3d.unit_size = 5.0
+		p3d.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(p3d)
 		_3d_pool.append(p3d)
 
