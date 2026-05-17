@@ -63,6 +63,21 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🔊 NEW: UI audio
+
+- [ ] Title screen: hovering Start/Meta/Settings plays a hover blip; clicking plays a click
+- [ ] Settings screen: hover + click on Back button play hover/click respectively
+- [ ] Meta screen: hover on affordable unlock buttons plays hover; purchase plays a confirm "ding"; Back plays click
+- [ ] Pause menu: hover + click feedback on Resume and Return-to-Menu buttons
+- [ ] Card draft: panel appearance plays a "draft appear" whoosh; each card flips in with a staggered card-flip sound; hovering or focusing a card plays hover; picking a card plays confirm; Skip plays click
+- [ ] Shop: hover on offers plays hover; purchase plays confirm; Continue plays click
+- [ ] Wave Complete: hover + click on Next Wave and Restart buttons
+- [ ] Death screen: hover + click on Bank & Return button
+- [ ] Challenge toast: each toast pop plays a confirm/ding (queued toasts each ding once)
+- [ ] No double-sound or stale "play_sfx('ui_click')" residual anywhere in the UI
+
+---
+
 ## 🆕 NEW: Death screen + combo UI (this session)
 
 ### Death screen

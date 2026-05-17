@@ -16,6 +16,7 @@ func _ready() -> void:
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
 	EventBus.run_ended.connect(_on_run_ended)
 	bank_button.pressed.connect(_on_bank_pressed)
+	bank_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _on_barrier_destroyed() -> void:
 	_present(false)
@@ -116,7 +117,7 @@ func _animate_in(rd_earned: int) -> void:
 		count_tw.tween_interval(0.025)
 
 func _on_bank_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().paused = false
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

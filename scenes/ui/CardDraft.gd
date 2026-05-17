@@ -19,6 +19,7 @@ func _ready() -> void:
 	panel.visible = false
 	EventBus.card_offered.connect(_on_card_offered)
 	skip_button.pressed.connect(_on_skip_pressed)
+	skip_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _on_card_offered(cards: Array) -> void:
 	if cards.is_empty():
@@ -29,6 +30,7 @@ func _on_card_offered(cards: Array) -> void:
 	panel.visible = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().paused = true
+	AudioMan.play_draft_appear()
 
 func _populate(cards: Array) -> void:
 	# Clear existing children
@@ -38,6 +40,9 @@ func _populate(cards: Array) -> void:
 		var card: CardData = cards[i]
 		var card_button := _make_card_button(card, i)
 		card_row.add_child(card_button)
+		# Stagger flip sounds so multi-card draft has a satisfying cascade.
+		var delay := 0.08 * float(i)
+		get_tree().create_timer(delay, true, false, true).timeout.connect(AudioMan.play_card_flip)
 
 func _make_card_button(card: CardData, index: int) -> Button:
 	var btn := Button.new()
@@ -62,14 +67,16 @@ func _make_card_button(card: CardData, index: int) -> Button:
 	var color := RARITY_COLORS[card.rarity] if card.rarity >= 0 and card.rarity < RARITY_COLORS.size() else Color.WHITE
 	btn.add_theme_color_override("font_color", color)
 	btn.pressed.connect(_on_card_picked.bind(index))
+	btn.mouse_entered.connect(AudioMan.play_ui_hover)
+	btn.focus_entered.connect(AudioMan.play_ui_hover)
 	return btn
 
 func _on_card_picked(idx: int) -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_confirm()
 	panel.visible = false
 	CardSystem.pick_card(idx)
 
 func _on_skip_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	panel.visible = false
 	CardSystem.skip_draft()

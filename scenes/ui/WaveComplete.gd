@@ -16,6 +16,8 @@ func _ready() -> void:
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
 	next_wave_button.pressed.connect(_on_next_wave_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
+	next_wave_button.mouse_entered.connect(AudioMan.play_ui_hover)
+	retry_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _on_shop_done() -> void:
 	if _is_game_over:
@@ -42,7 +44,7 @@ func _show() -> void:
 	SaveSystem.save_meta()
 
 func _on_next_wave_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	var spawn_ring := get_tree().current_scene.find_child("SpawnRing", true, false)
 	if spawn_ring != null and spawn_ring.has_method("start_next_wave"):
 		panel.visible = false
@@ -53,7 +55,7 @@ func _on_next_wave_pressed() -> void:
 		push_warning("[WaveComplete] SpawnRing not found")
 
 func _on_retry_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().paused = false
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

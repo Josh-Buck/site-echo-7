@@ -13,6 +13,8 @@ func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
 	meta_button.pressed.connect(_on_meta_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
+	for b in [start_button, meta_button, settings_button]:
+		b.mouse_entered.connect(AudioMan.play_ui_hover)
 	_refresh_stats()
 	version_label.text = "v0.2.0 — Site Echo 7"
 	# Grab focus so Enter/Space activates Start Run directly.
@@ -33,12 +35,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_meta_pressed() -> void:
 	AudioMan.register_first_gesture()
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/MetaScreen.tscn")
 
 func _on_settings_pressed() -> void:
 	AudioMan.register_first_gesture()
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/SettingsScreen.tscn")
 
 func _refresh_stats() -> void:
@@ -58,7 +60,7 @@ func _on_start_pressed() -> void:
 	_starting = true
 	print("[TitleScreen] start pressed, loading Main.tscn")
 	AudioMan.register_first_gesture()
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	GameState.start_run()
 	var err := get_tree().change_scene_to_file("res://scenes/Main.tscn")
 	if err != OK:

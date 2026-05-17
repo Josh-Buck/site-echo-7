@@ -20,6 +20,7 @@ func _ready() -> void:
 	EventBus.card_drafted.connect(_on_card_drafted)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
 	continue_button.pressed.connect(_on_continue_pressed)
+	continue_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _on_card_drafted(_card) -> void:
 	_generate_offers()
@@ -53,6 +54,7 @@ func _make_offer_button(offer: Dictionary, idx: int) -> Button:
 	btn.add_theme_font_size_override("font_size", 20)
 	btn.disabled = GameState.tokens < int(offer["cost"])
 	btn.pressed.connect(_on_buy.bind(idx))
+	btn.mouse_entered.connect(AudioMan.play_ui_hover)
 	return btn
 
 func _on_buy(idx: int) -> void:
@@ -62,7 +64,7 @@ func _on_buy(idx: int) -> void:
 	var cost: int = int(offer["cost"])
 	if GameState.tokens < cost:
 		return
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_confirm()
 	GameState.tokens -= cost
 	EventBus.tokens_changed.emit(GameState.tokens, -cost)
 	_apply_effect(String(offer["id"]))
@@ -129,7 +131,7 @@ func _on_tokens_changed(_total: int, _delta: int) -> void:
 	_populate()
 
 func _on_continue_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	panel.visible = false
 	# Stay paused — WaveComplete is the next overlay and will re-affirm pause.
 	EventBus.shop_done.emit()

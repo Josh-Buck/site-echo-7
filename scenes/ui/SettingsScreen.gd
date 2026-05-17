@@ -25,6 +25,7 @@ func _ready() -> void:
 	sens_slider.value_changed.connect(_on_sens_changed)
 	vol_slider.value_changed.connect(_on_vol_changed)
 	back_button.pressed.connect(_on_back_pressed)
+	back_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
@@ -47,5 +48,5 @@ func _update_vol_label() -> void:
 	vol_value_label.text = "%d%%" % int(round(vol_slider.value * 100.0))
 
 func _on_back_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

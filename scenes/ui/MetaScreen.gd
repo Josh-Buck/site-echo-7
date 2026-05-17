@@ -17,6 +17,7 @@ const UNLOCKS: Array[Dictionary] = [
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	back_button.pressed.connect(_on_back_pressed)
+	back_button.mouse_entered.connect(AudioMan.play_ui_hover)
 	_refresh()
 
 func _input(event: InputEvent) -> void:
@@ -57,13 +58,15 @@ func _make_unlock_button(u: Dictionary) -> Button:
 		btn.disabled = true
 		btn.add_theme_color_override("font_color", Color(0.5, 0.5, 0.55))
 	btn.pressed.connect(_on_unlock_pressed.bind(u))
+	if not btn.disabled:
+		btn.mouse_entered.connect(AudioMan.play_ui_hover)
 	return btn
 
 func _on_unlock_pressed(u: Dictionary) -> void:
 	if MetaProgress.buy_unlock(u["id"], int(u["cost"])):
-		AudioMan.play_sfx("card_pick")
+		AudioMan.play_ui_confirm()
 		_refresh()
 
 func _on_back_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

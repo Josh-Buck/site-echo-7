@@ -9,6 +9,8 @@ func _ready() -> void:
 	panel.visible = false
 	resume_button.pressed.connect(_on_resume_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
+	resume_button.mouse_entered.connect(AudioMan.play_ui_hover)
+	menu_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
@@ -22,19 +24,19 @@ func _show() -> void:
 	panel.visible = true
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 
 func _resume() -> void:
 	panel.visible = false
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 
 func _on_resume_pressed() -> void:
 	_resume()
 
 func _on_menu_pressed() -> void:
-	AudioMan.play_sfx("ui_click")
+	AudioMan.play_ui_click()
 	get_tree().paused = false
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")

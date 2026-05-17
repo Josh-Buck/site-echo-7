@@ -42,6 +42,7 @@ func _show_toast(cd: ChallengeData) -> void:
 	_payout.text = "+%d RD" % cd.rd_payout
 	_panel.position.x = OFFSCREEN_X
 	_panel.modulate.a = 1.0
+	AudioMan.play_ui_confirm()
 
 	var tw := create_tween()
 	tw.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
