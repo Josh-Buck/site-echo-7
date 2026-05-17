@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttachmentData" load_steps=2 format=3 uid="uid://battachreddotxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/attachment_data.gd" id="1_ad"]
+
+[resource]
+script = ExtResource("1_ad")
+id = &"ar_red_dot"
+display_name = "AR Red Dot"
+description = "Reflex optic. Tightens the AR's effective spread by 5%."
+weapon_filter = Array[StringName]([&"ar_standard"])
+slot = &"optic"
+effect_kind = &"spread_mul"
+effect_value = 0.95
+rd_cost = 180

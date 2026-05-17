@@ -8,6 +8,9 @@ var best_round: int = 0
 var research_data: int = 0
 var unlocks: Dictionary = {}  # unlock_id -> true
 var settings: Dictionary = {}  # key -> value
+# Starter arsenal: pistol + sidearm. AR / shotgun / future weapons unlock via RD.
+var unlocked_weapons: Array = ["pistol_m1", "sidearm_backup"]
+var unlocked_attachments: Array = []
 
 func _ready() -> void:
 	print("[MetaProgress] ready")
@@ -38,6 +41,42 @@ func buy_unlock(id: StringName, cost: int) -> bool:
 	SaveSystem.save_meta()
 	return true
 
+func has_weapon(id: String) -> bool:
+	return unlocked_weapons.has(id)
+
+func unlock_weapon(id: String) -> void:
+	if not unlocked_weapons.has(id):
+		unlocked_weapons.append(id)
+		SaveSystem.save_meta()
+
+func buy_weapon(id: String, cost: int) -> bool:
+	if has_weapon(id):
+		return false
+	if research_data < cost:
+		return false
+	research_data -= cost
+	unlocked_weapons.append(id)
+	SaveSystem.save_meta()
+	return true
+
+func has_attachment(id: String) -> bool:
+	return unlocked_attachments.has(id)
+
+func unlock_attachment(id: String) -> void:
+	if not unlocked_attachments.has(id):
+		unlocked_attachments.append(id)
+		SaveSystem.save_meta()
+
+func buy_attachment(id: String, cost: int) -> bool:
+	if has_attachment(id):
+		return false
+	if research_data < cost:
+		return false
+	research_data -= cost
+	unlocked_attachments.append(id)
+	SaveSystem.save_meta()
+	return true
+
 func reset_all() -> void:
 	lifetime_score = 0
 	lifetime_kills = 0
@@ -45,6 +84,8 @@ func reset_all() -> void:
 	research_data = 0
 	unlocks = {}
 	settings = {}
+	unlocked_weapons = ["pistol_m1", "sidearm_backup"]
+	unlocked_attachments = []
 	SaveSystem.save_meta()
 
 func to_dict() -> Dictionary:
@@ -55,6 +96,8 @@ func to_dict() -> Dictionary:
 		"research_data": research_data,
 		"unlocks": unlocks,
 		"settings": settings,
+		"unlocked_weapons": unlocked_weapons,
+		"unlocked_attachments": unlocked_attachments,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -64,6 +107,13 @@ func from_dict(data: Dictionary) -> void:
 	research_data = data.get("research_data", 0)
 	unlocks = data.get("unlocks", {})
 	settings = data.get("settings", {})
+	unlocked_weapons = data.get("unlocked_weapons", ["pistol_m1", "sidearm_backup"])
+	unlocked_attachments = data.get("unlocked_attachments", [])
+	# Guard: pistol + sidearm are starter — always present even if save was hand-edited.
+	if not unlocked_weapons.has("pistol_m1"):
+		unlocked_weapons.append("pistol_m1")
+	if not unlocked_weapons.has("sidearm_backup"):
+		unlocked_weapons.append("sidearm_backup")
 
 func get_setting(key: String, default_value):
 	return settings.get(key, default_value)

@@ -414,3 +414,24 @@ When CRITICAL is all green, the next building targets:
 - [ ] Weapon bodies/barrels/magazines display the weapon_metal PBR (visible normal map + roughness variation), not flat StandardMaterial3D colors
 - [ ] Grip / pump / stock surfaces (if named that way) display the weapon_polymer PBR with a duller, less metallic look
 - [ ] No console errors about missing material/texture resources on weapon spawn
+
+## Weapon unlock economy
+
+### Starter arsenal restricted
+- [ ] Fresh save (wipe via `dev_reset`) starts a run with ONLY Pistol (key 1) and Sidearm (key 4) available; pressing key 2 (AR) and key 3 (Shotgun) does nothing
+- [ ] No AR or Shotgun viewmodel renders in the WeaponHolder until they're unlocked
+- [ ] HUD weapon-name on swap reflects the reduced kit (only "M1 Pistol" and "Sidearm" reachable)
+- [ ] Sidearm still works as the always-available infinite-reserve fallback
+
+### MetaScreen weapon unlocks
+- [ ] MetaScreen shows a "Weapons" category at the top with Assault Rifle (250 RD) and Combat Shotgun (400 RD) rows
+- [ ] Rows show "LOCKED — 250 RD" when player can't afford, plain "250 RD" when affordable, "OWNED" once purchased
+- [ ] Buying AR for 250 RD deducts the cost, marks the row OWNED, and persists across page reload
+- [ ] After buying AR: starting a new run, swap_secondary now activates the Assault Rifle
+- [ ] After buying both AR and Shotgun: all 4 weapons reachable (1=Pistol, 2=AR, 3=Shotgun, 4=Sidearm) — same as pre-change behavior
+- [ ] Can't double-buy: clicking an OWNED row is a no-op and does not refund
+
+### Attachment data stub
+- [ ] `scenes/weapons/data/attachment_data.gd` loads as a Resource subclass without parse errors (open editor, check no red script badge)
+- [ ] The 4 example `.tres` files under `scenes/weapons/data/attachments/` open in the inspector and show all fields populated (id, slot, effect_kind, effect_value, weapon_filter, rd_cost)
+- [ ] NOTE: attachment effects are NOT wired to weapon stats yet — buying an attachment currently has no in-run effect. Hand off the application pipeline to `zombie-gameplay-dev` in a later session.

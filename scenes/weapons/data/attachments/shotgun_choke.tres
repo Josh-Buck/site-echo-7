@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttachmentData" load_steps=2 format=3 uid="uid://battachchokexyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/attachment_data.gd" id="1_ad"]
+
+[resource]
+script = ExtResource("1_ad")
+id = &"shotgun_choke"
+display_name = "Shotgun Choke"
+description = "Tightens the Combat Shotgun's pellet cone by 25% for longer-range kills."
+weapon_filter = Array[StringName]([&"shotgun_combat"])
+slot = &"muzzle"
+effect_kind = &"spread_mul"
+effect_value = 0.75
+rd_cost = 200

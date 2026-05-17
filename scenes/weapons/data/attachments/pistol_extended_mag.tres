@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttachmentData" load_steps=2 format=3 uid="uid://battachextmagxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/attachment_data.gd" id="1_ad"]
+
+[resource]
+script = ExtResource("1_ad")
+id = &"pistol_extended_mag"
+display_name = "Extended Pistol Mag"
+description = "+4 rounds per magazine on the M1 Pistol."
+weapon_filter = Array[StringName]([&"pistol_m1"])
+slot = &"mag"
+effect_kind = &"mag_size_add"
+effect_value = 4.0
+rd_cost = 120

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttachmentData" load_steps=2 format=3 uid="uid://battachcompxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/attachment_data.gd" id="1_ad"]
+
+[resource]
+script = ExtResource("1_ad")
+id = &"ar_compensator"
+display_name = "AR Compensator"
+description = "Muzzle device that vents gas upward. -10% vertical recoil on the Assault Rifle."
+weapon_filter = Array[StringName]([&"ar_standard"])
+slot = &"muzzle"
+effect_kind = &"recoil_mul"
+effect_value = 0.9
+rd_cost = 150

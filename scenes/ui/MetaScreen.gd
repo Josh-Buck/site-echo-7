@@ -1,13 +1,15 @@
 extends Control
 
 const UNLOCKS: Array[Dictionary] = [
-	{"id": &"perk_combat_veteran", "name": "Combat Veteran", "desc": "Start each run with +20 tokens.", "cost": 100, "category": "Starter Perks"},
-	{"id": &"perk_quick_draft", "name": "Quick Draft", "desc": "First card draft of every run offers 5 cards instead of 3.", "cost": 200, "category": "Starter Perks"},
-	{"id": &"perk_quartermaster", "name": "Quartermaster", "desc": "Start each run with 1 random card already drafted.", "cost": 250, "category": "Starter Perks"},
-	{"id": &"perk_reinforced_barrier", "name": "Reinforced Barrier", "desc": "Barrier max HP +20% (multiplicative).", "cost": 300, "category": "Starter Perks"},
-	{"id": &"barrier_hp_1", "name": "Barrier Plating I", "desc": "Permanent +10 max HP.", "cost": 150, "category": "Barrier Upgrades"},
-	{"id": &"barrier_hp_2", "name": "Barrier Plating II", "desc": "Permanent +20 max HP. Stacks with I.", "cost": 400, "category": "Barrier Upgrades"},
-	{"id": &"barrier_hp_3", "name": "Barrier Plating III", "desc": "Permanent +30 max HP. Stacks with prior.", "cost": 800, "category": "Barrier Upgrades"},
+	{"kind": "weapon", "id": "ar_standard", "name": "Assault Rifle", "desc": "Unlock the Assault Rifle as an in-run weapon option.", "cost": 250, "category": "Weapons"},
+	{"kind": "weapon", "id": "shotgun_combat", "name": "Combat Shotgun", "desc": "Unlock the Combat Shotgun as an in-run weapon option.", "cost": 400, "category": "Weapons"},
+	{"kind": "perk", "id": &"perk_combat_veteran", "name": "Combat Veteran", "desc": "Start each run with +20 tokens.", "cost": 100, "category": "Starter Perks"},
+	{"kind": "perk", "id": &"perk_quick_draft", "name": "Quick Draft", "desc": "First card draft of every run offers 5 cards instead of 3.", "cost": 200, "category": "Starter Perks"},
+	{"kind": "perk", "id": &"perk_quartermaster", "name": "Quartermaster", "desc": "Start each run with 1 random card already drafted.", "cost": 250, "category": "Starter Perks"},
+	{"kind": "perk", "id": &"perk_reinforced_barrier", "name": "Reinforced Barrier", "desc": "Barrier max HP +20% (multiplicative).", "cost": 300, "category": "Starter Perks"},
+	{"kind": "perk", "id": &"barrier_hp_1", "name": "Barrier Plating I", "desc": "Permanent +10 max HP.", "cost": 150, "category": "Barrier Upgrades"},
+	{"kind": "perk", "id": &"barrier_hp_2", "name": "Barrier Plating II", "desc": "Permanent +20 max HP. Stacks with I.", "cost": 400, "category": "Barrier Upgrades"},
+	{"kind": "perk", "id": &"barrier_hp_3", "name": "Barrier Plating III", "desc": "Permanent +30 max HP. Stacks with prior.", "cost": 800, "category": "Barrier Upgrades"},
 ]
 
 @onready var rd_label: Label = $VBox/RDLabel
@@ -46,9 +48,16 @@ func _make_unlock_button(u: Dictionary) -> Button:
 	btn.custom_minimum_size = Vector2(720, 70)
 	btn.clip_text = false
 	btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var owned: bool = MetaProgress.has_unlock(u["id"])
+	var owned: bool = _is_owned(u)
 	var affordable: bool = MetaProgress.research_data >= int(u["cost"])
-	var status := "UNLOCKED" if owned else ("%d RD" % int(u["cost"]))
+	var owned_label := "OWNED" if u.get("kind", "perk") == "weapon" else "UNLOCKED"
+	var status: String
+	if owned:
+		status = owned_label
+	elif not affordable:
+		status = "LOCKED — %d RD" % int(u["cost"])
+	else:
+		status = "%d RD" % int(u["cost"])
 	btn.text = "%s    [%s]\n%s" % [u["name"], status, u["desc"]]
 	btn.add_theme_font_size_override("font_size", 16)
 	if owned:
@@ -62,8 +71,18 @@ func _make_unlock_button(u: Dictionary) -> Button:
 		btn.mouse_entered.connect(AudioMan.play_ui_hover)
 	return btn
 
+func _is_owned(u: Dictionary) -> bool:
+	if u.get("kind", "perk") == "weapon":
+		return MetaProgress.has_weapon(String(u["id"]))
+	return MetaProgress.has_unlock(u["id"])
+
 func _on_unlock_pressed(u: Dictionary) -> void:
-	if MetaProgress.buy_unlock(u["id"], int(u["cost"])):
+	var bought: bool
+	if u.get("kind", "perk") == "weapon":
+		bought = MetaProgress.buy_weapon(String(u["id"]), int(u["cost"]))
+	else:
+		bought = MetaProgress.buy_unlock(u["id"], int(u["cost"]))
+	if bought:
 		AudioMan.play_ui_confirm()
 		_refresh()
 
