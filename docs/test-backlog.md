@@ -238,6 +238,55 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🌐 Web build verification (run after next deploy)
+
+These are browser-side checks for the deploy/export pipeline. Run in Chrome first, then Firefox, then Safari. Paste DevTools Console output for any failure.
+
+### Build pipeline
+- [ ] GH Actions workflow succeeds end to end (build job + deploy job both green)
+- [ ] Live URL https://josh-buck.github.io/site-echo-7/ loads without 404 on the page itself
+- [ ] DevTools Network tab: `index.pck` is < 80 MB gzipped (check "Transfer" column — that's compressed size)
+- [ ] No 404s on any `.png`, `.ogg`, `.wasm`, `.pck`, or `index.*` asset (.nojekyll working)
+
+### Boot console output
+- [ ] Console shows `[SaveSystem] ready`, `[AudioMan] ready`, `[ChallengeTracker] ready` in that order
+- [ ] **`[ChallengeTracker] loaded 28 challenges`** (CRITICAL — if it says 0, the `DirAccess.open("res://...")` enumeration failed under web PCK; see findings)
+- [ ] No red errors / parse errors / "Cannot infer type" / "ext_resource not found" in console
+- [ ] No "AudioContext was prevented from starting" warnings after first click on title screen
+- [ ] No WebGL2 warnings (Safari is the suspect here)
+
+### Challenges (the one most at risk)
+- [ ] Reach round 5 → "First Steps" toast actually triggers in-browser (proves challenges loaded from PCK)
+- [ ] Page reload after completing a bronze → toast does NOT re-fire (proves MetaProgress save round-tripped through IndexedDB)
+- [ ] If 28 challenges did NOT load, fall back to a static `const CHALLENGE_PATHS := [...]` list — flag in the report
+
+### Saves on web
+- [ ] Earn RD, refresh the tab, RD persists (IndexedDB working)
+- [ ] No `[SaveSystem] failed to open` errors after first save
+- [ ] After save, console does NOT show repeated `DirAccess.rename_absolute` errors (would indicate the fallback path runs every save — works but spammy)
+
+### Audio gating
+- [ ] No audio before first click on title screen (browsers block AudioContext pre-gesture)
+- [ ] After first click, ambient hum starts and all SFX become audible
+- [ ] Master volume slider in Settings affects level live in-browser
+
+### Renderer + memory
+- [ ] No "VRAM compression" warnings on texture loads
+- [ ] PBR materials look the same in browser as in editor (lab_tile, concrete, rusty_steel)
+- [ ] DevTools Memory tab: heap stays under ~256 MB at peak wave 20 (we set Initial Memory to 256 MB; growth beyond requires extra)
+- [ ] Frame rate at wave 17–20 holds ≥ 45 FPS on Chrome desktop
+
+### Browser matrix
+- [ ] Chrome desktop: full run to wave 20 with no console errors
+- [ ] Firefox: barrier saves persist (Firefox's stricter IDB quota can silently fail)
+- [ ] Safari: at minimum loads + plays wave 1 (Safari WebGL2 is the worst — document any breakage rather than spending evenings fixing)
+
+### Audio pool stress
+- [ ] Peak wave 20 (Tank + Director + 20 walkers + AR full-auto + barrier hits): no stuttering, no truncated SFX (validates 16/16 pool is sufficient)
+- [ ] If you hear SFX cut off mid-play, bump `POOL_SIZE` in AudioMan.gd from 16 → 24
+
+---
+
 ## How to report
 
 Paste a screenshot + console log on critical failures. Otherwise just delete lines.
