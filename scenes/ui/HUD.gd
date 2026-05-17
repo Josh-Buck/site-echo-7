@@ -10,6 +10,7 @@ extends CanvasLayer
 @onready var deck_label: Label = $DeckLabel
 @onready var click_hint: Label = $ClickHint
 @onready var hit_marker: Label = $HitMarker
+@onready var boss_banner: Label = $BossBanner
 
 var _active_weapon: Node = null
 var _hit_marker_timer: float = 0.0
@@ -35,6 +36,7 @@ func _ready() -> void:
 	EventBus.card_drafted.connect(_on_card_drafted)
 	EventBus.enemy_damaged.connect(_on_enemy_damaged)
 	hit_marker.visible = false
+	boss_banner.visible = false
 	_update_hp(100.0, 100.0)
 	ammo_label.text = "-- / --"
 	weapon_label.text = ""
@@ -83,6 +85,17 @@ func _on_weapon_swapped(_old: Node, new_weapon: Node) -> void:
 
 func _on_wave_started(round_n: int, _composition: Array) -> void:
 	wave_label.text = "WAVE %d" % round_n
+	if round_n == 10:
+		_show_boss_banner("⚠  MINI-BOSS: THE SUBJECT  ⚠")
+
+func _show_boss_banner(text: String) -> void:
+	boss_banner.text = text
+	boss_banner.visible = true
+	boss_banner.modulate = Color(1, 1, 1, 1)
+	var tw := create_tween()
+	tw.tween_interval(2.5)
+	tw.tween_property(boss_banner, "modulate:a", 0.0, 1.5)
+	tw.tween_callback(func(): boss_banner.visible = false)
 
 func _on_enemy_killed(_enemy: Node, _src: Node, _headshot: bool, _pos: Vector3) -> void:
 	GameState.current_score += 1

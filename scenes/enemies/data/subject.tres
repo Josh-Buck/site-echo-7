@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=3 format=3 uid="uid://b1subjectxyz"]
+
+[ext_resource type="Script" path="res://scenes/enemies/data/enemy_data.gd" id="1_ed"]
+[ext_resource type="PackedScene" uid="uid://b1zombiexyz" path="res://scenes/enemies/Zombie.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_ed")
+id = &"subject"
+display_name = "The Subject"
+max_hp = 300.0
+move_speed = 2.6
+attack_damage = 35.0
+attack_range = 1.8
+attack_rate = 0.8
+headshot_multiplier = 1.5
+armor = true
+attack_type = 0
+token_drop = 50
+scene = ExtResource("2_scene")
+size_scale = 1.85
+body_color = Color(0.42, 0.1, 0.4, 1)
+head_color = Color(0.58, 0.15, 0.5, 1)
+eye_color = Color(1, 0.2, 0.55, 1)
