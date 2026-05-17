@@ -109,6 +109,17 @@ See `docs/non-negotiables.md`. Read it before touching scope.
 
 See `docs/ideas.md`. Stuff that's *not* in v1 goes here, not into the code.
 
+## Operating cadence (user preferences)
+
+These are durable instructions for how I (Claude) work with the user on this project. Updated when the user surfaces new preferences.
+
+- **Don't pause for verification unless critical.** Keep building forward as long as I'm updating the test backlog at `docs/test-backlog.md`. The exception is a hard blocker (e.g. the live build is unplayable) — fix and ship that immediately.
+- **Update `docs/test-backlog.md` every time new behavior lands**, organized by milestone, with checkboxes. When the user verifies an item, *remove* it from the backlog — don't accumulate verified items.
+- **Update `CLAUDE.md`, `docs/design-plan.md`, or `docs/non-negotiables.md` proactively** whenever durable context emerges (new conventions, scope decisions, recurring gotchas, lessons learned). Don't make me reconstruct context next session.
+- **Spread commits over time, push every commit.** No batching mega-commits. The user wants to see incremental work arrive on GitHub.
+- **Screenshots are the primary visual feedback channel.** I can't render WebGL myself. When something seems visually off, ask for a screenshot. When something is functionally broken, ask for a DevTools Console paste.
+- **Custom agents (`.claude/agents/*.md`) require a Claude Code session restart to register.** Once registered, route specialist tasks to them. Until then, do the work in the main thread but flag the agent that *would* have owned it (for traceability).
+
 ## Agent team
 
 Project-level Claude Code subagents live in `.claude/agents/`. Each has a focused lane; route work to the right one rather than to a generalist.

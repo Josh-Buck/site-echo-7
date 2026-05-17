@@ -14,9 +14,9 @@ Quick reset shortcuts in-game:
 ## M2c1 + M2c2 — title screen, shop wall, RD banking (latest deploy)
 
 ### Title screen
-- [ ] Page now opens to a black title screen "SITE ECHO 7" instead of straight to game
-- [ ] Lifetime stats visible (kills, best wave, research data) — all 0 on first run
-- [ ] "START RUN" button captures pointer + loads gameplay
+- [x] Page now opens to a black title screen "SITE ECHO 7" ← verified
+- [x] Lifetime stats visible (kills, best wave, research data) ← verified
+- [ ] "START RUN" button captures pointer + loads gameplay ← **fixed in latest push** — Background panel was eating clicks. Added mouse_filter=IGNORE + fullscreen click fallback. Retry on next deploy.
 - [ ] After dying or quitting back, title screen reappears with updated lifetime stats
 
 ### Shop wall flow (between waves)
