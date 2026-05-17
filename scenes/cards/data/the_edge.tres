@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardtexyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"the_edge"
+display_name = "The Edge"
+description = "Marginal gains, everywhere. +15% to fire rate, damage, headshot, mag, and reserve."
+rarity = 2
+draft_weight = 0.3
+fire_rate_mult = 1.15
+damage_mult = 1.15
+headshot_mult_mult = 1.15
+mag_size_mult = 1.15
+reserve_mult = 1.15

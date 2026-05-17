@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardtsxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"trick_shot"
+display_name = "Trick Shot"
+description = "Aim first, then squeeze. Headshot damage +50%, fire rate -15%."
+rarity = 1
+draft_weight = 0.7
+headshot_mult_mult = 1.5
+fire_rate_mult = 0.85

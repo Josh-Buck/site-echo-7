@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardhtxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"hair_trigger"
+display_name = "Hair Trigger"
+description = "Sear filed down. +35% fire rate on all weapons."
+rarity = 0
+draft_weight = 1.1
+fire_rate_mult = 1.35

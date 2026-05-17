@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardvrxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"vampire_rounds"
+display_name = "Vampire Rounds"
+description = "Every kill heals the barrier by 1 HP."
+rarity = 1
+draft_weight = 0.65
+effect_id = &"lifesteal"

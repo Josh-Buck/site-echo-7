@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardbbxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"bunker_buster"
+display_name = "Bunker Buster"
+description = "Brutal armor-piercing rounds. +50% damage, +50% reload time."
+rarity = 1
+draft_weight = 0.7
+damage_mult = 1.5
+reload_time_mult = 1.5

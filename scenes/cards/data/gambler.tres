@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardgmblxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"gambler"
+display_name = "Gambler"
+description = "CURSE: Damage ×2.5 but mag size -40% and reload time +40%."
+rarity = 3
+draft_weight = 0.35
+damage_mult = 2.5
+mag_size_mult = 0.6
+reload_time_mult = 1.4
