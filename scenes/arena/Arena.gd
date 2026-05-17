@@ -1,5 +1,9 @@
 extends Node3D
 
+const LAB_HUM := preload("res://audio/ambient/lab_hum_loop.ogg")
+const CONCRETE_MAT_PATH := "res://art/materials/concrete/material.tres"
+const LAB_TILE_MAT_PATH := "res://art/materials/lab_tile/material.tres"
+
 @onready var nav_region: NavigationRegion3D = $NavRegion
 @onready var fluor_east: OmniLight3D = get_node_or_null("FluorescentEast")
 @onready var fluor_west: OmniLight3D = get_node_or_null("FluorescentWest")
@@ -8,6 +12,7 @@ var _flicker_east_t: float = 0.0
 var _flicker_west_t: float = 0.0
 var _east_base_energy: float = 1.5
 var _west_base_energy: float = 1.5
+var _hum: AudioStreamPlayer = null
 
 func _ready() -> void:
 	var nm: NavigationMesh = nav_region.navigation_mesh
@@ -22,10 +27,14 @@ func _ready() -> void:
 		_west_base_energy = fluor_west.light_energy
 	_flicker_east_t = randf_range(2.0, 6.0)
 	_flicker_west_t = randf_range(4.0, 9.0)
+	_apply_pbr_materials()
 	_build_perimeter_walls()
 	_build_dust_motes()
+	_start_ambient_hum()
 
 func _process(delta: float) -> void:
+	if _hum and not _hum.playing and AudioMan.can_play():
+		_hum.play()
 	if fluor_east:
 		_flicker_east_t -= delta
 		if _flicker_east_t <= 0.0:
@@ -45,11 +54,42 @@ func _pulse_flicker(light: OmniLight3D, base: float) -> void:
 	tw.tween_property(light, "light_energy", base * 0.25, 0.06)
 	tw.tween_property(light, "light_energy", base, 0.18)
 
+func _apply_pbr_materials() -> void:
+	if ResourceLoader.exists(CONCRETE_MAT_PATH):
+		var concrete: StandardMaterial3D = load(CONCRETE_MAT_PATH)
+		# Tile across the 36m floor diameter so the texture doesn't stretch.
+		var tiled := concrete.duplicate() as StandardMaterial3D
+		tiled.uv1_scale = Vector3(8.0, 8.0, 1.0)
+		var floor_mesh := get_node_or_null("FloorBody/Mesh") as MeshInstance3D
+		if floor_mesh:
+			floor_mesh.set_surface_override_material(0, tiled)
+
+func _start_ambient_hum() -> void:
+	_hum = AudioStreamPlayer.new()
+	_hum.stream = LAB_HUM
+	_hum.bus = &"Master"
+	_hum.volume_db = -18.0
+	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
+	if LAB_HUM is AudioStreamOggVorbis:
+		(LAB_HUM as AudioStreamOggVorbis).loop = true
+	add_child(_hum)
+	if AudioMan.can_play():
+		_hum.play()
+	# else: _process polls AudioMan.can_play() and starts the hum once the user gestures.
+
 func _build_perimeter_walls() -> void:
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.22, 0.22, 0.24)
-	mat.metallic = 0.0
-	mat.roughness = 0.95
+	var mat: Material
+	if ResourceLoader.exists(LAB_TILE_MAT_PATH):
+		var base: StandardMaterial3D = load(LAB_TILE_MAT_PATH)
+		var tiled := base.duplicate() as StandardMaterial3D
+		tiled.uv1_scale = Vector3(2.0, 2.0, 1.0)
+		mat = tiled
+	else:
+		var fallback := StandardMaterial3D.new()
+		fallback.albedo_color = Color(0.22, 0.22, 0.24)
+		fallback.metallic = 0.0
+		fallback.roughness = 0.95
+		mat = fallback
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(4.2, 4.5, 0.4)
 	var ring_radius := 16.0

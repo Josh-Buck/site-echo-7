@@ -6,6 +6,33 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## 🔊 NEW: Barrier/arena audio + PBR materials
+
+### Barrier audio
+- [ ] Zombie melee on barrier plays a real metallic impact (hit_01/hit_02), positional from attacker direction
+- [ ] Heavy hits (Tank, Subject, Director — damage ≥ 12) play the deeper hit_heavy sample
+- [ ] At ≤ 25% barrier HP, a quiet looping critical_alarm starts and persists while low
+- [ ] Repairing the barrier above 30% HP stops the alarm loop (hysteresis — no chatter at the threshold)
+- [ ] Barrier destruction stops the alarm (no orphaned loop after death screen)
+
+### Ambient hum
+- [ ] Arena 1 has a low lab_hum_loop ambient at ~-18 dB (audible but not intrusive)
+- [ ] CoolingTower (round 11+) has a slightly deeper, slightly louder industrial hum
+- [ ] Hum starts on its own once the first user gesture lands (no need to refresh)
+
+### Wave start stinger
+- [ ] Rounds 1–4: no stinger (only the existing wave_start chime)
+- [ ] Round 5+: tension_stinger.ogg plays at -6 dB at wave start
+- [ ] Stinger doesn't clip or distort against the chime
+
+### PBR materials
+- [ ] Arena 1 floor shows visible concrete tiling (not stretched, not single-color)
+- [ ] Arena 1 perimeter walls show lab_tile detail at close range
+- [ ] CoolingTower floor shows concrete; shell shows metal_panel; pipes + girders show rusty_steel
+- [ ] No magenta/missing material warnings in console at arena load
+
+---
+
 ## 🏅 NEW: Challenge system (M3 first pass)
 
 ### Bronze tier

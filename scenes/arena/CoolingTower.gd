@@ -1,5 +1,10 @@
 extends Node3D
 
+const LAB_HUM := preload("res://audio/ambient/lab_hum_loop.ogg")
+const METAL_PANEL_MAT_PATH := "res://art/materials/metal_panel/material.tres"
+const RUSTY_STEEL_MAT_PATH := "res://art/materials/rusty_steel/material.tres"
+const CONCRETE_MAT_PATH := "res://art/materials/concrete/material.tres"
+
 @onready var nav_region: NavigationRegion3D = $NavRegion
 @onready var vent_light: OmniLight3D = get_node_or_null("VentLight")
 @onready var fan: Node3D = get_node_or_null("VentFan")
@@ -7,6 +12,7 @@ extends Node3D
 var _fan_spin: float = 0.0
 var _flicker_t: float = 0.0
 var _vent_base_energy: float = 1.6
+var _hum: AudioStreamPlayer = null
 
 func _ready() -> void:
 	var nm: NavigationMesh = nav_region.navigation_mesh
@@ -18,11 +24,15 @@ func _ready() -> void:
 	if vent_light:
 		_vent_base_energy = vent_light.light_energy
 	_flicker_t = randf_range(3.0, 7.0)
+	_apply_pbr_materials()
 	_build_perimeter_pipes()
 	_build_girders()
 	_build_dust_motes()
+	_start_ambient_hum()
 
 func _process(delta: float) -> void:
+	if _hum and not _hum.playing and AudioMan.can_play():
+		_hum.play()
 	if fan:
 		_fan_spin += delta * 1.6
 		fan.rotation.y = _fan_spin
@@ -42,12 +52,53 @@ func _pulse_flicker(light: OmniLight3D, base: float) -> void:
 	tw.tween_property(light, "light_energy", base * 0.3, 0.05)
 	tw.tween_property(light, "light_energy", base, 0.2)
 
+func _apply_pbr_materials() -> void:
+	# Floor: concrete, tiled.
+	if ResourceLoader.exists(CONCRETE_MAT_PATH):
+		var concrete: StandardMaterial3D = load(CONCRETE_MAT_PATH)
+		var floor_mat := concrete.duplicate() as StandardMaterial3D
+		floor_mat.uv1_scale = Vector3(8.0, 8.0, 1.0)
+		var floor_mesh := get_node_or_null("FloorBody/Mesh") as MeshInstance3D
+		if floor_mesh:
+			floor_mesh.set_surface_override_material(0, floor_mat)
+	# Shell: metal panel, large tiling because the cylinder is huge.
+	if ResourceLoader.exists(METAL_PANEL_MAT_PATH):
+		var panel: StandardMaterial3D = load(METAL_PANEL_MAT_PATH)
+		var shell_mat := panel.duplicate() as StandardMaterial3D
+		shell_mat.uv1_scale = Vector3(6.0, 3.0, 1.0)
+		shell_mat.cull_mode = BaseMaterial3D.CULL_FRONT
+		var shell := get_node_or_null("Shell") as MeshInstance3D
+		if shell:
+			shell.set_surface_override_material(0, shell_mat)
+
+func _start_ambient_hum() -> void:
+	_hum = AudioStreamPlayer.new()
+	_hum.stream = LAB_HUM
+	_hum.bus = &"Master"
+	# Industrial feel: slightly louder + pitched down for a deeper drone.
+	_hum.volume_db = -16.0
+	_hum.pitch_scale = 0.89
+	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
+	if LAB_HUM is AudioStreamOggVorbis:
+		(LAB_HUM as AudioStreamOggVorbis).loop = true
+	add_child(_hum)
+	if AudioMan.can_play():
+		_hum.play()
+
 func _build_perimeter_pipes() -> void:
 	# Vertical industrial pipes ringing the chamber.
-	var pipe_mat := StandardMaterial3D.new()
-	pipe_mat.albedo_color = Color(0.32, 0.36, 0.4)
-	pipe_mat.metallic = 0.85
-	pipe_mat.roughness = 0.35
+	var pipe_mat: Material
+	if ResourceLoader.exists(RUSTY_STEEL_MAT_PATH):
+		var base: StandardMaterial3D = load(RUSTY_STEEL_MAT_PATH)
+		var dup := base.duplicate() as StandardMaterial3D
+		dup.uv1_scale = Vector3(1.0, 6.0, 1.0)
+		pipe_mat = dup
+	else:
+		var fallback := StandardMaterial3D.new()
+		fallback.albedo_color = Color(0.32, 0.36, 0.4)
+		fallback.metallic = 0.85
+		fallback.roughness = 0.35
+		pipe_mat = fallback
 	var pipe_mesh := CylinderMesh.new()
 	pipe_mesh.top_radius = 0.35
 	pipe_mesh.bottom_radius = 0.35
@@ -70,10 +121,18 @@ func _build_perimeter_pipes() -> void:
 
 func _build_girders() -> void:
 	# Cross girders at the upper ring + an outer perimeter low wall.
-	var girder_mat := StandardMaterial3D.new()
-	girder_mat.albedo_color = Color(0.18, 0.2, 0.23)
-	girder_mat.metallic = 0.7
-	girder_mat.roughness = 0.5
+	var girder_mat: Material
+	if ResourceLoader.exists(RUSTY_STEEL_MAT_PATH):
+		var base: StandardMaterial3D = load(RUSTY_STEEL_MAT_PATH)
+		var dup := base.duplicate() as StandardMaterial3D
+		dup.uv1_scale = Vector3(8.0, 1.0, 1.0)
+		girder_mat = dup
+	else:
+		var fallback := StandardMaterial3D.new()
+		fallback.albedo_color = Color(0.18, 0.2, 0.23)
+		fallback.metallic = 0.7
+		fallback.roughness = 0.5
+		girder_mat = fallback
 	var box := BoxMesh.new()
 	box.size = Vector3(34.0, 0.35, 0.35)
 	var girders := Node3D.new()

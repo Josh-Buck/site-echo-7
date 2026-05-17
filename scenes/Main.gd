@@ -1,14 +1,21 @@
 extends Node3D
 
 const COOLING_TOWER := preload("res://scenes/arena/CoolingTower.tscn")
+const TENSION_STINGER := preload("res://audio/ambient/tension_stinger.ogg")
 const ARENA_SWAP_ROUND := 11
+const STINGER_FIRST_ROUND := 5
 
 var _swapped: bool = false
 
 func _ready() -> void:
 	GameState.start_run()
 	EventBus.wave_ended.connect(_on_wave_ended)
+	EventBus.wave_started.connect(_on_wave_started)
 	print("[Main] M1 ready, lifetime_score=%d" % MetaProgress.lifetime_score)
+
+func _on_wave_started(round_number: int, _composition: Array) -> void:
+	if round_number >= STINGER_FIRST_ROUND:
+		AudioMan.play_2d(TENSION_STINGER, -6.0, 0.0)
 
 func _on_wave_ended(round_number: int) -> void:
 	if _swapped:
