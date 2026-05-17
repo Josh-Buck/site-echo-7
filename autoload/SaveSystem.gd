@@ -49,13 +49,22 @@ func load_meta() -> bool:
 	var payload: Dictionary = parsed
 	var version: int = payload.get("version", 0)
 	if version != SAVE_VERSION:
-		# Migration hook for future schema bumps. For now, refuse and start fresh.
-		push_warning("[SaveSystem] save version mismatch (%d vs %d), starting fresh" % [version, SAVE_VERSION])
-		return false
+		payload = _migrate(payload, version)
+		if payload.is_empty():
+			push_warning("[SaveSystem] save version %d unmigratable (current %d), starting fresh" % [version, SAVE_VERSION])
+			return false
 	var data: Dictionary = payload.get("data", {})
 	MetaProgress.from_dict(data)
 	print("[SaveSystem] loaded meta save: lifetime_score=%d" % MetaProgress.lifetime_score)
 	return true
+
+func _migrate(payload: Dictionary, from_version: int) -> Dictionary:
+	# Stepwise schema migrations. Return {} to refuse and start fresh.
+	# Future bumps: while from_version < SAVE_VERSION: payload = _migrate_<n>_to_<n+1>(payload); from_version += 1
+	if from_version > SAVE_VERSION:
+		return {}
+	payload["version"] = SAVE_VERSION
+	return payload
 
 func wipe_meta() -> void:
 	if FileAccess.file_exists(META_PATH):

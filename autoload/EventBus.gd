@@ -20,6 +20,7 @@ signal run_ended(stats)
 signal challenge_completed(challenge_id, rd_payout)
 signal shop_opened()
 signal shop_done()
+signal settings_changed(key, value)
 
 func _ready() -> void:
 	print("[EventBus] ready")

@@ -6,6 +6,28 @@ Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 
 
 ---
 
+## ⚙️ NEW: Settings + barrier PBR + save versioning
+
+### Settings menu
+- [ ] FOV slider 60–110 (default 75) — live-changes the in-game camera FOV when adjusted mid-run (pause → settings → drag)
+- [ ] FOV persists across page reload (set 100, reload, FOV remains 100 on next run start) — NOTE: requires `Player._ready` to apply `MetaProgress.get_fov()`; hand off to `zombie-gameplay-dev`
+- [ ] Fullscreen toggle: clicking ON enters browser fullscreen; OFF returns windowed (the click itself satisfies the user-gesture requirement)
+- [ ] Gore Effects toggle: persists; default ON — NOTE: actual VFX gating (`MetaProgress.gore_enabled()`) needs call sites in `Zombie._spawn_blood_burst` + `_begin_dissolve`; hand off to `zombie-ai-architect`
+- [ ] Master / SFX / Music sliders all visible, drag changes label %, persist across reload
+- [ ] SFX and Music buses exist (check Audio panel: Master, SFX, Music) — NOTE: existing players still route to Master; routing weapon/zombie SFX to the SFX bus is gameplay-dev work
+- [ ] ESC from settings returns to title menu
+
+### Barrier visual
+- [ ] Barrier renders as translucent cyan/white energy field (not opaque dark metal)
+- [ ] Barrier still receives damage and triggers existing hit/destroy audio
+- [ ] Barrier doesn't cast aggressive shadows across the arena floor
+
+### Save versioning
+- [ ] Existing meta save with `version: 1` loads cleanly on launch
+- [ ] Wiping save via `dev_reset` still resets everything (regression check)
+
+---
+
 ## 🧟 NEW: Zombie footsteps + PBR + perf audit
 
 ### Footsteps

@@ -70,4 +70,11 @@ func get_setting(key: String, default_value):
 
 func set_setting(key: String, value) -> void:
 	settings[key] = value
+	EventBus.settings_changed.emit(key, value)
 	SaveSystem.save_meta()
+
+func gore_enabled() -> bool:
+	return bool(get_setting("gore_enabled", true))
+
+func get_fov() -> float:
+	return float(get_setting("fov", 75.0))
