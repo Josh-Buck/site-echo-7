@@ -42,6 +42,12 @@ theme_override_font_sizes/font_size = 44
 text = "SETTINGS"
 horizontal_alignment = 1
 
+[node name="HintLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "ESC or BACK button to return"
+horizontal_alignment = 1
+
 [node name="Spacer1" type="Control" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
@@ -103,6 +109,6 @@ custom_minimum_size = Vector2(0, 48)
 [node name="BackButton" type="Button" parent="VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(220, 48)
-theme_override_font_sizes/font_size = 20
-text = "BACK TO MENU"
+custom_minimum_size = Vector2(320, 60)
+theme_override_font_sizes/font_size = 24
+text = "← BACK TO MENU"

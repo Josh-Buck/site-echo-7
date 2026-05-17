@@ -19,6 +19,11 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 	_refresh()
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		_on_back_pressed()
+		get_viewport().set_input_as_handled()
+
 func _refresh() -> void:
 	rd_label.text = "Research Data: %d" % MetaProgress.research_data
 	for c in unlock_list.get_children():

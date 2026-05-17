@@ -26,6 +26,11 @@ func _ready() -> void:
 	vol_slider.value_changed.connect(_on_vol_changed)
 	back_button.pressed.connect(_on_back_pressed)
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		_on_back_pressed()
+		get_viewport().set_input_as_handled()
+
 func _on_sens_changed(v: float) -> void:
 	MetaProgress.set_setting("mouse_sensitivity", v)
 	_update_sens_label()
