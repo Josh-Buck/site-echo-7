@@ -14,6 +14,13 @@ const CARD_FLIP_PATH := "res://audio/sfx/ui/card_flip.ogg"
 const DRAFT_APPEAR_PATH := "res://audio/sfx/ui/draft_appear.ogg"
 
 var _gesture_received: bool = false
+var _ui_sfx_paths: Dictionary = {
+	"click": UI_CLICK_PATH,
+	"hover": UI_HOVER_PATH,
+	"confirm": UI_CONFIRM_PATH,
+	"card_flip": CARD_FLIP_PATH,
+	"draft_appear": DRAFT_APPEAR_PATH
+}
 var _cache: Dictionary = {}  # String id -> AudioStreamWAV
 var _2d_pool: Array[AudioStreamPlayer] = []
 var _3d_pool: Array[AudioStreamPlayer3D] = []
@@ -144,20 +151,27 @@ func _load_stream(path: String) -> AudioStream:
 
 # --- UI helper hooks (exposed; UI layer calls these) ---
 
+func _play_ui_sfx(id: String) -> void:
+	var path := _ui_sfx_paths.get(id)
+	if path == null:
+		push_warning("[AudioMan] unknown UI sfx id: %s" % id)
+		return
+	play_2d(_load_stream(path), -4.0, 0.04)
+
 func play_ui_click() -> void:
-	play_2d(_load_stream(UI_CLICK_PATH), -4.0, 0.04)
+	_play_ui_sfx("click")
 
 func play_ui_hover() -> void:
-	play_2d(_load_stream(UI_HOVER_PATH), -10.0, 0.06)
+	_play_ui_sfx("hover")
 
 func play_ui_confirm() -> void:
-	play_2d(_load_stream(UI_CONFIRM_PATH), -3.0, 0.0)
+	_play_ui_sfx("confirm")
 
 func play_card_flip() -> void:
-	play_2d(_load_stream(CARD_FLIP_PATH), -5.0, 0.05)
+	_play_ui_sfx("card_flip")
 
 func play_draft_appear() -> void:
-	play_2d(_load_stream(DRAFT_APPEAR_PATH), -4.0, 0.0)
+	_play_ui_sfx("draft_appear")
 
 func _get_sfx(id: String) -> AudioStreamWAV:
 	if not _cache.has(id):
