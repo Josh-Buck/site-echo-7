@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1boltxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"bolt_action"
+display_name = "Bolt-Action Rifle"
+description = "One round chambered. Make it count. Headshot magnet."
+base_damage = 60.0
+headshot_multiplier = 3.0
+damage_type = 0
+fire_rate = 0.7
+automatic = false
+mag_size = 5
+reserve_ammo_max = 35
+infinite_reserve = false
+pellet_count = 1
+spread_angle_deg = 0.0
+reload_time = 2.5
+recoil_vertical = 5.0
+recoil_horizontal = 0.3
+recoil_recovery = 0.6

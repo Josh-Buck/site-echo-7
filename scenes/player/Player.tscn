@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b1playerxyz"]
+[gd_scene load_steps=11 format=3 uid="uid://b1playerxyz"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scenes/weapons/WeaponManager.gd" id="2_wm"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://b1sidearmscxyz" path="res://scenes/weapons/Sidearm.tscn" id="6_sidearm"]
 [ext_resource type="Script" path="res://scenes/player/HitPause.gd" id="7_hitpause"]
 [ext_resource type="Script" path="res://scenes/player/CasingPool.gd" id="8_casing"]
+[ext_resource type="PackedScene" uid="uid://b1smgscxyz" path="res://scenes/weapons/SMG.tscn" id="9_smg"]
+[ext_resource type="PackedScene" uid="uid://b1boltscxyz" path="res://scenes/weapons/BoltAction.tscn" id="10_bolt"]
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_player")
@@ -40,6 +42,12 @@ visible = false
 visible = false
 
 [node name="Sidearm" parent="CameraPivot/Camera3D/WeaponHolder" instance=ExtResource("6_sidearm")]
+visible = false
+
+[node name="SMG" parent="CameraPivot/Camera3D/WeaponHolder" instance=ExtResource("9_smg")]
+visible = false
+
+[node name="BoltAction" parent="CameraPivot/Camera3D/WeaponHolder" instance=ExtResource("10_bolt")]
 visible = false
 
 [node name="HitPause" type="Node" parent="."]

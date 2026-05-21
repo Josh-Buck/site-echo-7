@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3 uid="uid://b1smgxyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/data/weapon_data.gd" id="1_wd"]
+
+[resource]
+script = ExtResource("1_wd")
+id = &"smg_compact"
+display_name = "Compact SMG"
+description = "Fast-firing PDW. Generous mag, low per-shot damage. Spray and pray."
+base_damage = 8.0
+headshot_multiplier = 1.8
+damage_type = 0
+fire_rate = 12.0
+automatic = true
+mag_size = 35
+reserve_ammo_max = 180
+infinite_reserve = false
+pellet_count = 1
+spread_angle_deg = 0.0
+reload_time = 1.7
+recoil_vertical = 0.9
+recoil_horizontal = 0.55
+recoil_recovery = 0.18
