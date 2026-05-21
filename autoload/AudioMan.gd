@@ -27,19 +27,6 @@ var _3d_pool: Array[AudioStreamPlayer3D] = []
 var _2d_idx: int = 0
 var _3d_idx: int = 0
 var _stream_cache: Dictionary = {}  # path -> AudioStream
-var _ui_sfx_paths: Dictionary = {
-	"click": UI_CLICK_PATH,
-	"hover": UI_HOVER_PATH,
-	"confirm": UI_CONFIRM_PATH,
-	"card_flip": CARD_FLIP_PATH,
-	"draft_appear": DRAFT_APPEAR_PATH
-}
-var _cache: Dictionary = {}  # String id -> AudioStreamWAV
-var _2d_pool: Array[AudioStreamPlayer] = []
-var _3d_pool: Array[AudioStreamPlayer3D] = []
-var _2d_idx: int = 0
-var _3d_idx: int = 0
-var _stream_cache: Dictionary = {}  # path -> AudioStream
 
 func _ready() -> void:
 	print("[AudioMan] ready")
