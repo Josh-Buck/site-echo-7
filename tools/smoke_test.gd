@@ -143,6 +143,38 @@ func _run() -> void:
 			_expect(has_subject, "Wave 10 contains Subject boss")
 			_expect(has_director, "Wave 20 contains Director boss")
 
+	# Step 10: Cooling Tower arena swap at wave 11.
+	# Drive wave_ended for round 10 — Main._on_wave_ended should swap the Arena child.
+	var pre_arena := scene.get_node_or_null("Arena")
+	var pre_arena_path: String = pre_arena.scene_file_path if pre_arena else ""
+	# Reset Shop allow-flag so we can fire wave_ended without re-stalling on the menu.
+	if shop != null:
+		shop.set("_allow_open", false)
+		var sp2 := shop.get_node_or_null("Panel")
+		if sp2 is CanvasItem:
+			(sp2 as CanvasItem).visible = false
+	if wave_complete != null:
+		var wcp := wave_complete.get_node_or_null("Panel")
+		if wcp is CanvasItem:
+			(wcp as CanvasItem).visible = false
+	get_tree().paused = false
+	print("[smoke] firing wave_ended for round 10 to trigger Cooling Tower swap")
+	EventBus.wave_ended.emit(10)
+	# Swap awaits one process frame internally.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await _wait(0.4)
+	var post_arena := scene.get_node_or_null("Arena")
+	_expect(post_arena != null, "Arena child still exists after wave 10 swap")
+	if post_arena != null:
+		_expect(post_arena.scene_file_path != pre_arena_path, "Arena scene file changed after wave 10 (was %s, now %s)" % [pre_arena_path, post_arena.scene_file_path])
+		_expect(post_arena.scene_file_path.find("CoolingTower") != -1, "New arena is CoolingTower")
+
+	# Step 11: SpawnRing.refresh_spawn_points should have run, leaving spawn points present.
+	if ring != null and ring.has_method("get"):
+		var sps: Array = ring.get("_spawn_points")
+		_expect(sps.size() > 0, "SpawnRing has spawn points after arena swap (got %d)" % sps.size())
+
 	_done()
 
 func _done() -> void:

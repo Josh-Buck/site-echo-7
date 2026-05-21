@@ -30,10 +30,15 @@ func _swap_to_cooling_tower() -> void:
 	if old_arena == null:
 		push_warning("[Main] no Arena child to swap")
 		return
+	# Rename the outgoing arena first — otherwise add_child auto-renames the new
+	# one to "@Arena@2" because the old node still occupies the name until
+	# queue_free runs at end-of-frame, and then `get_node("Arena")` returns null.
+	var old_index := old_arena.get_index()
+	old_arena.name = "ArenaOld"
 	var new_arena: Node = COOLING_TOWER.instantiate()
 	new_arena.name = "Arena"
 	add_child(new_arena)
-	move_child(new_arena, old_arena.get_index())
+	move_child(new_arena, old_index)
 	old_arena.queue_free()
 	var ring: Node = get_node_or_null("SpawnRing")
 	if ring and ring.has_method("refresh_spawn_points"):
