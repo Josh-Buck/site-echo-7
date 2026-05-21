@@ -45,14 +45,17 @@ func _ready() -> void:
 	EventBus.shop_opened.connect(_on_shop_opened)
 
 func _build_pools() -> void:
+	# Route to SFX bus (Settings slider controls it). Falls back to Master if
+	# the project's bus layout doesn't have SFX (older saves / external imports).
+	var bus_name: StringName = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
 	for i in POOL_SIZE:
 		var p2d := AudioStreamPlayer.new()
-		p2d.bus = &"Master"
+		p2d.bus = bus_name
 		p2d.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(p2d)
 		_2d_pool.append(p2d)
 		var p3d := AudioStreamPlayer3D.new()
-		p3d.bus = &"Master"
+		p3d.bus = bus_name
 		p3d.max_distance = 40.0
 		p3d.unit_size = 5.0
 		p3d.process_mode = Node.PROCESS_MODE_ALWAYS

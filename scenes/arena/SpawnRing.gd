@@ -44,6 +44,9 @@ func start_next_wave() -> void:
 func has_next_wave() -> bool:
 	return _current_wave_index + 1 < waves.size()
 
+func get_current_wave() -> WaveData:
+	return _current_wave
+
 func _start_wave(wd: WaveData) -> void:
 	if wd == null or wd.composition.is_empty():
 		return

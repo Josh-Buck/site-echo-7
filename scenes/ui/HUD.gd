@@ -15,6 +15,7 @@ extends CanvasLayer
 @onready var low_hp_vignette: TextureRect = $LowHpVignette
 @onready var damage_arrow_anchor: Control = $DamageArrowAnchor
 @onready var damage_arrow: Label = $DamageArrowAnchor/DamageArrow
+@onready var wave_intro_banner: Label = $WaveIntroBanner
 
 var _active_weapon: Node = null
 var _hit_marker_timer: float = 0.0
@@ -53,6 +54,7 @@ func _ready() -> void:
 	hit_marker.visible = false
 	boss_banner.visible = false
 	streak_label.visible = false
+	wave_intro_banner.visible = false
 	_update_hp(100.0, 100.0)
 	ammo_label.text = "-- / --"
 	weapon_label.text = ""
@@ -69,14 +71,26 @@ func _update_hp(current: float, max_val: float) -> void:
 func _update_ammo_from_weapon(weapon: Node) -> void:
 	if weapon == null or not weapon.has_method("get_ammo_state"):
 		ammo_label.text = "-- / --"
+		ammo_label.modulate = Color(1, 1, 1, 1)
 		weapon_label.text = ""
 		return
 	var s: Dictionary = weapon.get_ammo_state()
 	if s.get("reloading", false):
 		ammo_label.text = "RELOADING..."
+		ammo_label.modulate = Color(1, 1, 1, 1)
 	else:
 		var reserve_text: String = "∞" if s.get("infinite_reserve", false) else str(int(s.get("reserve", 0)))
 		ammo_label.text = "%d / %s" % [int(s.get("current", 0)), reserve_text]
+		# Low-ammo pulse: when current < 25% of mag, flash red.
+		var current: int = int(s.get("current", 0))
+		var mag: int = int(s.get("mag_size", 1))
+		if mag > 0 and float(current) / float(mag) <= 0.25:
+			# Sine-pulse the modulate; tied to engine time so it animates without _process.
+			var t: float = float(Time.get_ticks_msec()) * 0.006
+			var pulse: float = 0.5 + 0.5 * sin(t)
+			ammo_label.modulate = Color(1.0, lerp(0.45, 1.0, 1.0 - pulse), lerp(0.45, 1.0, 1.0 - pulse), 1.0)
+		else:
+			ammo_label.modulate = Color(1, 1, 1, 1)
 	weapon_label.text = s.get("weapon_name", "")
 
 func _on_barrier_damaged(_amount: float, attacker: Node) -> void:
@@ -106,6 +120,7 @@ func _on_weapon_swapped(_old: Node, new_weapon: Node) -> void:
 
 func _on_wave_started(round_n: int, _composition: Array) -> void:
 	wave_label.text = "WAVE %d" % round_n
+	_show_wave_intro(round_n)
 	match round_n:
 		10:
 			_show_boss_banner("⚠  MINI-BOSS: THE SUBJECT  ⚠")
@@ -115,6 +130,31 @@ func _on_wave_started(round_n: int, _composition: Array) -> void:
 			_show_boss_banner("⚠  TWO OF THEM  ⚠")
 		20:
 			_show_boss_banner("☢  FINAL BOSS: THE DIRECTOR  ☢")
+
+func _show_wave_intro(round_n: int) -> void:
+	# Pulls the live wave data from SpawnRing so we can list per-type counts.
+	var spawn_ring := get_tree().current_scene.find_child("SpawnRing", true, false)
+	if spawn_ring == null or not spawn_ring.has_method("get_current_wave"):
+		return
+	var wd = spawn_ring.get_current_wave()
+	if wd == null or wd.composition.is_empty():
+		return
+	var parts: Array[String] = []
+	for i in wd.composition.size():
+		var enemy = wd.composition[i]
+		var count: int = int(wd.counts[i]) if i < wd.counts.size() else 0
+		if count <= 0 or enemy == null:
+			continue
+		parts.append("%d %s" % [count, enemy.display_name])
+	if parts.is_empty():
+		return
+	wave_intro_banner.text = "WAVE %d  —  %s" % [round_n, "  ·  ".join(parts)]
+	wave_intro_banner.visible = true
+	wave_intro_banner.modulate = Color(1, 1, 1, 1)
+	var tw := create_tween()
+	tw.tween_interval(3.0)
+	tw.tween_property(wave_intro_banner, "modulate:a", 0.0, 1.0)
+	tw.tween_callback(func(): wave_intro_banner.visible = false)
 
 func _show_boss_banner(text: String) -> void:
 	boss_banner.text = text
