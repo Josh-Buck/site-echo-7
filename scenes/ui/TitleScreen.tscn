@@ -83,6 +83,17 @@ custom_minimum_size = Vector2(280, 48)
 theme_override_font_sizes/font_size = 20
 text = "SETTINGS"
 
+[node name="SpacerBetweenButtons3" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="StatsButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 48)
+theme_override_font_sizes/font_size = 20
+text = "LIFETIME STATS"
+
 [node name="Spacer2" type="Control" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 32)

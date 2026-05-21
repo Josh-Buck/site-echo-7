@@ -11,6 +11,10 @@ var settings: Dictionary = {}  # key -> value
 # Starter arsenal: pistol + sidearm. AR / shotgun / future weapons unlock via RD.
 var unlocked_weapons: Array = ["pistol_m1", "sidearm_backup"]
 var unlocked_attachments: Array = []
+# Run accounting for the lifetime stats screen.
+var total_runs: int = 0
+var total_victories: int = 0
+var total_rd_earned: int = 0
 
 func _ready() -> void:
 	print("[MetaProgress] ready")
@@ -25,6 +29,12 @@ func record_run_end() -> int:
 		best_round = GameState.current_round
 	var earned: int = GameState.compute_rd_payout()
 	research_data += earned
+	total_runs += 1
+	total_rd_earned += earned
+	# Victory = cleared all available waves (set via SpawnRing.run_ended payload).
+	# Detect by reaching round 20 which is the current final wave.
+	if GameState.current_round >= 20:
+		total_victories += 1
 	SaveSystem.save_meta()
 	return earned
 
@@ -98,6 +108,9 @@ func to_dict() -> Dictionary:
 		"settings": settings,
 		"unlocked_weapons": unlocked_weapons,
 		"unlocked_attachments": unlocked_attachments,
+		"total_runs": total_runs,
+		"total_victories": total_victories,
+		"total_rd_earned": total_rd_earned,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -109,6 +122,9 @@ func from_dict(data: Dictionary) -> void:
 	settings = data.get("settings", {})
 	unlocked_weapons = data.get("unlocked_weapons", ["pistol_m1", "sidearm_backup"])
 	unlocked_attachments = data.get("unlocked_attachments", [])
+	total_runs = data.get("total_runs", 0)
+	total_victories = data.get("total_victories", 0)
+	total_rd_earned = data.get("total_rd_earned", 0)
 	# Guard: pistol + sidearm are starter — always present even if save was hand-edited.
 	if not unlocked_weapons.has("pistol_m1"):
 		unlocked_weapons.append("pistol_m1")
