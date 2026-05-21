@@ -6,7 +6,29 @@ Big push just landed — game is now 20 waves long with two bosses, 33 cards (in
 
 ---
 
-## 🆕 LATEST PUSH — verify these first
+## 🧹 AUDIT PASS — 9 bug fixes (latest batch)
+
+Read every major code file, fixed concrete issues found:
+
+### Critical (likely visible)
+- [ ] **Shop no longer opens at run start.** The Quartermaster perk was firing `card_drafted` on run start, which the Shop was listening to → Shop popped up before Wave 1 even spawned. Shop now gates itself on `wave_ended`.
+- [ ] **PauseMenu refuses to open** while card draft / shop / wave complete / death screen is active. Was stealing mouse mode + tree-pause state on Resume.
+- [ ] **Marksman ammo refund no longer plays the reload click.** Was emitting `weapon_reloaded` which AudioMan turned into a phantom reload SFX on every headshot kill.
+- [ ] **Shop purchases no longer play reload click.** Same root cause — three Shop offers were emitting `weapon_reloaded`. Now silent; HUD still updates because it polls active weapon every frame.
+- [ ] **HUD ammo readout shows real numbers immediately** on entering a run (was "-- / --" until first shot fired — initial `weapon_swapped` signal was lost because Player readies before HUD).
+- [ ] **Hit-pause runs once per headshot kill** (was firing from both HUD.gd and HitPause.gd with different time-scale values; race condition).
+
+### Subtle
+- [ ] **Zombie footsteps now switch to metal grates on Cooling Tower** (was always concrete — detected wrong scene path).
+- [ ] **Brass casings actually land on the floor** instead of falling through it (collision_mask was 1 = Player layer; now 2 = environment).
+- [ ] **GameState.start_run no longer fires twice** at run start (TitleScreen + Main._ready were both calling it).
+
+### UX nicety added during audit
+- [ ] Card hover preview now shows **"SYNERGY LOCKED — need N more X card(s)"** when the hovered synergy card hasn't activated yet (instead of misleading stat deltas).
+
+---
+
+## 🆕 PRIOR PUSH — verify these too
 
 ### Card draft hover preview
 - [ ] Hovering a draft card shows a line at the bottom: "On Pistol — Fire rate: 4.00 → 5.00 /s" projecting the card's effect on the currently-equipped weapon
