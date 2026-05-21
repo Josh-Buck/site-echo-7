@@ -6,6 +6,21 @@ Big push just landed — game is now 20 waves long with two bosses, 33 cards (in
 
 ---
 
+## 🧪 SMOKE-TEST FIXES — verified via headless E2E test
+
+A new `tools/smoke_test.tscn` exercises the wave-end flow programmatically. It found two more bugs:
+
+- [ ] **Cooling Tower arena swap at wave 11 was completely broken** (this is huge — anyone reaching wave 11 would have hit it). `add_child` auto-renames a new node when a sibling owns the same name, and `queue_free()` is deferred to end-of-frame. The OLD arena still owned the "Arena" name when the new one was added, so the new arena landed as "@Arena@2" and `get_node("Arena")` returned null. Fix: rename old to "ArenaOld" before adding the new one.
+- [ ] **CardDraft no longer fires script errors** every time a card is drafted (was emitting "Invalid assignment of property or key 'theme_override_font_sizes' with value of type 'Dictionary'" three times per draft).
+
+The smoke test now asserts 32 checks across boot, the wave-end flow (wave_ended → CardDraft → skip → Shop visible → shop_done → WaveComplete visible), audio buses, boss-wave composition, and the Cooling Tower swap. Re-run any time:
+
+```
+godot --headless res://tools/smoke_test.tscn
+```
+
+---
+
 ## 🚨 BOOT-BREAKING FIXES — must verify these first
 
 Headless --check-only revealed 7 parse-level errors that would prevent the game from booting (or silently break sub-systems). All fixed and deployed:
