@@ -9,17 +9,29 @@ var tokens_earned_this_run: int = 0
 var run_active: bool = false
 var kills_by_type: Dictionary = {}  # display_name -> int
 var card_usage: Dictionary = {}  # card display_name -> kills-while-equipped
+# Token-shop emplacement state.
+var turret_count: int = 0
+# Applied to zombie move_speed at spawn; reset to 1.0 once a wave starts so the
+# slow lasts exactly one wave (the wave you bought it for).
+var zombie_speed_mult_next_wave: float = 1.0
 
 func _ready() -> void:
 	print("[GameState] ready")
 	EventBus.enemy_killed.connect(_on_enemy_killed)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
+	EventBus.wave_started.connect(_on_wave_started)
+
+func _on_wave_started(_round_n: int, _composition) -> void:
+	# Slow field is one-wave only — consume the modifier so it doesn't persist.
+	zombie_speed_mult_next_wave = 1.0
 
 func start_run() -> void:
 	current_round = 0
 	current_score = 0
 	tokens = 0
 	tokens_earned_this_run = 0
+	turret_count = 0
+	zombie_speed_mult_next_wave = 1.0
 	kills_by_type.clear()
 	card_usage.clear()
 	# Apply meta-unlocked run-start perks.

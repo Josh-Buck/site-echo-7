@@ -14,6 +14,7 @@ var _destroyed: bool = false
 var _heavy_threshold: float = 0.0
 var _alarm_player: AudioStreamPlayer = null
 var _alarm_active: bool = false
+var _regen_rate: float = 0.0  # HP/sec, active only during the wave granted via Shop
 
 func _ready() -> void:
 	var bonus: float = 0.0
@@ -42,6 +43,30 @@ func _ready() -> void:
 		alarm.loop = true
 	add_child(_alarm_player)
 	hp_changed.emit(current_hp, max_hp)
+	EventBus.wave_ended.connect(_on_wave_ended)
+
+func _process(delta: float) -> void:
+	if _destroyed or _regen_rate <= 0.0:
+		return
+	if current_hp >= max_hp:
+		return
+	current_hp = min(max_hp, current_hp + _regen_rate * delta)
+	hp_changed.emit(current_hp, max_hp)
+	_update_alarm()
+
+func _on_wave_ended(_round_n: int) -> void:
+	# Regen is a one-wave effect granted at the previous between-wave shop.
+	_regen_rate = 0.0
+
+func enable_regen_next_wave(rate: float) -> void:
+	_regen_rate = rate
+
+func bump_max_hp(amount: float) -> void:
+	max_hp += amount
+	current_hp = min(max_hp, current_hp + amount)
+	_heavy_threshold = max_hp * 0.12
+	hp_changed.emit(current_hp, max_hp)
+	_update_alarm()
 
 func take_damage(amount: float, attacker: Node = null) -> void:
 	if _destroyed:

@@ -11,6 +11,11 @@ const OFFER_POOL: Array[Dictionary] = [
 	{"id": "all_ammo", "name": "Full Resupply", "desc": "Refill ALL weapons' reserves.", "cost": 75},
 	{"id": "barrier_full", "name": "Field Welder", "desc": "Repair barrier to full HP.", "cost": 150},
 	{"id": "mag_refill", "name": "Speed Loader", "desc": "Instantly refill the active mag.", "cost": 20},
+	# New emplacement / utility offers — deliberately weak alternatives to ammo.
+	{"id": "turret_place", "name": "Auto-Turret", "desc": "Deploy a slow auto-turret (8 dmg / 1.6s, 14m range). Stacks up to 4.", "cost": 90},
+	{"id": "barrier_regen", "name": "Field Regenerator", "desc": "Barrier slowly auto-heals +1 HP/s for this wave only.", "cost": 40},
+	{"id": "max_hp_boost", "name": "Reinforced Plating", "desc": "+15 barrier max HP for the rest of the run (and heals 15).", "cost": 60},
+	{"id": "slow_field", "name": "Chill Emitter", "desc": "Zombies move 20% slower for the next wave.", "cost": 45},
 ]
 
 var _current_offers: Array[Dictionary] = []
@@ -50,6 +55,9 @@ func _on_card_drafted(_card) -> void:
 func _generate_offers() -> void:
 	_current_offers.clear()
 	var pool := OFFER_POOL.duplicate()
+	# Hide turret offer once at cap (4 turrets) — no dead choices.
+	if GameState.turret_count >= TURRET_ANCHORS.size():
+		pool = pool.filter(func(o): return o["id"] != "turret_place")
 	pool.shuffle()
 	for i in min(3, pool.size()):
 		_current_offers.append(pool[i])
@@ -124,6 +132,35 @@ func _apply_effect(effect_id: String) -> void:
 				var b: Node = barriers[0]
 				if "max_hp" in b and b.has_method("repair"):
 					b.repair(b.max_hp)
+		"turret_place":
+			_place_turret()
+		"barrier_regen":
+			var barriers := get_tree().get_nodes_in_group("barriers")
+			if barriers.size() > 0 and barriers[0].has_method("enable_regen_next_wave"):
+				barriers[0].enable_regen_next_wave(1.0)
+		"max_hp_boost":
+			var barriers := get_tree().get_nodes_in_group("barriers")
+			if barriers.size() > 0 and barriers[0].has_method("bump_max_hp"):
+				barriers[0].bump_max_hp(15.0)
+		"slow_field":
+			GameState.zombie_speed_mult_next_wave = 0.8
+
+const TURRET_SCENE := preload("res://scenes/turret/Turret.tscn")
+const TURRET_ANCHORS := [
+	Vector3(3.5, 0.0, 3.5),
+	Vector3(-3.5, 0.0, 3.5),
+	Vector3(-3.5, 0.0, -3.5),
+	Vector3(3.5, 0.0, -3.5),
+]
+
+func _place_turret() -> void:
+	var slot := GameState.turret_count
+	if slot >= TURRET_ANCHORS.size():
+		return  # cap at 4
+	GameState.turret_count += 1
+	var t := TURRET_SCENE.instantiate()
+	get_tree().current_scene.add_child(t)
+	(t as Node3D).global_position = TURRET_ANCHORS[slot]
 
 func _get_weapon_manager() -> WeaponManager:
 	var n := get_tree().current_scene.find_child("WeaponHolder", true, false)

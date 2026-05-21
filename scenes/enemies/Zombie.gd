@@ -227,7 +227,9 @@ func _state_chase(_delta: float) -> void:
 func _effective_move_speed() -> float:
 	if data == null:
 		return 0.0
-	return data.move_speed * (1.5 if _enraged else 1.0)
+	var rage_mult: float = 1.5 if _enraged else 1.0
+	# Token-shop "Chill Emitter" upgrade — applies to all zombies for one wave.
+	return data.move_speed * rage_mult * GameState.zombie_speed_mult_next_wave
 
 func _effective_attack_damage() -> float:
 	if data == null:
