@@ -147,11 +147,19 @@ func _show_wave_intro(round_n: int) -> void:
 		parts.append("%d %s" % [count, enemy.display_name])
 	if parts.is_empty():
 		return
-	wave_intro_banner.text = "WAVE %d  —  %s" % [round_n, "  ·  ".join(parts)]
+	# Line 1: wave composition. Line 2: deck reminder so the player remembers their build.
+	var lines: Array[String] = []
+	lines.append("WAVE %d  —  %s" % [round_n, "  ·  ".join(parts)])
+	if not CardSystem.active_deck.is_empty():
+		var deck_names: Array[String] = []
+		for c in CardSystem.active_deck:
+			deck_names.append(c.display_name)
+		lines.append("Deck: " + "  ·  ".join(deck_names))
+	wave_intro_banner.text = "\n".join(lines)
 	wave_intro_banner.visible = true
 	wave_intro_banner.modulate = Color(1, 1, 1, 1)
 	var tw := create_tween()
-	tw.tween_interval(3.0)
+	tw.tween_interval(3.5)
 	tw.tween_property(wave_intro_banner, "modulate:a", 0.0, 1.0)
 	tw.tween_callback(func(): wave_intro_banner.visible = false)
 

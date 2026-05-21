@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var subtitle_label: Label = $Panel/VBox/SubtitleLabel
 @onready var card_row: HBoxContainer = $Panel/VBox/CardRow
 @onready var skip_button: Button = $Panel/VBox/SkipButton
+@onready var preview_label: Label = $Panel/VBox/PreviewLabel
 
 const RARITY_COLORS: Array[Color] = [
 	Color(0.75, 0.78, 0.85),  # Common — neutral
@@ -163,7 +164,70 @@ func _make_card_button(card: CardData, index: int) -> Button:
 	btn.pressed.connect(_on_card_picked.bind(index))
 	btn.mouse_entered.connect(AudioMan.play_ui_hover)
 	btn.focus_entered.connect(AudioMan.play_ui_hover)
+	# Hover preview: project this card's effect onto the currently-active weapon.
+	btn.mouse_entered.connect(_show_card_preview.bind(card))
+	btn.focus_entered.connect(_show_card_preview.bind(card))
+	btn.mouse_exited.connect(_clear_card_preview)
+	btn.focus_exited.connect(_clear_card_preview)
 	return btn
+
+func _show_card_preview(card: CardData) -> void:
+	if preview_label == null:
+		return
+	var weapon: Weapon = _find_active_weapon()
+	if weapon == null or weapon.data == null:
+		preview_label.text = ""
+		return
+	var wd: WeaponData = weapon.data
+	var deltas: Array[String] = []
+	# Compare projected effective stats with current effective stats.
+	if not is_equal_approx(card.fire_rate_mult, 1.0):
+		var cur := wd.fire_rate * CardSystem.get_modifier(&"fire_rate")
+		var new_v := cur * card.fire_rate_mult
+		deltas.append("Fire rate: %.2f → %.2f /s" % [cur, new_v])
+	if not is_equal_approx(card.damage_mult, 1.0):
+		var cur := wd.base_damage * CardSystem.get_modifier(&"damage")
+		var new_v := cur * card.damage_mult
+		deltas.append("Damage: %.1f → %.1f" % [cur, new_v])
+	if not is_equal_approx(card.mag_size_mult, 1.0):
+		var cur := int(wd.mag_size * CardSystem.get_modifier(&"mag_size"))
+		var new_v := int(float(cur) * card.mag_size_mult)
+		deltas.append("Mag size: %d → %d" % [cur, new_v])
+	if not is_equal_approx(card.reload_time_mult, 1.0):
+		var cur := wd.reload_time * CardSystem.get_modifier(&"reload_time")
+		var new_v := cur * card.reload_time_mult
+		deltas.append("Reload: %.2fs → %.2fs" % [cur, new_v])
+	if not is_equal_approx(card.recoil_mult, 1.0):
+		var cur := wd.recoil_vertical * CardSystem.get_modifier(&"recoil")
+		var new_v := cur * card.recoil_mult
+		deltas.append("Recoil: %.1f° → %.1f°" % [cur, new_v])
+	if not is_equal_approx(card.headshot_mult_mult, 1.0):
+		var cur := wd.headshot_multiplier * CardSystem.get_modifier(&"headshot_mult")
+		var new_v := cur * card.headshot_mult_mult
+		deltas.append("Headshot ×: %.2f → %.2f" % [cur, new_v])
+	if not is_equal_approx(card.reserve_mult, 1.0):
+		var cur := int(wd.reserve_ammo_max * CardSystem.get_modifier(&"reserve"))
+		var new_v := int(float(cur) * card.reserve_mult)
+		deltas.append("Reserve: %d → %d" % [cur, new_v])
+	if deltas.is_empty():
+		# Conditional effect cards (Marksman / Last Round / lifesteal) — describe their trigger.
+		preview_label.text = "On %s — effect: %s" % [wd.display_name, card.description]
+	else:
+		preview_label.text = "On %s\n%s" % [wd.display_name, "    ·    ".join(deltas)]
+
+func _clear_card_preview() -> void:
+	if preview_label == null:
+		return
+	preview_label.text = ""
+
+func _find_active_weapon() -> Weapon:
+	var wm := get_tree().current_scene.find_child("WeaponHolder", true, false)
+	if wm == null or not wm.has_method("get_active_weapon"):
+		return null
+	var w = wm.get_active_weapon()
+	if w is Weapon:
+		return w as Weapon
+	return null
 
 func _on_card_picked(idx: int) -> void:
 	if _state != State.INTERACTIVE:

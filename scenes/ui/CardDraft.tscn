@@ -46,6 +46,15 @@ size_flags_horizontal = 4
 custom_minimum_size = Vector2(900, 380)
 alignment = 1
 
+[node name="PreviewLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.85, 0.95, 0.7, 1)
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3
+
 [node name="Spacer2" type="Control" parent="Panel/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 24)
