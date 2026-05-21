@@ -71,7 +71,7 @@ func _on_start_pressed() -> void:
 	print("[TitleScreen] start pressed, loading Main.tscn")
 	AudioMan.register_first_gesture()
 	AudioMan.play_ui_click()
-	GameState.start_run()
+	# Main._ready calls GameState.start_run() — don't double-call here.
 	var err := get_tree().change_scene_to_file("res://scenes/Main.tscn")
 	if err != OK:
 		push_error("[TitleScreen] scene change failed: %d" % err)

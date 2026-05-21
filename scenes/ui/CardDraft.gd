@@ -174,6 +174,13 @@ func _make_card_button(card: CardData, index: int) -> Button:
 func _show_card_preview(card: CardData) -> void:
 	if preview_label == null:
 		return
+	# Synergy cards: warn if the requirement isn't met yet.
+	if card.requires_tag != &"" and card.requires_count > 0:
+		var have: int = CardSystem.count_tag(card.requires_tag)
+		if have < card.requires_count:
+			var still: int = card.requires_count - have
+			preview_label.text = "SYNERGY LOCKED — need %d more %s card(s) before this activates" % [still, String(card.requires_tag).capitalize()]
+			return
 	var weapon: Weapon = _find_active_weapon()
 	if weapon == null or weapon.data == null:
 		preview_label.text = ""
