@@ -39,7 +39,7 @@ func _build_body() -> RigidBody3D:
 	b.continuous_cd = false
 	b.can_sleep = true
 	b.collision_layer = 0  # casings don't get hit by raycasts
-	b.collision_mask = 1   # collide with world only
+	b.collision_mask = 2   # collide with environment (floor + barrier — layer 2)
 	b.contact_monitor = false
 	b.visible = false
 	b.freeze = true

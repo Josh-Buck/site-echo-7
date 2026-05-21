@@ -180,9 +180,8 @@ func _on_enemy_killed(_enemy: Node, _src: Node, headshot: bool, _pos: Vector3) -
 	_update_streak_label()
 	if _kill_streak == 3 or _kill_streak == 5 or _kill_streak == 10 or _kill_streak == 20:
 		_pop_streak_tier()
-	if headshot:
-		_hit_pause()
 	# Kill-flavored hit marker stacks on top of the damage-flavored one.
+	# Headshot hit-pause is owned by the HitPause node (Player.tscn child) — single owner of time_scale.
 	_flash_hit_marker(headshot, true)
 
 func _streak_tier(streak: int) -> Dictionary:
@@ -213,13 +212,6 @@ func _pop_streak_tier() -> void:
 	var tw := create_tween()
 	tw.tween_property(streak_label, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.parallel().tween_property(streak_label, "modulate", Color(1, 1, 1, 1), 0.45)
-
-func _hit_pause() -> void:
-	# Brief Engine.time_scale dip for "punch" on critical kills.
-	# create_timer args: time, process_always, process_in_physics, ignore_time_scale
-	Engine.time_scale = 0.08
-	var t := get_tree().create_timer(0.055, true, false, true)
-	t.timeout.connect(func(): Engine.time_scale = 1.0)
 
 func _on_tokens_changed(new_total: int, _delta: int) -> void:
 	tokens_label.text = "TOKENS: %d" % new_total
