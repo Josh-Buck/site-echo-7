@@ -36,3 +36,4 @@ export/
 
 # Local-only Godot files
 override.cfg
+.aider*
