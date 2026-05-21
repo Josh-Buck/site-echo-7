@@ -1,5 +1,7 @@
 # Design plan — godot-shooter
 
+> **Status (live).** M0 / M1 / M2 are shipped end-to-end. M3 is *substantially* complete — all listed weapons, enemies, bosses, cards (30 + 3 synergy = 33), challenges (26), shop, card draft + buffer, card hover preview, lifetime stats screen, challenges browser, Director phase-2 rage, spawn telegraph, pause menu, settings, two arenas (Containment Lab + Cooling Tower), procedural audio + real CC0 SFX, weapon kick/PBR/casings, blood VFX, hit pause, screen shake, damage numbers, hit markers, wave intro banner with composition + deck reminder. The unticked items below are historical — see **`docs/production-gaps.md`** for the live punch list of what still blocks v1.0 (mostly real 3D art, music, accessibility, and a few P1 polish items).
+
 The locked, milestone-by-milestone plan. Companion to `CLAUDE.md` (the rules) and `docs/non-negotiables.md` (the constraints). Open questions at the bottom.
 
 ## Fiction & framing (one paragraph)

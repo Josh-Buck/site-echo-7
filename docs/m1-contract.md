@@ -1,5 +1,7 @@
 # M1 integration contract
 
+> **Historical — M1 shipped.** The constants below are still accurate for the current codebase (player at 0,1.6,0; barrier radius 3.0; spawn ring radius 12; 8 spawn points; collision layers unchanged). The "files to create" sections are outdated — see **`docs/codebase-map.md`** for the live file index.
+
 Shared constants and file ownership for the M1 parallel build. Agents read this so their work integrates cleanly.
 
 ## Coordinate system
