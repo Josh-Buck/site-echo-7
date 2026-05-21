@@ -18,6 +18,8 @@ var _queue: Array[ChallengeData] = []
 var _busy: bool = false
 
 func _ready() -> void:
+	# Toast should slide even while card draft / shop / pause have the tree paused.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 100
 	_panel.modulate.a = 0.0
 	_panel.position.x = OFFSCREEN_X

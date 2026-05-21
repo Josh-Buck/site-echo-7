@@ -69,11 +69,17 @@ func register_first_gesture() -> void:
 	print("[AudioMan] first user gesture registered, audio enabled")
 
 func _apply_master_volume() -> void:
-	var vol: float = float(MetaProgress.get_setting("master_volume", 1.0))
-	set_master_volume(vol)
+	# Cold-boot application of ALL persisted bus volumes — SFX/Music sliders
+	# would otherwise no-op until the player visits SettingsScreen.
+	set_master_volume(float(MetaProgress.get_setting("master_volume", 1.0)))
+	set_bus_linear("SFX", float(MetaProgress.get_setting("sfx_volume", 1.0)))
+	set_bus_linear("Music", float(MetaProgress.get_setting("music_volume", 1.0)))
 
 func set_master_volume(linear: float) -> void:
-	var bus := AudioServer.get_bus_index("Master")
+	set_bus_linear("Master", linear)
+
+func set_bus_linear(bus_name: String, linear: float) -> void:
+	var bus := AudioServer.get_bus_index(bus_name)
 	if bus < 0:
 		return
 	linear = clamp(linear, 0.0, 1.0)
