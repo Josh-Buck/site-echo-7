@@ -74,7 +74,7 @@ func _apply_pbr_materials() -> void:
 func _start_ambient_hum() -> void:
 	_hum = AudioStreamPlayer.new()
 	_hum.stream = LAB_HUM
-	_hum.bus = &"Master"
+	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
 	# Industrial feel: slightly louder + pitched down for a deeper drone.
 	_hum.volume_db = -16.0
 	_hum.pitch_scale = 0.89

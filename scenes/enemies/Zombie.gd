@@ -85,12 +85,14 @@ func _init_footsteps() -> void:
 	_footstep_timer = randf_range(0.0, _footstep_interval)
 
 func _pick_footstep_pool() -> Array:
-	var scene_path := ""
+	# Main.tscn replaces its Arena child in-place (no scene_change), so checking
+	# the current_scene path always returns "Main.tscn". We have to read the
+	# actual Arena instance's source file instead.
 	var cs := get_tree().current_scene
 	if cs:
-		scene_path = cs.scene_file_path
-	if "CoolingTower" in scene_path:
-		return FOOTSTEPS_METAL
+		var arena := cs.get_node_or_null("Arena")
+		if arena and arena.scene_file_path.find("CoolingTower") != -1:
+			return FOOTSTEPS_METAL
 	return FOOTSTEPS_CONCRETE
 
 func _init_audio_pitch() -> void:
