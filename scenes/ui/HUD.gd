@@ -49,7 +49,6 @@ func _ready() -> void:
 	EventBus.enemy_killed.connect(_on_enemy_killed)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
 	EventBus.card_drafted.connect(_on_card_drafted)
-	EventBus.card_offered.connect(_on_card_offered)  # Ensure card_offered is connected
 	EventBus.enemy_damaged.connect(_on_enemy_damaged)
 	hit_marker.visible = false
 	boss_banner.visible = false
@@ -219,12 +218,6 @@ func _on_tokens_changed(new_total: int, _delta: int) -> void:
 
 func _on_card_drafted(_card) -> void:
 	_update_deck_display()
-
-func _on_card_offered(choices: Array) -> void:
-	var names: Array[String] = []
-	for c in choices:
-		names.append(c.display_name)
-	deck_label.text = "OFFERED DECK: " + " · ".join(names)
 
 func _update_deck_display() -> void:
 	if deck_label == null:
