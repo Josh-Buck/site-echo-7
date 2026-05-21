@@ -34,6 +34,7 @@ var _groan_timer: float = 0.0
 var _footstep_timer: float = 0.0
 var _footstep_interval: float = 0.45
 var _footstep_pool: Array = []
+var _enraged: bool = false  # Director phase-2 trigger
 
 const BARRIER_RADIUS: float = 3.0
 # Cap on simultaneous footstep emitters per tick — nearest-N to listener.
@@ -218,9 +219,20 @@ func _state_chase(_delta: float) -> void:
 	# Direct steering — arena is a flat circle with the barrier as the only obstacle.
 	# CharacterBody3D.move_and_slide handles sliding along the barrier collision.
 	var dir := to_target / dist
-	velocity.x = dir.x * data.move_speed
-	velocity.z = dir.z * data.move_speed
+	var spd := _effective_move_speed()
+	velocity.x = dir.x * spd
+	velocity.z = dir.z * spd
 	look_at(global_position + Vector3(dir.x, 0.0, dir.z), Vector3.UP)
+
+func _effective_move_speed() -> float:
+	if data == null:
+		return 0.0
+	return data.move_speed * (1.5 if _enraged else 1.0)
+
+func _effective_attack_damage() -> float:
+	if data == null:
+		return 0.0
+	return data.attack_damage * (1.25 if _enraged else 1.0)
 
 func _state_attack(delta: float) -> void:
 	velocity.x = 0.0
@@ -238,18 +250,19 @@ func _state_attack(delta: float) -> void:
 		_attack_cooldown = 1.0 / max(0.1, data.attack_rate)
 
 func _perform_attack() -> void:
+	var dmg := _effective_attack_damage()
 	match data.attack_type:
 		0:  # Melee
 			_play_audio(attack_growl)
 			if _target and _target.has_method("take_damage"):
-				_target.take_damage(data.attack_damage, self)
+				_target.take_damage(dmg, self)
 				_play_audio(attack_hit)
 		1:  # Ranged
 			_play_audio(attack_growl)
 			_fire_projectile()
 		2:  # Suicide
 			if _target and _target.has_method("take_damage"):
-				_target.take_damage(data.attack_damage, self)
+				_target.take_damage(dmg, self)
 				_play_audio(attack_hit)
 			# Self-destruct: skip past stagger, go straight to die.
 			state = AIState.DIE
@@ -333,6 +346,7 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 	current_hp -= amount
 	EventBus.enemy_damaged.emit(self, amount, source, hit_position, is_headshot)
 	_spawn_blood_burst(hit_position, is_headshot)
+	_check_director_rage()
 	if current_hp <= 0.0:
 		state = AIState.DIE
 		_die_timer = DISSOLVE_TIME
@@ -349,6 +363,29 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 func is_headshot_position(pos: Vector3) -> bool:
 	# Head sphere is centered at +1.55, radius 0.2. Anything in the head sphere zone counts.
 	return pos.y > global_position.y + 1.35
+
+func _check_director_rage() -> void:
+	# Director (final boss) enters a phase-2 rage when HP drops below 50% — faster,
+	# hits harder, body color shifts to telegraph the threat increase.
+	if _enraged or data == null or data.id != &"director":
+		return
+	if current_hp > data.max_hp * 0.5:
+		return
+	_enraged = true
+	# Recolor body + head to a brighter red, intensify eye glow.
+	var rage_body := Color(0.85, 0.05, 0.08, 1)
+	var rage_head := Color(1.0, 0.1, 0.12, 1)
+	var rage_eyes := Color(1.0, 0.4, 0.3, 1)
+	_tint_mesh($Mesh, rage_body, false)
+	_tint_mesh($Head, rage_head, false)
+	_tint_mesh($EyeL, rage_eyes, true, 7.0)
+	_tint_mesh($EyeR, rage_eyes, true, 7.0)
+	# Brief scale-pop tween — visual exclamation.
+	var tw := create_tween()
+	tw.tween_property(self, "scale", scale * 1.15, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "scale", scale, 0.32)
+	# Diegetic audio cue: re-use death roar at full pitch as a phase-shift bellow.
+	_play_audio(attack_growl)
 
 func _spawn_blood_burst(at: Vector3, headshot: bool) -> void:
 	if not MetaProgress.gore_enabled():

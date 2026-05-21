@@ -3,6 +3,8 @@ extends Control
 const UNLOCKS: Array[Dictionary] = [
 	{"kind": "weapon", "id": "ar_standard", "name": "Assault Rifle", "desc": "Unlock the Assault Rifle as an in-run weapon option.", "cost": 250, "category": "Weapons"},
 	{"kind": "weapon", "id": "shotgun_combat", "name": "Combat Shotgun", "desc": "Unlock the Combat Shotgun as an in-run weapon option.", "cost": 400, "category": "Weapons"},
+	{"kind": "weapon", "id": "smg_compact", "name": "Compact SMG", "desc": "Unlock the Compact SMG — high RPM, low per-shot damage.", "cost": 550, "category": "Weapons"},
+	{"kind": "weapon", "id": "bolt_action", "name": "Bolt-Action Rifle", "desc": "Unlock the Bolt-Action Rifle — one-shot precision, slow to chamber.", "cost": 700, "category": "Weapons"},
 	{"kind": "perk", "id": &"perk_combat_veteran", "name": "Combat Veteran", "desc": "Start each run with +20 tokens.", "cost": 100, "category": "Starter Perks"},
 	{"kind": "perk", "id": &"perk_quick_draft", "name": "Quick Draft", "desc": "First card draft of every run offers 5 cards instead of 3.", "cost": 200, "category": "Starter Perks"},
 	{"kind": "perk", "id": &"perk_quartermaster", "name": "Quartermaster", "desc": "Start each run with 1 random card already drafted.", "cost": 250, "category": "Starter Perks"},
