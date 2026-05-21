@@ -17,9 +17,15 @@ var _recoil_yaw: float = 0.0
 var _recoil_recovery: float = 0.3
 var _shake_amount: float = 0.0
 var _shake_seed: float = 0.0
+var _sway_phase: float = 0.0
 
 const SHAKE_DECAY: float = 14.0
 const SHAKE_MAX: float = 0.8
+# Idle weapon/camera sway — sells "alive" instead of "snap-still."
+const SWAY_AMP_PITCH: float = 0.0028  # ~0.16°
+const SWAY_AMP_YAW: float = 0.0022
+const SWAY_FREQ_PITCH: float = 1.15
+const SWAY_FREQ_YAW: float = 0.78
 
 func _ready() -> void:
 	# Browsers block pointer lock without a user gesture — we wait for the first click.
@@ -62,8 +68,16 @@ func _process(delta: float) -> void:
 		var t: float = float(Time.get_ticks_msec()) * 0.001
 		shake_x = sin((t + _shake_seed) * 60.0) * _shake_amount * 0.03
 		shake_y = cos((t + _shake_seed) * 73.0) * _shake_amount * 0.03
-	rotation.y = _yaw + _recoil_yaw + shake_x
-	camera_pivot.rotation.x = _pitch + _recoil_pitch + shake_y
+	# Idle breathing sway. Suppressed while the player is firing (shake spike) or
+	# while the cursor is loose (menu open) so menus don't have a drifting weapon.
+	_sway_phase += delta
+	var sway_pitch := 0.0
+	var sway_yaw := 0.0
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and _shake_amount < 0.05:
+		sway_pitch = sin(_sway_phase * SWAY_FREQ_PITCH) * SWAY_AMP_PITCH
+		sway_yaw = sin(_sway_phase * SWAY_FREQ_YAW + 1.3) * SWAY_AMP_YAW
+	rotation.y = _yaw + _recoil_yaw + shake_x + sway_yaw
+	camera_pivot.rotation.x = _pitch + _recoil_pitch + shake_y + sway_pitch
 
 func add_shake(magnitude: float) -> void:
 	_shake_amount = min(SHAKE_MAX, _shake_amount + magnitude)

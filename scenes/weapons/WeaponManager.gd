@@ -82,6 +82,9 @@ func _activate(index: int) -> void:
 		w.visible = (i == index)
 		w.process_mode = Node.PROCESS_MODE_INHERIT if i == index else Node.PROCESS_MODE_DISABLED
 	var new_weapon: Weapon = _slots[index]
+	# Raise animation: kick the new weapon down + tilted, _update_kick springs it up.
+	if new_weapon != null and new_weapon.has_method("begin_swap_in"):
+		new_weapon.begin_swap_in()
 	weapon_changed.emit(new_weapon)
 	EventBus.weapon_swapped.emit(old, new_weapon)
 

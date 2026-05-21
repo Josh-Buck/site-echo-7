@@ -285,6 +285,11 @@ func _kick() -> void:
 	_kick_offset.z = KICK_BACK_M
 	_kick_pitch = deg_to_rad(KICK_PITCH_DEG)
 
+func begin_swap_in() -> void:
+	# Drop the weapon below its rest position and let _update_kick spring it up.
+	_kick_offset.y = -0.18
+	_kick_pitch = deg_to_rad(-4.0)
+
 func _update_kick(delta: float) -> void:
 	var decay := exp(-delta / max(0.02, _kick_recovery))
 	_kick_offset *= decay
