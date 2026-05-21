@@ -14,15 +14,31 @@ const OFFER_POOL: Array[Dictionary] = [
 ]
 
 var _current_offers: Array[Dictionary] = []
+# Latched by wave_ended. Quartermaster perk fires card_drafted at run start
+# (before wave 1), and we don't want the shop to pop up then.
+var _allow_open: bool = false
 
 func _ready() -> void:
 	panel.visible = false
 	EventBus.card_drafted.connect(_on_card_drafted)
 	EventBus.tokens_changed.connect(_on_tokens_changed)
+	EventBus.wave_ended.connect(_on_wave_ended)
+	EventBus.run_started.connect(_on_run_started)
 	continue_button.pressed.connect(_on_continue_pressed)
 	continue_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
+func _on_run_started() -> void:
+	_allow_open = false
+
+func _on_wave_ended(_round_n: int) -> void:
+	_allow_open = true
+
 func _on_card_drafted(_card) -> void:
+	if not _allow_open:
+		return
+	# One-shot per wave so a mid-run perk draft (e.g. future card pool refresh) can't
+	# re-trigger the shop.
+	_allow_open = false
 	_generate_offers()
 	_populate()
 	panel.visible = true
