@@ -72,12 +72,14 @@ func _on_buy(idx: int) -> void:
 	_populate()
 
 func _apply_effect(effect_id: String) -> void:
+	# Don't emit weapon_reloaded here — it would play the reload SFX on top of
+	# the shop's confirm sound, reading as a phantom reload click. HUD polls
+	# the active weapon's ammo state every frame so display still updates.
 	match effect_id:
 		"ammo_topup":
 			var w := _get_active_weapon()
 			if w != null:
 				w.reserve_ammo = w.get_effective_reserve_max()
-				EventBus.weapon_reloaded.emit(w)
 		"all_ammo":
 			var wm := _get_weapon_manager()
 			if wm != null:
@@ -85,7 +87,6 @@ func _apply_effect(effect_id: String) -> void:
 					if child is Weapon:
 						var weapon: Weapon = child
 						weapon.reserve_ammo = weapon.get_effective_reserve_max()
-						EventBus.weapon_reloaded.emit(weapon)
 		"mag_refill":
 			var w := _get_active_weapon()
 			if w != null:
@@ -95,7 +96,6 @@ func _apply_effect(effect_id: String) -> void:
 					var taken: int = min(needed, w.reserve_ammo)
 					w.current_ammo += taken
 					w.reserve_ammo -= taken
-					EventBus.weapon_reloaded.emit(w)
 		"barrier_repair":
 			var barriers := get_tree().get_nodes_in_group("barriers")
 			if barriers.size() > 0:
