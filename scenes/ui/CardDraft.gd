@@ -142,7 +142,6 @@ func _enable_card_buttons() -> void:
 func _make_card_button(card: CardData, index: int) -> Button:
 	var btn := Button.new()
 	btn.custom_minimum_size = Vector2(280, 360)
-	btn.theme_override_font_sizes = {}
 	btn.clip_text = false
 	btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var name_text := card.display_name
