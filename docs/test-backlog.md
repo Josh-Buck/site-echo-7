@@ -6,7 +6,26 @@ Big push just landed — game is now 20 waves long with two bosses, 33 cards (in
 
 ---
 
-## 🧹 AUDIT PASS — 9 bug fixes (latest batch)
+## 🚨 BOOT-BREAKING FIXES — must verify these first
+
+Headless --check-only revealed 7 parse-level errors that would prevent the game from booting (or silently break sub-systems). All fixed and deployed:
+
+- [ ] **Game now boots cleanly** — was failing AudioMan, HUD, Arena, CoolingTower, Barrier, BulletTracer parse checks.
+- [ ] **SMG (key 5) is reachable** — WeaponManager had SLOT_COUNT=4, so SMG and BoltAction were instantiated then immediately skipped because their ids weren't in SLOT_BY_ID. Even if a player unlocked them with RD, they couldn't equip them.
+- [ ] **Bolt-Action (key 6) is reachable** — same fix.
+
+Specific code changes (all in `08817a9`):
+1. `autoload/AudioMan.gd`: Dictionary.get() return value typed explicitly
+2. `scenes/ui/HUD.gd`: clamp() result typed explicitly
+3. `scenes/weapons/vfx/BulletTracer.gd`: clamp() result typed explicitly
+4. `scenes/arena/Arena.gd` + `scenes/arena/CoolingTower.gd`: mutate const audio resource via local var (was rejected as const-assignment)
+5. `scenes/barrier/Barrier.gd`: same const-mutation pattern
+6. `scenes/weapons/WeaponManager.gd`: slots 4 and 5 added; input handler reads swap_quinary / swap_senary
+7. `Arena._build_perimeter_walls()` + `CoolingTower` wall builder: add_child before look_at (eliminates "Node not inside tree" runtime spam)
+
+---
+
+## 🧹 AUDIT PASS — 9 bug fixes (prior batch)
 
 Read every major code file, fixed concrete issues found:
 
