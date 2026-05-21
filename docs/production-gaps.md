@@ -37,22 +37,22 @@ Tiers:
 ## P1 — Strongly expected
 
 ### Content depth
-- [ ] **5th weapon: SMG** (high RPM, low damage, big mag) — listed in M3 design plan.
-- [ ] **6th weapon: Bolt-Action Rifle** (one-shot precision, slow chamber) — listed in M3 design plan.
-- [ ] **Spitter + Exploder enemy types** — verify both exist with distinct mechanics; the AcidSpit scene suggests Spitter is partly built. Fill any gap.
+- [x] **5th weapon: SMG** ✓ shipped — high RPM, low damage, 35 mag, slot 5 / key 5, 550 RD unlock.
+- [x] **6th weapon: Bolt-Action Rifle** ✓ shipped — 0.7 rps, 60 dmg, HS×3, slot 6 / key 6, 700 RD unlock.
+- [x] **Spitter + Exploder** ✓ shipped (M3d earlier).
 - [ ] **Elite / armored variants** of basic enemies for mid-round spice.
-- [ ] **Curse cards** (design plan open question — lock in or v2). Tradeoff cards that downside one stat to massively boost another. Drives deck-building tension.
-- [ ] **Synergy cards** that only activate when specific other cards are in the deck. Currently most cards are flat stat boosts.
-- [ ] **More boss phases.** The Director should have at least two phases (full HP / sub-50%). The Subject mid-boss should have one telegraphed special.
+- [x] **Curse cards** ✓ shipped — Glass Cannon, Field Trauma, Gambler (tradeoff cards).
+- [x] **Synergy cards** ✓ shipped — Pyromaniac (fire ≥3), Surgical Precision (precision ≥2), Munitions Specialist (ammo ≥2). Tag map in CardSystem.CARD_TAGS.
+- [x] **More boss phases** ✓ shipped — Director phase-2 rage at HP < 50% (speed +50%, damage +25%, body recolor). Subject mid-boss still single-phase.
 
 ### UI / UX
-- [ ] **Challenges browser in MetaScreen.** Today challenges complete via toast but the player can't see pending/complete challenges anywhere. Needs a list view with tier filters + progress bars + RD payouts.
-- [ ] **Lifetime stats screen.** Total kills, best wave, total runs, RD earned/spent, favorite weapon, favorite card. Lives in the title screen or meta screen.
-- [ ] **Spawn telegraph / radial compass.** Design-plan.md core loop step 1 mentions "audio sting + radial compass markers light up." Currently spawns happen with only the audio cue.
-- [ ] **Damage numbers** floating off enemies on hit (toggleable). Helps card-effect feedback ("did Marksman just trigger?").
-- [ ] **Card hover preview** — when hovering a card in draft, show projected stats delta on current weapon ("Damage Up: 12 → 14.4").
-- [ ] **Reload hint flash** when ammo < 25%.
-- [ ] **Wave intro banner** with composition preview ("Wave 14 — 8 Walkers, 4 Runners, 1 Tank").
+- [x] **Challenges browser** ✓ shipped — ChallengesScreen.tscn, reachable from Meta Progression. Lists all 26 challenges by tier with counter progress.
+- [x] **Lifetime stats screen** ✓ shipped — LifetimeStatsScreen.tscn, reachable from title. Career / Combat / Per-weapon / Challenges sections.
+- [x] **Spawn telegraph** ✓ shipped — 0.9s warning red light pulse + descending sting at each spawn point before zombies pop in.
+- [x] **Damage numbers** ✓ shipped (M3a).
+- [x] **Card hover preview** ✓ shipped — projects stat deltas on the active weapon when hovering a draft card.
+- [x] **Reload hint flash** ✓ shipped (M3-polish).
+- [x] **Wave intro banner with composition** ✓ shipped (M3-polish). Also now includes "Deck:" reminder line.
 - [ ] **Resume-run flow** on title screen — Continue / New Run buttons, confirm-dialog if New overrides save.
 
 ### Accessibility

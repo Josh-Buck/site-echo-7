@@ -76,10 +76,12 @@ Main.tscn (root: Node3D)
 │   └─ SpawnPoint0..N (Marker3D, group "spawn_points")
 ├─ Player (Player.tscn instance, transform 0,1.6,0)
 │   └─ CameraPivot/Camera3D/WeaponHolder (WeaponManager.gd)
-│       ├─ Pistol (Pistol.tscn) — slot 0
-│       ├─ AR (AR.tscn)         — slot 1 (RD-locked until unlocked)
-│       ├─ Shotgun (Shotgun.tscn) — slot 2 (RD-locked)
-│       └─ Sidearm (Sidearm.tscn) — slot 3 (infinite ammo)
+│       ├─ Pistol (Pistol.tscn)     — slot 0 (key 1, starter)
+│       ├─ AR (AR.tscn)             — slot 1 (key 2, RD-locked 250)
+│       ├─ Shotgun (Shotgun.tscn)   — slot 2 (key 3, RD-locked 400)
+│       ├─ Sidearm (Sidearm.tscn)   — slot 3 (key 4, starter, infinite ammo)
+│       ├─ SMG (SMG.tscn)           — slot 4 (key 5, RD-locked 550)
+│       └─ BoltAction (BoltAction.tscn) — slot 5 (key 6, RD-locked 700)
 ├─ SpawnRing (SpawnRing.gd) — drives wave queue
 ├─ HUD (HUD.tscn) — CanvasLayer
 ├─ CardDraft (CardDraft.tscn) — between-wave overlay #1
@@ -100,11 +102,11 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 | File | Purpose |
 |---|---|
 | `Weapon.gd` | Base weapon. Fire/reload/recoil/payload pipeline. Muzzle flash, tracer, sparks, kick, casings, PBR. |
-| `Weapon.tscn` | Placeholder base mesh. Inherited by Pistol/Shotgun/AR/Sidearm. |
-| `Pistol.tscn` / `Shotgun.tscn` / `AR.tscn` / `Sidearm.tscn` | Per-weapon viewmodel + assigned `WeaponData` resource. |
-| `WeaponManager.gd` | 4-slot weapon swap. RD-gates slots via `MetaProgress.has_weapon`. |
+| `Weapon.tscn` | Placeholder base mesh. Inherited by Pistol/Shotgun/AR/Sidearm/SMG/BoltAction. |
+| `Pistol.tscn` / `Shotgun.tscn` / `AR.tscn` / `Sidearm.tscn` / `SMG.tscn` / `BoltAction.tscn` | Per-weapon viewmodel + assigned `WeaponData` resource. |
+| `WeaponManager.gd` | 6-slot weapon swap (keys 1-6, Q to cycle). RD-gates slots via `MetaProgress.has_weapon`. |
 | `data/weapon_data.gd` | `WeaponData` Resource class. |
-| `data/*.tres` | `pistol_m1`, `ar`, `shotgun`, `sidearm` — stat resources. |
+| `data/*.tres` | `pistol_m1`, `ar`, `shotgun`, `sidearm`, `smg`, `bolt_action` — stat resources. |
 | `data/attachments/*.tres` | Schema stub. Not yet wired into gameplay. |
 | `vfx/BulletTracer.gd/tscn` | Per-shot tracer line. |
 | `vfx/ImpactSparks.gd/tscn` | Spark burst at non-enemy hit point. |
@@ -113,7 +115,7 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 
 | File | Purpose |
 |---|---|
-| `Zombie.gd` | All enemy behavior. State machine (Idle/Chase/Attack/Stagger/Die). Direct steering (no navmesh). Per-archetype tinting + size from EnemyData. |
+| `Zombie.gd` | All enemy behavior. State machine (Idle/Chase/Attack/Stagger/Die). Direct steering (no navmesh). Per-archetype tinting + size from EnemyData. Director enters phase-2 rage at HP<50% (speed/dmg+color shift). |
 | `Zombie.tscn` | Body + head + eyes capsule rig. Used by every archetype. |
 | `data/enemy_data.gd` | `EnemyData` Resource class. |
 | `data/*.tres` | walker, runner, tank, exploder, spitter, subject (mini-boss), director (final boss). |
@@ -126,7 +128,7 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 |---|---|
 | `Arena.gd/tscn` | Containment Lab (waves 1–10 default arena). Floor, walls, lights, spawn points. |
 | `CoolingTower.gd/tscn` | Second arena (waves 11+). |
-| `SpawnRing.gd` | Wave queue runner. Hands out enemies from shuffled queue, respects active cap, fires wave_started / wave_ended. |
+| `SpawnRing.gd` | Wave queue runner. Hands out enemies from shuffled queue, respects active cap, fires wave_started / wave_ended. 0.9s spawn telegraph (light pulse + sting) precedes each zombie pop-in. |
 | `data/wave_data.gd` + `wave_1..wave_20.tres` | Per-wave composition + counts. |
 
 ### UI (`scenes/ui/`)
@@ -135,9 +137,11 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 |---|---|
 | `HUD.gd/tscn` | In-game HUD: HP, ammo, weapon name, wave, score, tokens, deck, hit marker, damage numbers, streak, vignette, damage arrow, boss banner, wave intro banner. |
 | `TitleScreen.gd/tscn` | Boot screen. Start / Meta / Settings. |
-| `MetaScreen.gd/tscn` | Spend RD on perks, barrier upgrades, weapon unlocks. |
+| `MetaScreen.gd/tscn` | Spend RD on perks, barrier upgrades, weapon unlocks. Includes VIEW CHALLENGES button → ChallengesScreen. |
 | `SettingsScreen.gd/tscn` | Sensitivity, FOV, fullscreen, gore toggle, Master/SFX/Music volumes. |
-| `CardDraft.gd/tscn` | Between-wave card pick. Buffer → awaiting-gate → interactive state machine. |
+| `ChallengesScreen.gd/tscn` | Browser for all 26 challenges with tier-coloured rows, progress counters, completion state. Reachable from MetaScreen. |
+| `LifetimeStatsScreen.gd/tscn` | Career / Combat / Per-weapon / Challenges totals. Reachable from TitleScreen. |
+| `CardDraft.gd/tscn` | Between-wave card pick. Buffer → awaiting-gate → interactive state machine. Live hover preview projects card's stat deltas onto the active weapon. |
 | `Shop.gd/tscn` | Between-wave token spending. |
 | `WaveComplete.gd/tscn` | Wave summary + NEXT WAVE / RESTART. Also handles game-over (barrier breached) and victory (all waves cleared). |
 | `PauseMenu.gd/tscn` | ESC pause overlay. process_mode ALWAYS so it works during get_tree().paused. |
@@ -182,11 +186,11 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 
 ## When growing the codebase
 
-**Adding a new weapon:** Create `data/<id>.tres` + `<Name>.tscn` (inheriting Weapon.tscn). Add to `MetaProgress.STARTER_WEAPONS` (or RD-unlock list). Add slot binding in `WeaponManager.SLOT_BY_ID`. Add input action in `project.godot`.
+**Adding a new weapon:** Create `data/<id>.tres` + `<Name>.tscn` (inheriting Weapon.tscn). Add slot binding in `WeaponManager.SLOT_BY_ID` and bump `SLOT_COUNT` if needed. Add the input action (`swap_X`) in `project.godot` AND handler in `WeaponManager._unhandled_input`. Instance the new weapon in `Player.tscn` under `WeaponHolder` (visible=false). If RD-locked: add an UNLOCKS entry in `MetaScreen.UNLOCKS` (`kind="weapon"`). Starter loadout lives in `MetaProgress.unlocked_weapons`.
 
 **Adding a new enemy:** Create `data/<id>.tres`. EnemyData.scene = `Zombie.tscn`. Tint/size in the .tres. Reference it in some `wave_N.tres`.
 
-**Adding a new card:** Create `data/cards/<id>.tres`. **Append to `CardSystem.STARTER_CARDS` manifest** (CRITICAL — won't load otherwise).
+**Adding a new card:** Create `data/cards/<id>.tres`. **Append to `CardSystem.STARTER_CARDS` manifest** (CRITICAL — won't load otherwise). If the card belongs to a synergy cluster, add its id → tag(s) entry in `CardSystem.CARD_TAGS`. If it's a SYNERGY card itself (only activates when N+ of a tag exist), set `requires_tag` + `requires_count` on the .tres.
 
 **Adding a new challenge:** Create `data/challenges/<id>.tres`. Append to `ChallengeTracker.CHALLENGE_PATHS`. Add tracking logic in ChallengeTracker if a new `tracking_kind`.
 

@@ -2,7 +2,50 @@
 
 Live URL: **https://josh-buck.github.io/site-echo-7/**
 
-Big push just landed — game is now 20 waves long with two bosses, 30 cards, 4 weapons. Delete lines as you verify or message me with broken items.
+Big push just landed — game is now 20 waves long with two bosses, 33 cards (incl. 3 synergies), 6 weapons. Delete lines as you verify or message me with broken items.
+
+---
+
+## 🆕 LATEST PUSH — verify these first
+
+### Card draft hover preview
+- [ ] Hovering a draft card shows a line at the bottom: "On Pistol — Fire rate: 4.00 → 5.00 /s" projecting the card's effect on the currently-equipped weapon
+- [ ] For conditional cards (Marksman, Last Round, Vampire Rounds) the preview shows the card's description text instead of a stat delta
+- [ ] Mouse exit clears the preview
+
+### Wave intro banner (deck line added)
+- [ ] WAVE 1 banner shows composition AND a second line "Deck: (empty)" — once you've drafted, subsequent waves show your active cards in that line
+
+### New weapons (RD-locked)
+- [ ] Meta Progression screen lists **Compact SMG** (550 RD) and **Bolt-Action Rifle** (700 RD) under Weapons
+- [ ] After buying SMG → next run, press `5` to swap to it. Full-auto, fast RPM, 35-round mag.
+- [ ] After buying Bolt-Action → next run, press `6`. Slow but one-shots Walkers (60 dmg).
+- [ ] HUD weapon name updates on each swap
+
+### Director phase-2 rage
+- [ ] On Wave 20, fight the Director down to ~half HP — body recolors to bright red, eyes intensify, audible growl, brief scale pop
+- [ ] After rage, the Director hits harder (≈68 dmg vs 55) and moves visibly faster
+
+### Spawn telegraph
+- [ ] During any wave, watch a spawn point: a red light pulses + a descending beep plays ~0.9s before each zombie spawn — gives directional cue
+- [ ] No double-spawn / no missing spawn when waves overlap
+
+### Card synergies (new legendaries)
+- [ ] Pyromaniac in the draft pool; only activates when you hold 3+ damage-cluster cards (Hollow Points, Hot Loads, Magnum Frame, etc.)
+- [ ] Surgical Precision activates with 2+ precision cards (Headstrong, Marksman, etc.)
+- [ ] Munitions Specialist activates with 2+ ammo cards (Extended Mag, Bandolier, etc.)
+- [ ] If synergy is not met, the bonus does NOT apply (verify via card hover preview — projected stats should not change for the synergy card)
+
+### Challenges browser
+- [ ] Meta Progression → VIEW CHALLENGES button → lists all 26 challenges grouped by tier (Bronze → Platinum)
+- [ ] Completed challenges show ✓ COMPLETE
+- [ ] Counter-based challenges (headshots_total, kills_<weapon>) show current / target
+- [ ] ESC or BACK returns to MetaScreen
+
+### Lifetime stats screen
+- [ ] Title screen has LIFETIME STATS button
+- [ ] Shows Career / Combat / Per-weapon / Challenges sections
+- [ ] total_runs / total_victories / total_rd_earned increment between runs
 
 ---
 
