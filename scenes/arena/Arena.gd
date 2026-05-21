@@ -68,7 +68,7 @@ func _start_ambient_hum() -> void:
 	_hum = AudioStreamPlayer.new()
 	_hum.stream = LAB_HUM
 	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
-	_hum.volume_db = -18.0
+	_hum.volume_db = -24.0
 	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
 	if LAB_HUM is AudioStreamOggVorbis:
 		var hum: AudioStreamOggVorbis = LAB_HUM
@@ -93,8 +93,8 @@ func _build_perimeter_walls() -> void:
 		mat = fallback
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(4.2, 4.5, 0.4)
-	var ring_radius := 16.0
-	var segments := 18
+	var ring_radius := 22.0
+	var segments := 22
 	var ring := Node3D.new()
 	ring.name = "PerimeterWalls"
 	add_child(ring)

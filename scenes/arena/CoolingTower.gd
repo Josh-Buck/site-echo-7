@@ -76,7 +76,7 @@ func _start_ambient_hum() -> void:
 	_hum.stream = LAB_HUM
 	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
 	# Industrial feel: slightly louder + pitched down for a deeper drone.
-	_hum.volume_db = -16.0
+	_hum.volume_db = -22.0
 	_hum.pitch_scale = 0.89
 	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
 	if LAB_HUM is AudioStreamOggVorbis:
@@ -104,7 +104,7 @@ func _build_perimeter_pipes() -> void:
 	pipe_mesh.top_radius = 0.35
 	pipe_mesh.bottom_radius = 0.35
 	pipe_mesh.height = 9.0
-	var ring_radius := 16.5
+	var ring_radius := 22.5
 	var segments := 14
 	var ring := Node3D.new()
 	ring.name = "PerimeterPipes"
@@ -165,7 +165,7 @@ func _build_girders() -> void:
 		var s := MeshInstance3D.new()
 		s.mesh = wall_mesh
 		s.set_surface_override_material(0, wall_mat)
-		s.position = Vector3(cos(ang) * 17.0, 0.8, sin(ang) * 17.0)
+		s.position = Vector3(cos(ang) * 23.0, 0.8, sin(ang) * 23.0)
 		s.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		walls.add_child(s)
 		s.look_at(Vector3(0, 0.8, 0), Vector3.UP)

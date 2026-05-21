@@ -241,46 +241,60 @@ func _make_stream(samples: PackedFloat32Array) -> AudioStreamWAV:
 # --- Specific sounds ---
 
 func _synth_pistol_fire() -> AudioStreamWAV:
-	var dur := 0.16
+	# Crack-body-tail: sharp transient, low-freq body, filtered noise tail.
+	# Each layer is exponentially decayed at a different rate so the shot reads
+	# as one "POP" instead of a noise hiss.
+	var dur := 0.22
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
 	samples.resize(n)
+	var last_noise: float = 0.0
 	for i in n:
 		var t: float = float(i) / SAMPLE_RATE
-		var env: float = exp(-t * 28.0)
-		var noise: float = randf() * 2.0 - 1.0
-		if i > 0:
-			noise = noise * 0.45 + samples[i-1] * 0.55
-		samples[i] = noise * env * 0.7
+		# Crack: very fast attack, ~5ms transient.
+		var crack: float = (randf() * 2.0 - 1.0) * exp(-t * 220.0) * 1.0
+		# Body: low sine at 140Hz, decaying over ~80ms.
+		var body: float = sin(2.0 * PI * 140.0 * t) * exp(-t * 22.0) * 0.55
+		# Tail: smoothed noise, longer decay.
+		var n_raw: float = randf() * 2.0 - 1.0
+		last_noise = n_raw * 0.35 + last_noise * 0.65
+		var tail: float = last_noise * exp(-t * 14.0) * 0.32
+		samples[i] = crack + body + tail
 	return _make_stream(samples)
 
 func _synth_shotgun_fire() -> AudioStreamWAV:
-	var dur := 0.28
+	# Same crack-body-tail structure but a beefier body (50Hz thump) and a longer tail.
+	var dur := 0.38
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
 	samples.resize(n)
+	var last_noise: float = 0.0
 	for i in n:
 		var t: float = float(i) / SAMPLE_RATE
-		var env: float = exp(-t * 14.0)
-		var noise: float = randf() * 2.0 - 1.0
-		if i > 0:
-			noise = noise * 0.3 + samples[i-1] * 0.7
-		var thump: float = sin(2.0 * PI * 80.0 * t) * exp(-t * 25.0) * 0.4
-		samples[i] = (noise * 0.7 + thump) * env * 0.95
+		var crack: float = (randf() * 2.0 - 1.0) * exp(-t * 140.0) * 1.0
+		var body: float = sin(2.0 * PI * 60.0 * t) * exp(-t * 9.0) * 0.7
+		var sub: float = sin(2.0 * PI * 38.0 * t) * exp(-t * 5.0) * 0.4
+		var n_raw: float = randf() * 2.0 - 1.0
+		last_noise = n_raw * 0.25 + last_noise * 0.75
+		var tail: float = last_noise * exp(-t * 7.0) * 0.4
+		samples[i] = crack + body + sub + tail
 	return _make_stream(samples)
 
 func _synth_ar_fire() -> AudioStreamWAV:
-	var dur := 0.09
+	# Tight crack with a slightly higher body — AR is sharper / shorter than pistol.
+	var dur := 0.12
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
 	samples.resize(n)
+	var last_noise: float = 0.0
 	for i in n:
 		var t: float = float(i) / SAMPLE_RATE
-		var env: float = exp(-t * 45.0)
-		var noise: float = randf() * 2.0 - 1.0
-		if i > 0:
-			noise = noise * 0.6 + samples[i-1] * 0.4
-		samples[i] = noise * env * 0.55
+		var crack: float = (randf() * 2.0 - 1.0) * exp(-t * 280.0) * 0.9
+		var body: float = sin(2.0 * PI * 200.0 * t) * exp(-t * 50.0) * 0.45
+		var n_raw: float = randf() * 2.0 - 1.0
+		last_noise = n_raw * 0.4 + last_noise * 0.6
+		var tail: float = last_noise * exp(-t * 32.0) * 0.22
+		samples[i] = crack + body + tail
 	return _make_stream(samples)
 
 func _synth_reload() -> AudioStreamWAV:
@@ -335,6 +349,7 @@ func _synth_zombie_death() -> AudioStreamWAV:
 	return _make_stream(samples)
 
 func _synth_barrier_hit() -> AudioStreamWAV:
+	# Metal thud — mostly tonal so it doesn't read as "gunshot." Lower volume too.
 	var dur := 0.22
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
@@ -342,9 +357,9 @@ func _synth_barrier_hit() -> AudioStreamWAV:
 	for i in n:
 		var t: float = float(i) / SAMPLE_RATE
 		var env: float = exp(-t * 14.0)
-		var clang: float = sin(2.0 * PI * 220.0 * t) * 0.35 + sin(2.0 * PI * 330.0 * t) * 0.28 + sin(2.0 * PI * 510.0 * t) * 0.15
-		var click: float = (randf() * 2.0 - 1.0) * exp(-t * 70.0) * 0.5
-		samples[i] = (clang + click) * env
+		var clang: float = sin(2.0 * PI * 220.0 * t) * 0.30 + sin(2.0 * PI * 330.0 * t) * 0.22 + sin(2.0 * PI * 510.0 * t) * 0.10
+		var click: float = (randf() * 2.0 - 1.0) * exp(-t * 90.0) * 0.18
+		samples[i] = (clang + click) * env * 0.6
 	return _make_stream(samples)
 
 func _synth_barrier_destroyed() -> AudioStreamWAV:
