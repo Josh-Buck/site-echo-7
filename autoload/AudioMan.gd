@@ -203,8 +203,24 @@ func _synth(id: String) -> AudioStreamWAV:
 		"wave_start": return _synth_wave_start()
 		"card_pick": return _synth_card_pick()
 		"shop_open": return _synth_shop_open()
+		"spawn_telegraph": return _synth_spawn_telegraph()
 	push_warning("[AudioMan] unknown sfx id: %s" % id)
 	return null
+
+func _synth_spawn_telegraph() -> AudioStreamWAV:
+	# Descending mid-frequency warning beep with noise grit — sells "breach incoming."
+	var dur := 0.28
+	var n := int(dur * SAMPLE_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(n)
+	for i in n:
+		var t: float = float(i) / SAMPLE_RATE
+		var env: float = exp(-t * 5.5) * 0.55
+		var f: float = lerp(280.0, 110.0, t / dur)
+		var tone: float = sin(2.0 * PI * f * t)
+		var grit: float = (randf() * 2.0 - 1.0) * 0.4
+		samples[i] = (tone * 0.65 + grit * 0.35) * env
+	return _make_stream(samples)
 
 # --- Synth helpers ---
 

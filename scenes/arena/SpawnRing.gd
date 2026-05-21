@@ -3,9 +3,12 @@ extends Node3D
 @export var waves: Array[Resource] = []  # of WaveData
 @export var auto_start: bool = true
 
+const TELEGRAPH_LEAD: float = 0.9  # seconds before spawn — gives player time to spin toward the breach
+
 var _spawn_points: Array = []
 var _spawn_queue: Array = []  # of EnemyData
 var _active_count: int = 0
+var _pending_count: int = 0  # telegraphed but not yet finalized
 var _total_to_spawn: int = 0
 var _wave_active: bool = false
 var _spawn_timer: float = 0.0
@@ -53,6 +56,7 @@ func _start_wave(wd: WaveData) -> void:
 	_current_wave = wd
 	_spawn_queue.clear()
 	_active_count = 0
+	_pending_count = 0
 	for i in wd.composition.size():
 		var enemy = wd.composition[i]
 		var count: int = wd.counts[i] if i < wd.counts.size() else 0
@@ -71,11 +75,13 @@ func _process(delta: float) -> void:
 	if not _wave_active:
 		return
 	_spawn_timer -= delta
-	if _spawn_timer <= 0.0 and not _spawn_queue.is_empty() and _active_count < _current_wave.simultaneous_active_cap:
-		_spawn_next()
+	if _spawn_timer <= 0.0 and not _spawn_queue.is_empty() and (_active_count + _pending_count) < _current_wave.simultaneous_active_cap:
+		_telegraph_and_schedule_spawn()
 		_spawn_timer = _spawn_interval
 
-func _spawn_next() -> void:
+# Player feedback: 0.9s before a zombie pops in, the spawn point flashes red and
+# plays a directional sting so the player can spin toward the threat.
+func _telegraph_and_schedule_spawn() -> void:
 	if _spawn_queue.is_empty() or _spawn_points.is_empty():
 		return
 	var enemy: EnemyData = _spawn_queue.pop_front()
@@ -84,6 +90,32 @@ func _spawn_next() -> void:
 		return
 	var idx := _pick_spawn_index()
 	var sp: Node3D = _spawn_points[idx]
+	_pending_count += 1
+	_play_telegraph_at(sp.global_position)
+	# Defer the actual spawn — timer survives pause for consistency with menu pausing.
+	var t := get_tree().create_timer(TELEGRAPH_LEAD)
+	t.timeout.connect(_finalize_spawn.bind(enemy, sp))
+
+func _play_telegraph_at(world_pos: Vector3) -> void:
+	AudioMan.play_sfx("spawn_telegraph", world_pos)
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.25, 0.15, 1)
+	light.light_energy = 5.0
+	light.omni_range = 5.5
+	light.shadow_enabled = false
+	get_tree().current_scene.add_child(light)
+	light.global_position = world_pos + Vector3(0, 1.0, 0)
+	var tw := create_tween()
+	tw.tween_property(light, "light_energy", 0.0, TELEGRAPH_LEAD)
+	tw.tween_callback(light.queue_free)
+
+func _finalize_spawn(enemy: EnemyData, sp: Node3D) -> void:
+	_pending_count = max(0, _pending_count - 1)
+	if not _wave_active:
+		return
+	if not is_instance_valid(sp):
+		# Spawn point freed (e.g. arena swapped mid-telegraph) — drop this spawn.
+		return
 	var inst: Node = enemy.scene.instantiate()
 	if "data" in inst:
 		inst.data = enemy
@@ -103,6 +135,7 @@ func _on_enemy_killed(_enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> voi
 	if not _wave_active:
 		return
 	_active_count = max(0, _active_count - 1)
-	if _spawn_queue.is_empty() and _active_count == 0:
+	# Wave only ends when queue drained AND nothing live AND nothing pending in the telegraph window.
+	if _spawn_queue.is_empty() and _active_count == 0 and _pending_count == 0:
 		_wave_active = false
 		EventBus.wave_ended.emit(_current_wave.round_number)
