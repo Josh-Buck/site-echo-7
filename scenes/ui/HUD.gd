@@ -61,6 +61,21 @@ func _ready() -> void:
 	score_label.text = "0"
 	tokens_label.text = "TOKENS: 0"
 	_update_deck_display()
+	# Player+WeaponManager are higher in the scene tree, so they ready BEFORE HUD and
+	# the initial weapon_swapped emit fires before this _ready connects. Poll once
+	# so the ammo label shows real numbers instead of "-- / --" until first shot.
+	call_deferred("_seed_active_weapon")
+
+func _seed_active_weapon() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	var wm := scene.find_child("WeaponHolder", true, false)
+	if wm != null and wm.has_method("get_active_weapon"):
+		var w = wm.get_active_weapon()
+		if w != null:
+			_active_weapon = w
+			_update_ammo_from_weapon(_active_weapon)
 
 func _update_hp(current: float, max_val: float) -> void:
 	hp_bar.max_value = max_val
