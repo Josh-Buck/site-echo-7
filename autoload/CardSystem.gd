@@ -150,12 +150,13 @@ func _on_enemy_killed(_enemy: Node, source_weapon: Node, is_headshot: bool, _pos
 					b.repair(1.0)
 			break
 	# Marksman: refund 1 reserve round on headshot kill.
+	# Note: don't emit weapon_reloaded — that'd play the reload SFX for an ammo refund.
+	# HUD polls the active weapon's ammo state in _process so it picks up the change naturally.
 	if is_headshot and source_weapon != null:
 		for card in active_deck:
 			if card.effect_id == &"marksman_refund":
 				if "reserve_ammo" in source_weapon:
 					source_weapon.reserve_ammo = int(source_weapon.reserve_ammo) + 1
-					EventBus.weapon_reloaded.emit(source_weapon)
 					break
 
 func _pick_weighted(pool: Array) -> CardData:
