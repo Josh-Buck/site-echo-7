@@ -40,9 +40,9 @@ func _populate() -> void:
 
 	_add_section("Per-weapon kills")
 	for wid in WEAPON_LABELS.keys():
-		var key := "kills_" + wid
-		var count := ChallengeTracker.get_counter(key)
-		_add_row(WEAPON_LABELS[wid], str(count))
+		var key: String = "kills_" + String(wid)
+		var count: int = ChallengeTracker.get_counter(key)
+		_add_row(String(WEAPON_LABELS[wid]), str(count))
 
 	_add_section("Challenges")
 	_add_row("Completed", "%d / %d" % [ChallengeTracker.completion_count(), ChallengeTracker.all_challenges().size()])

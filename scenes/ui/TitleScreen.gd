@@ -21,7 +21,7 @@ func _ready() -> void:
 	for b in hover_buttons:
 		b.mouse_entered.connect(AudioMan.play_ui_hover)
 	_refresh_stats()
-	version_label.text = "v0.2.0 — Site Echo 7"
+	version_label.text = "%s — Site Echo 7" % GameState.VERSION
 	# Grab focus so Enter/Space activates Start Run directly.
 	start_button.grab_focus()
 	print("[TitleScreen] ready, start_button=", start_button)

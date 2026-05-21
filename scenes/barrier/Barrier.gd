@@ -15,6 +15,10 @@ var _heavy_threshold: float = 0.0
 var _alarm_player: AudioStreamPlayer = null
 var _alarm_active: bool = false
 var _regen_rate: float = 0.0  # HP/sec, active only during the wave granted via Shop
+# Throttle barrier impact SFX — 10 zombies attacking at 1/s gave us a constant
+# "machine gun clang" that the user (correctly) said sounded like gunfire.
+const IMPACT_SFX_COOLDOWN: float = 0.16
+var _last_impact_sfx_at: float = -1.0
 
 func _ready() -> void:
 	var bonus: float = 0.0
@@ -94,18 +98,25 @@ func get_hp_fraction() -> float:
 	return current_hp / max_hp
 
 func _play_impact(amount: float, attacker: Node) -> void:
+	# Throttle: collapse rapid-fire impacts from a horde into a single audible thud.
+	# Heavy hits bypass the throttle so the player hears Tank/Director impacts.
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var is_heavy := amount >= _heavy_threshold
+	if not is_heavy and (now - _last_impact_sfx_at) < IMPACT_SFX_COOLDOWN:
+		return
+	_last_impact_sfx_at = now
 	var pos := global_position + Vector3(0, 0.5, 0)
 	if attacker is Node3D:
 		pos = (attacker as Node3D).global_position
 	var stream: AudioStream
 	var vol_db: float
-	if amount >= _heavy_threshold:
+	if is_heavy:
 		stream = HIT_HEAVY
-		vol_db = -2.0
+		vol_db = -8.0
 	else:
 		stream = HIT_LIGHT_B if randi() % 2 == 0 else HIT_LIGHT_A
-		vol_db = -6.0
-	AudioMan.play_3d_at(stream, pos, vol_db, 28.0, 0.05)
+		vol_db = -16.0
+	AudioMan.play_3d_at(stream, pos, vol_db, 22.0, 0.05)
 
 func _update_alarm() -> void:
 	var frac := get_hp_fraction()

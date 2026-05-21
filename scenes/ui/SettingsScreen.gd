@@ -16,7 +16,8 @@ extends Control
 
 const DEFAULT_SENS: float = 0.002
 const SENS_MIN: float = 0.0005
-const SENS_MAX: float = 0.006
+# Bumped from 0.006 -> 0.020 — user maxed the old slider and wanted more.
+const SENS_MAX: float = 0.020
 const DEFAULT_FOV: float = 75.0
 const FOV_MIN: float = 60.0
 const FOV_MAX: float = 110.0

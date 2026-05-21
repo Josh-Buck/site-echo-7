@@ -126,6 +126,19 @@ func _apply_data_visuals() -> void:
 	_tint_mesh($Head, data.head_color, false)
 	_tint_mesh($EyeL, data.eye_color, true, 4.0)
 	_tint_mesh($EyeR, data.eye_color, true, 4.0)
+	# Tint limbs to a darkened variant of the body so the whole zombie reads as one
+	# decaying creature instead of a body + grey detached limbs.
+	var limb_color: Color = data.body_color.darkened(0.25)
+	_tint_mesh_if_present(&"ArmL", limb_color, false)
+	_tint_mesh_if_present(&"ArmR", limb_color, false)
+	_tint_mesh_if_present(&"LegL", limb_color, false)
+	_tint_mesh_if_present(&"LegR", limb_color, false)
+	_tint_mesh_if_present(&"Shoulders", data.body_color.darkened(0.4), false)
+
+func _tint_mesh_if_present(node_name: StringName, color: Color, glowy: bool) -> void:
+	var m := get_node_or_null(NodePath(node_name)) as MeshInstance3D
+	if m != null:
+		_tint_mesh(m, color, glowy)
 
 func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength: float = 3.0) -> void:
 	if m == null:

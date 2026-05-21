@@ -103,7 +103,8 @@ func _on_weapon_fired(weapon: Node, _payload: Dictionary) -> void:
 	add_shake(w.data.recoil_vertical * recoil_mult * 0.12)
 	# Tiny FOV punch on fire — reads as kinetic feedback and clarifies "the shot happened
 	# this frame." Recovers via the existing FOV setting since we only nudge transiently.
-	_fov_punch_amount = clamp(_fov_punch_amount + w.data.recoil_vertical * recoil_mult * 0.18, 0.0, 4.0)
+	# Lower coefficient + lower cap than the first pass — user wanted subtler.
+	_fov_punch_amount = clamp(_fov_punch_amount + w.data.recoil_vertical * recoil_mult * 0.08, 0.0, 2.0)
 
 func _on_barrier_damaged_shake(amount: float, _attacker: Node) -> void:
 	add_shake(0.2 + amount * 0.05)

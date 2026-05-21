@@ -208,18 +208,17 @@ func _synth(id: String) -> AudioStreamWAV:
 	return null
 
 func _synth_spawn_telegraph() -> AudioStreamWAV:
-	# Descending mid-frequency warning beep with noise grit — sells "breach incoming."
+	# Pure tonal descending beep — was reading as a gunshot because of the noise grit.
 	var dur := 0.28
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
 	samples.resize(n)
 	for i in n:
 		var t: float = float(i) / SAMPLE_RATE
-		var env: float = exp(-t * 5.5) * 0.55
+		var env: float = exp(-t * 5.5) * 0.35
 		var f: float = lerp(280.0, 110.0, t / dur)
 		var tone: float = sin(2.0 * PI * f * t)
-		var grit: float = (randf() * 2.0 - 1.0) * 0.4
-		samples[i] = (tone * 0.65 + grit * 0.35) * env
+		samples[i] = tone * env
 	return _make_stream(samples)
 
 # --- Synth helpers ---
@@ -317,6 +316,7 @@ func _synth_reload() -> AudioStreamWAV:
 	return _make_stream(samples)
 
 func _synth_zombie_groan() -> AudioStreamWAV:
+	# Tonal groan — dropped the rasp noise component which was reading percussive.
 	var dur := 0.75
 	var n := int(dur * SAMPLE_RATE)
 	var samples := PackedFloat32Array()
@@ -328,8 +328,7 @@ func _synth_zombie_groan() -> AudioStreamWAV:
 		var vibrato: float = 1.0 + sin(t * 16.0) * 0.06
 		var fund: float = sin(2.0 * PI * freq * vibrato * t) * 0.55
 		var harm: float = sin(2.0 * PI * freq * 2.0 * vibrato * t) * 0.22
-		var rasp: float = (randf() * 2.0 - 1.0) * 0.22
-		samples[i] = (fund + harm + rasp) * env * 0.85
+		samples[i] = (fund + harm) * env * 0.7
 	return _make_stream(samples)
 
 func _synth_zombie_death() -> AudioStreamWAV:
