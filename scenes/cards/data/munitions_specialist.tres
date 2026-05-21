@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardmsxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"munitions_specialist"
+display_name = "Munitions Specialist"
+description = "SYNERGY: Activates only with 2+ ammo cards (Extended Mag, Bandolier, etc.). Mag size +50%, reload speed +100%."
+rarity = 2
+draft_weight = 0.35
+mag_size_mult = 1.5
+reload_time_mult = 0.5
+requires_tag = &"ammo"
+requires_count = 2

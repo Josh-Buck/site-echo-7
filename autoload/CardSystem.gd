@@ -10,6 +10,45 @@ var current_offer: Array[CardData] = []
 signal cards_offered_local(cards: Array)
 signal card_added_local(card: CardData)
 
+# Tag map keyed by card id. Determines synergy eligibility. Adding a tag here is
+# cheaper than editing 30 .tres files and keeps the synergy taxonomy in one place.
+const CARD_TAGS := {
+	# fire / damage cluster
+	&"damage_1":           ["fire"],
+	&"hot_loads":          ["fire"],
+	&"magnum_frame":       ["fire"],
+	&"bunker_buster":      ["fire"],
+	&"glass_cannon":       ["fire"],
+	&"gambler":            ["fire"],
+	# precision / headshot cluster
+	&"headstrong":         ["precision"],
+	&"trick_shot":         ["precision"],
+	&"sniper":             ["precision"],
+	&"surgical":           ["precision"],
+	&"marksman":           ["precision"],
+	&"last_round":         ["precision"],
+	# ammo / mag / reserve cluster
+	&"mag_size_1":         ["ammo"],
+	&"heavy_mag":          ["ammo"],
+	&"field_workshop":     ["ammo"],
+	&"stockpile":          ["ammo"],
+	&"reserve_boost":      ["ammo"],
+	&"reload_speed":       ["ammo"],
+	# rate cluster (fast cards)
+	&"fire_rate_1":        ["rate"],
+	&"hair_trigger":       ["rate"],
+	&"adrenaline":         ["rate", "fire"],
+	&"berserker":          ["rate"],
+	&"lightweight":        ["rate"],
+	&"combat_drill":       ["rate", "ammo"],
+	&"field_specialist":   ["rate", "fire", "precision"],
+	&"field_trauma":       ["rate"],
+	&"the_edge":           ["rate", "fire", "ammo", "precision"],
+	&"vampire_rounds":     [],  # neutral effect — no tag needed
+	&"cold_steel":         ["precision"],  # recoil-down helps precision feel
+	&"recoil_down":        ["precision"],
+}
+
 const STARTER_CARDS: Array[String] = [
 	"res://scenes/cards/data/fire_rate_1.tres",
 	"res://scenes/cards/data/damage_1.tres",
@@ -41,6 +80,9 @@ const STARTER_CARDS: Array[String] = [
 	"res://scenes/cards/data/the_edge.tres",
 	"res://scenes/cards/data/vampire_rounds.tres",
 	"res://scenes/cards/data/gambler.tres",
+	"res://scenes/cards/data/pyromaniac.tres",
+	"res://scenes/cards/data/surgical_precision.tres",
+	"res://scenes/cards/data/munitions_specialist.tres",
 ]
 
 func _ready() -> void:
@@ -119,6 +161,8 @@ func skip_draft() -> void:
 func get_modifier(stat: StringName) -> float:
 	var m := 1.0
 	for card in active_deck:
+		if not _is_card_active(card):
+			continue
 		match stat:
 			&"fire_rate": m *= card.fire_rate_mult
 			&"damage": m *= card.damage_mult
@@ -129,10 +173,47 @@ func get_modifier(stat: StringName) -> float:
 			&"reserve": m *= card.reserve_mult
 	return m
 
+# Synergy cards (requires_tag set) only contribute when at least
+# requires_count OTHER cards in the deck share the tag.
+func _is_card_active(card: CardData) -> bool:
+	if card.requires_tag == &"":
+		return true
+	var needed: int = card.requires_count
+	if needed <= 0:
+		return true
+	var found := 0
+	for other in active_deck:
+		if other == card:
+			continue
+		if _card_has_tag(other, card.requires_tag):
+			found += 1
+			if found >= needed:
+				return true
+	return false
+
+func _card_has_tag(card: CardData, tag: StringName) -> bool:
+	var tags: Variant = CARD_TAGS.get(card.id)
+	if tags == null:
+		return false
+	for t in tags:
+		if StringName(t) == tag:
+			return true
+	return false
+
+func count_tag(tag: StringName) -> int:
+	var n := 0
+	for card in active_deck:
+		if _card_has_tag(card, tag):
+			n += 1
+	return n
+
 func mutate_payload(payload: Dictionary) -> Dictionary:
 	payload["damage"] = payload.get("damage", 0.0) * get_modifier(&"damage")
 	payload["headshot_multiplier"] = payload.get("headshot_multiplier", 1.0) * get_modifier(&"headshot_mult")
+	# Conditional effects only fire when the card is active (synergy-gated cards skip otherwise).
 	for card in active_deck:
+		if not _is_card_active(card):
+			continue
 		if card.effect_id == &"last_round":
 			var weapon = payload.get("source_weapon")
 			if weapon != null and "current_ammo" in weapon and weapon.current_ammo == 1:

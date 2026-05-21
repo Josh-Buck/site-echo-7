@@ -19,7 +19,11 @@ class_name CardData extends Resource
 @export var reserve_mult: float = 1.0
 
 @export_category("Conditional Effect")
-@export var effect_id: StringName = &""  # "marksman_refund", "last_round", or ""
+@export var effect_id: StringName = &""  # "marksman_refund", "last_round", "lifesteal", or ""
+
+@export_category("Synergy (optional — leave blank for normal cards)")
+@export var requires_tag: StringName = &""           # e.g. &"fire" — card only activates when deck has N of this tag
+@export_range(0, 10) var requires_count: int = 0     # N — minimum other-card count to activate
 
 func format_effect_text() -> String:
 	var parts: Array[String] = []

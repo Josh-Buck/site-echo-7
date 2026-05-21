@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardpyroxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"pyromaniac"
+display_name = "Pyromaniac"
+description = "SYNERGY: Activates only when you hold 3+ damage cards (Hollow Points, Hot Loads, Magnum Frame, etc.). +50% damage, +20% fire rate while active."
+rarity = 2
+draft_weight = 0.35
+fire_rate_mult = 1.2
+damage_mult = 1.5
+requires_tag = &"fire"
+requires_count = 3
