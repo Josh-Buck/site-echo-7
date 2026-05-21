@@ -80,7 +80,8 @@ func _start_ambient_hum() -> void:
 	_hum.pitch_scale = 0.89
 	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
 	if LAB_HUM is AudioStreamOggVorbis:
-		(LAB_HUM as AudioStreamOggVorbis).loop = true
+		var hum: AudioStreamOggVorbis = LAB_HUM
+		hum.loop = true
 	add_child(_hum)
 	if AudioMan.can_play():
 		_hum.play()
@@ -165,9 +166,9 @@ func _build_girders() -> void:
 		s.mesh = wall_mesh
 		s.set_surface_override_material(0, wall_mat)
 		s.position = Vector3(cos(ang) * 17.0, 0.8, sin(ang) * 17.0)
-		s.look_at(Vector3(0, 0.8, 0), Vector3.UP)
 		s.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		walls.add_child(s)
+		s.look_at(Vector3(0, 0.8, 0), Vector3.UP)
 
 func _build_dust_motes() -> void:
 	var p := GPUParticles3D.new()

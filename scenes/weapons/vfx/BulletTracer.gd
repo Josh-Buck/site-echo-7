@@ -32,7 +32,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	var k := 1.0 - clamp(_t / LIFETIME, 0.0, 1.0)
+	var k: float = 1.0 - clamp(_t / LIFETIME, 0.0, 1.0)
 	if _mat:
 		_mat.emission_energy_multiplier = 4.0 * k
 		_mat.albedo_color.a = k

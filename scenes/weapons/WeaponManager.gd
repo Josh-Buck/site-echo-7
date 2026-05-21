@@ -9,8 +9,10 @@ const SLOT_BY_ID := {
 	&"ar_standard": 1,
 	&"shotgun_combat": 2,
 	&"sidearm_backup": 3,
+	&"smg_compact": 4,
+	&"bolt_action": 5,
 }
-const SLOT_COUNT := 4
+const SLOT_COUNT := 6
 
 var _slots: Array[Weapon] = []
 var _active_index: int = -1
@@ -45,6 +47,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		swap_to(2)
 	elif event.is_action_pressed("swap_quaternary"):
 		swap_to(3)
+	elif event.is_action_pressed("swap_quinary"):
+		swap_to(4)
+	elif event.is_action_pressed("swap_senary"):
+		swap_to(5)
 	elif event.is_action_pressed("swap_next"):
 		swap_next()
 

@@ -38,7 +38,8 @@ func _ready() -> void:
 	_alarm_player.volume_db = -16.0
 	_alarm_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	if CRITICAL_ALARM is AudioStreamOggVorbis:
-		(CRITICAL_ALARM as AudioStreamOggVorbis).loop = true
+		var alarm: AudioStreamOggVorbis = CRITICAL_ALARM
+		alarm.loop = true
 	add_child(_alarm_player)
 	hp_changed.emit(current_hp, max_hp)
 

@@ -161,11 +161,11 @@ func _load_stream(path: String) -> AudioStream:
 # --- UI helper hooks (exposed; UI layer calls these) ---
 
 func _play_ui_sfx(id: String) -> void:
-	var path := _ui_sfx_paths.get(id)
+	var path: Variant = _ui_sfx_paths.get(id)
 	if path == null:
 		push_warning("[AudioMan] unknown UI sfx id: %s" % id)
 		return
-	play_2d(_load_stream(path), -4.0, 0.04)
+	play_2d(_load_stream(String(path)), -4.0, 0.04)
 
 func play_ui_click() -> void:
 	_play_ui_sfx("click")

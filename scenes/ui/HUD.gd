@@ -284,15 +284,14 @@ func _flash_hit_marker(headshot: bool, killed: bool) -> void:
 	tw.tween_property(hit_marker, "scale", Vector2.ONE, 0.18)
 
 func _tick_low_hp_vignette(delta: float) -> void:
-	var hp_ratio := 1.0
+	var hp_ratio: float = 1.0
 	if hp_bar.max_value > 0:
 		hp_ratio = hp_bar.value / hp_bar.max_value
-	var target := 0.0
+	var target: float = 0.0
 	if hp_ratio < 0.3 and hp_bar.value > 0.0:
 		_vignette_phase += delta * 4.5
-		var pulse := 0.5 + 0.5 * sin(_vignette_phase)
-		# Stronger as HP gets lower.
-		var severity := clamp((0.3 - hp_ratio) / 0.3, 0.0, 1.0)
+		var pulse: float = 0.5 + 0.5 * sin(_vignette_phase)
+		var severity: float = clamp((0.3 - hp_ratio) / 0.3, 0.0, 1.0)
 		target = lerp(0.35, 0.85, severity) * lerp(0.65, 1.0, pulse)
 	else:
 		_vignette_phase = 0.0
