@@ -241,10 +241,10 @@ func _flash_muzzle() -> void:
 	if muzzle_light == null or not (muzzle_light is OmniLight3D):
 		return
 	var ml: OmniLight3D = muzzle_light
-	ml.light_energy = 6.5
-	ml.omni_range = 5.0
+	ml.light_energy = 9.0
+	ml.omni_range = 6.5
 	var tw := create_tween()
-	tw.tween_property(ml, "light_energy", 0.0, 0.09)
+	tw.tween_property(ml, "light_energy", 0.0, 0.12)
 
 func _muzzle_origin() -> Vector3:
 	if muzzle_light is Node3D:

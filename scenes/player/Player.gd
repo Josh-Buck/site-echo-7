@@ -18,6 +18,7 @@ var _recoil_recovery: float = 0.3
 var _shake_amount: float = 0.0
 var _shake_seed: float = 0.0
 var _sway_phase: float = 0.0
+var _fov_punch_amount: float = 0.0  # transient FOV bump on fire, decays each frame
 
 const SHAKE_DECAY: float = 14.0
 const SHAKE_MAX: float = 0.8
@@ -78,6 +79,12 @@ func _process(delta: float) -> void:
 		sway_yaw = sin(_sway_phase * SWAY_FREQ_YAW + 1.3) * SWAY_AMP_YAW
 	rotation.y = _yaw + _recoil_yaw + shake_x + sway_yaw
 	camera_pivot.rotation.x = _pitch + _recoil_pitch + shake_y + sway_pitch
+	# FOV punch decays exponentially toward 0; apply to live camera fov as a transient offset.
+	if _fov_punch_amount > 0.001:
+		_fov_punch_amount = max(0.0, _fov_punch_amount - delta * 14.0)
+		camera.fov = MetaProgress.get_fov() + _fov_punch_amount
+	elif not is_equal_approx(camera.fov, MetaProgress.get_fov()):
+		camera.fov = MetaProgress.get_fov()
 
 func add_shake(magnitude: float) -> void:
 	_shake_amount = min(SHAKE_MAX, _shake_amount + magnitude)
@@ -94,6 +101,9 @@ func _on_weapon_fired(weapon: Node, _payload: Dictionary) -> void:
 	_recoil_yaw += deg_to_rad(w.data.recoil_horizontal * recoil_mult) * randf_range(-1.0, 1.0)
 	_recoil_recovery = w.data.recoil_recovery
 	add_shake(w.data.recoil_vertical * recoil_mult * 0.12)
+	# Tiny FOV punch on fire — reads as kinetic feedback and clarifies "the shot happened
+	# this frame." Recovers via the existing FOV setting since we only nudge transiently.
+	_fov_punch_amount = clamp(_fov_punch_amount + w.data.recoil_vertical * recoil_mult * 0.18, 0.0, 4.0)
 
 func _on_barrier_damaged_shake(amount: float, _attacker: Node) -> void:
 	add_shake(0.2 + amount * 0.05)

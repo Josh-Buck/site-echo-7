@@ -2,6 +2,24 @@
 
 Stuff that's NOT in v1 (or not yet decided). Park here so the code stays clean. Promote to a real spec only when a milestone explicitly pulls it in.
 
+## Player asks parked from 2026-05-21 session (post-audit)
+
+These came directly from the user after their first playthrough. Audio + spawn distance + shop expansions landed in-session. The items below are bigger and need their own milestone.
+
+- **Zombies should look like zombies, not capsules.** Need rigged humanoid mesh per archetype (Walker / Runner / Tank / Spitter / Exploder) and one distinct boss mesh each (Subject, Director). Per-archetype silhouettes that read at a glance — Runner thin/lanky, Tank bulky/armored, Spitter visible mouth/sac, Exploder visibly volatile. CC0 path: Quaternius zombie pack + retargeted to Godot skeleton, or commission. Hit-reaction animations come with this.
+- **Guns should look like real guns, not blocks.** Each weapon viewmodel needs a real GLB with firing animation rig + ejection-port socket. CC0 weapon kits are sparse — likely commission. Touch when ready to invest in art.
+- **Moon theme commit.** The arena already reads lunar-ish (dark/grey, low ambient). Lean in: lunar surface variant arena with cratered ground, distant Earth in sky, dust kicked up by zombies. Either replace Containment Lab OR add as the third arena (waves 16-20). Atmosphere/skybox swap is cheap; floor texture + props is the cost.
+- **Fort-expansion meta progression.** Start runs with a smaller barrier footprint and let RD unlocks expand it. Spec sketch:
+  - Tier 1 (default): barrier radius 3 (current)
+  - Tier 2 (unlock 400 RD): barrier radius 3.5 + 1 free turret slot
+  - Tier 3 (unlock 800 RD): barrier radius 4 + 2 free turret slots
+  - Per-run placement: tokens buy emplacements within the fort footprint (turrets, slowing pads, repair drones, damage spikes).
+  - This is a big system — requires barrier geometry to scale dynamically, spawn-point relocation, balance pass on all waves.
+- **Less arcade-y feel overall.** Tie-in with the above three. Bullet hole decals (currently absent), reload animations (currently audio-only), zombie hit stagger animations, blood decals that persist. Hit-pause variants per kill type (current is headshot-only).
+- **Per-archetype distinct silhouettes** (subset of zombie art ask above). Until real meshes ship: bump scale + color + body proportions further so a Tank and a Walker don't read as same-mesh-different-tint.
+
+
+
 ## Working title
 
 **Picked for now: Site Echo 7.** Repo slug: `site-echo-7`. Revisit before v1.0 — if a punchier name surfaces during build, swap.
