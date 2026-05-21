@@ -12,6 +12,8 @@ extends CanvasLayer
 var _shown: bool = false
 
 func _ready() -> void:
+	# Death screen pauses the tree on show — needs ALWAYS so its tweens still animate.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	panel.visible = false
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed)
 	EventBus.run_ended.connect(_on_run_ended)
@@ -103,12 +105,11 @@ func _format_top_cards() -> String:
 
 func _animate_in(rd_earned: int) -> void:
 	panel.modulate.a = 0.0
+	# Tweens bind to this node; with process_mode=ALWAYS they survive pause.
+	# (Godot 4 dropped Tween.set_pause_mode — the node's process_mode controls it now.)
 	var tw := create_tween()
-	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tw.tween_property(panel, "modulate:a", 1.0, 0.45)
-	# RD count-up flourish.
 	var count_tw := create_tween()
-	count_tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	count_tw.tween_interval(0.5)
 	var step_count := 24
 	for i in range(1, step_count + 1):
