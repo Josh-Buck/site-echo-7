@@ -139,6 +139,9 @@ const DEBRIS_SCENES := [
 	preload("res://art/models/props/prop_barrel2_closed.glb"),
 	preload("res://art/models/props/prop_locker.glb"),
 	preload("res://art/models/props/prop_chair.glb"),
+	preload("res://art/models/props/prop_crate.glb"),
+	preload("res://art/models/props/prop_crate_large.glb"),
+	preload("res://art/models/props/prop_crate_tarp.glb"),
 ]
 
 func _build_random_debris() -> void:
