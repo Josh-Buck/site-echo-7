@@ -183,18 +183,11 @@ func _find_target() -> void:
 		_target = barriers[0]
 
 func _physics_process(delta: float) -> void:
+	# Zombie groans muted at the source. With 10+ zombies stacking, even quiet
+	# groans read as background chatter / muffled gunfire. Re-enable as a single
+	# "horde ambient" 2D bed later if needed.
 	_groan_timer -= delta
-	if _groan_timer <= 0.0 and state != AIState.DIE and state != AIState.ATTACK:
-		# Longer interval + half the time skip the groan entirely. With 10+ zombies
-		# the old 4-10s cadence stacked into a constant ambient roar that read as gunfire.
-		_groan_timer = randf_range(10.0, 22.0)
-		if randf() < 0.5:
-			_play_random_groan()
-	if state == AIState.CHASE:
-		_footstep_timer -= delta
-		if _footstep_timer <= 0.0:
-			_footstep_timer = _footstep_interval
-			_try_play_footstep()
+	# Footsteps disabled (same reason as groans — too many overlapping sources).
 	match state:
 		AIState.IDLE:
 			_state_idle(delta)
@@ -322,12 +315,11 @@ func _play_random_groan() -> void:
 	_play_audio(pool[randi() % pool.size()])
 
 func _play_random_death() -> void:
-	var pool: Array[AudioStream] = []
-	if death_01: pool.append(death_01)
-	if death_02: pool.append(death_02)
-	if pool.is_empty():
-		return
-	_play_audio(pool[randi() % pool.size()])
+	# Death OGGs disabled. With 10+ kills per wave they layer into a percussive
+	# backdrop that reads as gunfire. The visual blood burst + dissolve is the
+	# kill feedback; a clean kill confirm comes from the on-screen score popup
+	# (HUD enemy_killed listener).
+	pass
 
 func _fire_projectile() -> void:
 	if data.projectile_scene == null or _target == null:

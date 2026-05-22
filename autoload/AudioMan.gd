@@ -449,11 +449,12 @@ func _on_weapon_reloaded(weapon: Node) -> void:
 		return
 	play_sfx("reload")
 
-func _on_enemy_killed(enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> void:
-	var pos := _pos
-	if enemy is Node3D:
-		pos = (enemy as Node3D).global_position
-	play_sfx("zombie_death", pos)
+func _on_enemy_killed(_enemy: Node, _src: Node, _hs: bool, _pos: Vector3) -> void:
+	# Zombie.gd plays its own death OGG via the per-zombie AudioStreamPlayer3D.
+	# This synth path was layering a 2nd noise-burst on top of every kill, which
+	# was the user's "shots happening when I'm not shooting" — every kill stacked
+	# two death sounds, the synth's 35% rasp reading as a muffled shot.
+	pass
 
 func _on_barrier_damaged(_amount: float, _attacker: Node) -> void:
 	# Barrier.gd plays the curated impact streams itself with damage-tier routing.
@@ -463,7 +464,9 @@ func _on_barrier_destroyed() -> void:
 	play_sfx("barrier_destroyed")
 
 func _on_wave_started(_round: int, _composition: Array) -> void:
-	play_sfx("wave_start")
+	# Wave-start synth disabled — Main.gd plays the tension-stinger OGG from
+	# wave 5 onward; one clean cue beats two layered ones.
+	pass
 
 func _on_card_drafted(card) -> void:
 	if card != null:

@@ -68,7 +68,7 @@ func _start_ambient_hum() -> void:
 	_hum = AudioStreamPlayer.new()
 	_hum.stream = LAB_HUM
 	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
-	_hum.volume_db = -24.0
+	_hum.volume_db = -40.0
 	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
 	if LAB_HUM is AudioStreamOggVorbis:
 		var hum: AudioStreamOggVorbis = LAB_HUM

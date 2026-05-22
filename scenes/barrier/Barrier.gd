@@ -97,20 +97,11 @@ func get_hp_fraction() -> float:
 		return 0.0
 	return current_hp / max_hp
 
-func _play_impact(amount: float, attacker: Node) -> void:
-	# Heavy hits only — the per-zombie light-attack thuds were the user's
-	# "constant gunshots in the background." Silenced entirely. Heavy hits
-	# (Tank / Director / boss class) still play to telegraph real danger.
-	if amount < _heavy_threshold:
-		return
-	var now: float = Time.get_ticks_msec() / 1000.0
-	if (now - _last_impact_sfx_at) < IMPACT_SFX_COOLDOWN:
-		return
-	_last_impact_sfx_at = now
-	var pos := global_position + Vector3(0, 0.5, 0)
-	if attacker is Node3D:
-		pos = (attacker as Node3D).global_position
-	AudioMan.play_3d_at(HIT_HEAVY, pos, -10.0, 18.0, 0.05)
+func _play_impact(_amount: float, _attacker: Node) -> void:
+	# Barrier impact SFX disabled entirely. With 10+ zombies attacking, even the
+	# heavy-hits-only filter produced rapid clangs that read as gunfire. The
+	# visual HP bar + on-hit damage arrow + screen shake are enough feedback.
+	pass
 
 func _update_alarm() -> void:
 	var frac := get_hp_fraction()

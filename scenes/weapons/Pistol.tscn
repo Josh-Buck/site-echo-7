@@ -10,4 +10,4 @@ data = ExtResource("2_data")
 ; Quaternius pistol GLB: barrel runs along +X, height is +Y, depth tiny. Rotate +90°
 ; around Y so barrel points -Z (Godot forward) and shrink to ~33cm viewmodel length.
 [node name="Model" parent="." instance=ExtResource("3_model")]
-transform = Transform3D(0, 0, -0.18, 0, 0.18, 0, 0.18, 0, 0, 0, 0, 0.05)
+transform = Transform3D(0, 0, 0.18, 0, 0.18, 0, -0.18, 0, 0, 0, 0, 0.05)
