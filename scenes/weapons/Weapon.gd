@@ -346,6 +346,10 @@ func _find_casing_pool() -> CasingPool:
 	return null
 
 func _apply_pbr_materials() -> void:
+	# Skip override on weapons that bring their own GLB model — the imported
+	# materials are correct and our flat polymer/metal swatches would erase them.
+	if has_node("Model"):
+		return
 	for mi in _collect_mesh_instances(self):
 		var lower := String(mi.name).to_lower()
 		var is_polymer := false

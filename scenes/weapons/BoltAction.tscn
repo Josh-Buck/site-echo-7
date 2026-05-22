@@ -1,46 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1boltscxyz"]
+[gd_scene load_steps=4 format=3 uid="uid://b1boltscxyz"]
 
 [ext_resource type="PackedScene" uid="uid://b1weaponxyz" path="res://scenes/weapons/Weapon.tscn" id="1_base"]
 [ext_resource type="Resource" uid="uid://b1boltxyz" path="res://scenes/weapons/data/bolt_action.tres" id="2_data"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_baStock"]
-size = Vector3(0.05, 0.08, 0.34)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_baBarrel"]
-top_radius = 0.012
-bottom_radius = 0.012
-height = 0.5
-
-[sub_resource type="BoxMesh" id="BoxMesh_baScope"]
-size = Vector3(0.025, 0.03, 0.14)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_baScopeLens"]
-top_radius = 0.018
-bottom_radius = 0.018
-height = 0.02
-
-[sub_resource type="BoxMesh" id="BoxMesh_baBolt"]
-size = Vector3(0.012, 0.025, 0.06)
+[ext_resource type="PackedScene" path="res://art/models/weapons/bolt_action.glb" id="3_model"]
 
 [node name="BoltAction" instance=ExtResource("1_base")]
 data = ExtResource("2_data")
 
-[node name="Stock" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0.05)
-mesh = SubResource("BoxMesh_baStock")
-
-[node name="Barrel" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.05, -0.22)
-mesh = SubResource("CylinderMesh_baBarrel")
-
-[node name="Scope" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, -0.06)
-mesh = SubResource("BoxMesh_baScope")
-
-[node name="ScopeLens" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.09, 0.01)
-mesh = SubResource("CylinderMesh_baScopeLens")
-
-[node name="Bolt" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 0.075, -0.02)
-mesh = SubResource("BoxMesh_baBolt")
+[node name="Model" parent="." instance=ExtResource("3_model")]
+transform = Transform3D(0.20, 0, 0, 0, 0.20, 0, 0, 0, 0.20, 0, 0.02, 0.03)

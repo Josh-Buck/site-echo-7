@@ -1,57 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://b1sidearmscxyz"]
+[gd_scene load_steps=4 format=3 uid="uid://b1sidearmscxyz"]
 
 [ext_resource type="PackedScene" uid="uid://b1weaponxyz" path="res://scenes/weapons/Weapon.tscn" id="1_base"]
 [ext_resource type="Resource" uid="uid://b1sidearmxyz" path="res://scenes/weapons/data/sidearm.tres" id="2_data"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_sdslide"]
-size = Vector3(0.045, 0.055, 0.16)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_sdbarrel"]
-top_radius = 0.010
-bottom_radius = 0.010
-height = 0.04
-
-[sub_resource type="BoxMesh" id="BoxMesh_sdframe"]
-size = Vector3(0.04, 0.035, 0.14)
-
-[sub_resource type="BoxMesh" id="BoxMesh_sdgrip"]
-size = Vector3(0.035, 0.10, 0.055)
-
-[sub_resource type="BoxMesh" id="BoxMesh_sdmag"]
-size = Vector3(0.033, 0.07, 0.045)
-
-[sub_resource type="BoxMesh" id="BoxMesh_sdsight"]
-size = Vector3(0.008, 0.008, 0.01)
+[ext_resource type="PackedScene" path="res://art/models/weapons/sidearm_backup.glb" id="3_model"]
 
 [node name="Sidearm" instance=ExtResource("1_base")]
 data = ExtResource("2_data")
 
-[node name="SidearmBody" type="Node3D" parent="."]
-
-[node name="Slide" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, -0.04)
-mesh = SubResource("BoxMesh_sdslide")
-
-[node name="Barrel" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.045, -0.14)
-mesh = SubResource("CylinderMesh_sdbarrel")
-
-[node name="Frame" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -0.03)
-mesh = SubResource("BoxMesh_sdframe")
-
-[node name="Grip" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 0.94, 0.34, 0, -0.34, 0.94, 0, -0.055, 0.01)
-mesh = SubResource("BoxMesh_sdgrip")
-
-[node name="Magazine" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.105, 0.005)
-mesh = SubResource("BoxMesh_sdmag")
-
-[node name="FrontSight" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, -0.10)
-mesh = SubResource("BoxMesh_sdsight")
-
-[node name="RearSight" type="MeshInstance3D" parent="SidearmBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0.025)
-mesh = SubResource("BoxMesh_sdsight")
+[node name="Model" parent="." instance=ExtResource("3_model")]
+transform = Transform3D(0.30, 0, 0, 0, 0.30, 0, 0, 0, 0.30, 0, 0.02, -0.04)
