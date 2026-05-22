@@ -30,6 +30,7 @@ func _ready() -> void:
 	_apply_pbr_materials()
 	_build_perimeter_walls()
 	_build_dust_motes()
+	_build_random_debris()
 	_start_ambient_hum()
 	# Boss-wave lighting variant — fluorescents dim to red while a boss is alive.
 	EventBus.wave_started.connect(_on_wave_started)
@@ -140,6 +141,39 @@ func _build_perimeter_walls() -> void:
 		seg.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		ring.add_child(seg)
 		seg.look_at(Vector3(0, 2.0, 0), Vector3.UP)
+
+func _build_random_debris() -> void:
+	# 6 small destroyed-equipment crates scattered between the barrier and the
+	# perimeter wall. Different placement each run for visual variety. They
+	# sit between the safe zone and the spawn ring so they read as
+	# "abandoned in the rush."
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var group := Node3D.new()
+	group.name = "Debris"
+	add_child(group)
+	var box_mesh := BoxMesh.new()
+	box_mesh.size = Vector3(1.2, 0.85, 1.2)
+	var mat := StandardMaterial3D.new()
+	if ResourceLoader.exists(LAB_TILE_MAT_PATH):
+		var base: StandardMaterial3D = load(LAB_TILE_MAT_PATH)
+		mat = base.duplicate() as StandardMaterial3D
+		mat.albedo_color = Color(0.32, 0.28, 0.24, 1)
+	else:
+		mat.albedo_color = Color(0.32, 0.28, 0.24, 1)
+		mat.roughness = 0.85
+	# Skip a 90-degree wedge so debris doesn't block the player's barrier sightline.
+	var safe_angle := PI * 0.55  # ~99 degrees forward-facing kept clear
+	for i in 6:
+		var ang := rng.randf_range(safe_angle, TAU - safe_angle * 0.2)
+		var radius := rng.randf_range(7.0, 13.0)
+		var crate := MeshInstance3D.new()
+		crate.mesh = box_mesh
+		crate.set_surface_override_material(0, mat)
+		crate.position = Vector3(cos(ang) * radius, 0.42, sin(ang) * radius)
+		crate.rotation.y = rng.randf_range(0.0, TAU)
+		crate.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		group.add_child(crate)
 
 func _build_dust_motes() -> void:
 	var p := GPUParticles3D.new()

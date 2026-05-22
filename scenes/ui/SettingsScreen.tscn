@@ -167,6 +167,132 @@ theme_override_font_sizes/font_size = 20
 text = "100%"
 horizontal_alignment = 2
 
+[node name="CrosshairStyleRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="CrosshairStyleLabel" type="Label" parent="VBox/CrosshairStyleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Crosshair Style"
+
+[node name="CrosshairStyleOption" type="OptionButton" parent="VBox/CrosshairStyleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+
+[node name="CrosshairStyleSpacer" type="Control" parent="VBox/CrosshairStyleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
+[node name="CrosshairSizeRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="CrosshairSizeLabel" type="Label" parent="VBox/CrosshairSizeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Crosshair Size"
+
+[node name="CrosshairSizeSlider" type="HSlider" parent="VBox/CrosshairSizeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+
+[node name="CrosshairSizeValueLabel" type="Label" parent="VBox/CrosshairSizeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+theme_override_font_sizes/font_size = 20
+text = "22"
+horizontal_alignment = 2
+
+[node name="CrosshairColorRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="CrosshairColorLabel" type="Label" parent="VBox/CrosshairColorRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Crosshair Color"
+
+[node name="CrosshairColorOption" type="OptionButton" parent="VBox/CrosshairColorRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+
+[node name="CrosshairColorSpacer" type="Control" parent="VBox/CrosshairColorRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
+[node name="FpsRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="FpsLabel" type="Label" parent="VBox/FpsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Show FPS Counter"
+
+[node name="FpsButton" type="CheckButton" parent="VBox/FpsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+text = "OFF"
+
+[node name="FpsSpacer" type="Control" parent="VBox/FpsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
+[node name="MouseSmoothRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="MouseSmoothLabel" type="Label" parent="VBox/MouseSmoothRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Mouse Smoothing"
+
+[node name="MouseSmoothButton" type="CheckButton" parent="VBox/MouseSmoothRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+text = "OFF"
+
+[node name="MouseSmoothSpacer" type="Control" parent="VBox/MouseSmoothRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
+[node name="TutorialReplayRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="TutorialReplayLabel" type="Label" parent="VBox/TutorialReplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Replay Tutorial Next Run"
+
+[node name="TutorialReplayButton" type="Button" parent="VBox/TutorialReplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+text = "RE-ARM TUTORIAL"
+
+[node name="TutorialReplaySpacer" type="Control" parent="VBox/TutorialReplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
 [node name="GoreRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(720, 44)

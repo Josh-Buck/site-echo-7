@@ -12,6 +12,13 @@ extends Control
 @onready var music_value_label: Label = $VBox/MusicRow/MusicValueLabel
 @onready var gore_button: CheckButton = $VBox/GoreRow/GoreButton
 @onready var fullscreen_button: CheckButton = $VBox/FullscreenRow/FullscreenButton
+@onready var crosshair_style_option: OptionButton = $VBox/CrosshairStyleRow/CrosshairStyleOption if has_node("VBox/CrosshairStyleRow/CrosshairStyleOption") else null
+@onready var crosshair_size_slider: HSlider = $VBox/CrosshairSizeRow/CrosshairSizeSlider if has_node("VBox/CrosshairSizeRow/CrosshairSizeSlider") else null
+@onready var crosshair_size_value_label: Label = $VBox/CrosshairSizeRow/CrosshairSizeValueLabel if has_node("VBox/CrosshairSizeRow/CrosshairSizeValueLabel") else null
+@onready var crosshair_color_option: OptionButton = $VBox/CrosshairColorRow/CrosshairColorOption if has_node("VBox/CrosshairColorRow/CrosshairColorOption") else null
+@onready var fps_button: CheckButton = $VBox/FpsRow/FpsButton if has_node("VBox/FpsRow/FpsButton") else null
+@onready var mouse_smooth_button: CheckButton = $VBox/MouseSmoothRow/MouseSmoothButton if has_node("VBox/MouseSmoothRow/MouseSmoothButton") else null
+@onready var tutorial_replay_button: Button = $VBox/TutorialReplayRow/TutorialReplayButton if has_node("VBox/TutorialReplayRow/TutorialReplayButton") else null
 @onready var back_button: Button = $VBox/BackButton
 
 const DEFAULT_SENS: float = 0.002
@@ -46,6 +53,11 @@ func _ready() -> void:
 
 	fullscreen_button.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	fullscreen_button.text = "ON" if fullscreen_button.button_pressed else "OFF"
+
+	_init_crosshair_controls()
+	_init_fps_control()
+	_init_mouse_smooth_control()
+	_init_tutorial_replay_control()
 
 	sens_slider.value_changed.connect(_on_sens_changed)
 	fov_slider.value_changed.connect(_on_fov_changed)
@@ -127,6 +139,94 @@ func _update_sens_label() -> void:
 
 func _update_fov_label() -> void:
 	fov_value_label.text = "%d" % int(round(fov_slider.value))
+
+func _init_crosshair_controls() -> void:
+	if crosshair_style_option != null:
+		crosshair_style_option.clear()
+		for label in ["+ (plus)", "× (x)", "· (dot)"]:
+			crosshair_style_option.add_item(label)
+		var cur_style: String = String(MetaProgress.get_setting("crosshair_style", "plus"))
+		var idx: int = 0
+		match cur_style:
+			"plus":  idx = 0
+			"x":     idx = 1
+			"dot":   idx = 2
+			"cross": idx = 0
+		crosshair_style_option.select(idx)
+		crosshair_style_option.item_selected.connect(_on_crosshair_style_changed)
+	if crosshair_size_slider != null:
+		crosshair_size_slider.min_value = 12
+		crosshair_size_slider.max_value = 48
+		crosshair_size_slider.step = 1
+		crosshair_size_slider.value = float(MetaProgress.get_setting("crosshair_size", 22))
+		_update_xhair_size_label()
+		crosshair_size_slider.value_changed.connect(_on_crosshair_size_changed)
+	if crosshair_color_option != null:
+		crosshair_color_option.clear()
+		for label in ["White", "Green", "Yellow", "Red", "Cyan"]:
+			crosshair_color_option.add_item(label)
+		var cur_color: String = String(MetaProgress.get_setting("crosshair_color", "white"))
+		var cidx: int = 0
+		match cur_color:
+			"white":  cidx = 0
+			"green":  cidx = 1
+			"yellow": cidx = 2
+			"red":    cidx = 3
+			"cyan":   cidx = 4
+		crosshair_color_option.select(cidx)
+		crosshair_color_option.item_selected.connect(_on_crosshair_color_changed)
+
+func _init_fps_control() -> void:
+	if fps_button == null:
+		return
+	fps_button.button_pressed = bool(MetaProgress.get_setting("show_fps", false))
+	fps_button.text = "ON" if fps_button.button_pressed else "OFF"
+	fps_button.toggled.connect(_on_fps_toggled)
+
+func _init_mouse_smooth_control() -> void:
+	if mouse_smooth_button == null:
+		return
+	mouse_smooth_button.button_pressed = bool(MetaProgress.get_setting("mouse_smoothing", false))
+	mouse_smooth_button.text = "ON" if mouse_smooth_button.button_pressed else "OFF"
+	mouse_smooth_button.toggled.connect(_on_mouse_smooth_toggled)
+
+func _init_tutorial_replay_control() -> void:
+	if tutorial_replay_button == null:
+		return
+	tutorial_replay_button.pressed.connect(_on_tutorial_replay_pressed)
+
+func _on_crosshair_style_changed(idx: int) -> void:
+	var styles := ["plus", "x", "dot"]
+	if idx >= 0 and idx < styles.size():
+		MetaProgress.set_setting("crosshair_style", styles[idx])
+
+func _on_crosshair_size_changed(v: float) -> void:
+	MetaProgress.set_setting("crosshair_size", int(v))
+	_update_xhair_size_label()
+
+func _update_xhair_size_label() -> void:
+	if crosshair_size_value_label != null and crosshair_size_slider != null:
+		crosshair_size_value_label.text = str(int(crosshair_size_slider.value))
+
+func _on_crosshair_color_changed(idx: int) -> void:
+	var colors := ["white", "green", "yellow", "red", "cyan"]
+	if idx >= 0 and idx < colors.size():
+		MetaProgress.set_setting("crosshair_color", colors[idx])
+
+func _on_fps_toggled(pressed: bool) -> void:
+	MetaProgress.set_setting("show_fps", pressed)
+	fps_button.text = "ON" if pressed else "OFF"
+
+func _on_mouse_smooth_toggled(pressed: bool) -> void:
+	MetaProgress.set_setting("mouse_smoothing", pressed)
+	mouse_smooth_button.text = "ON" if pressed else "OFF"
+
+func _on_tutorial_replay_pressed() -> void:
+	# Clears the "intro_seen" flag and the tutorial-done flag so next run
+	# re-shows them.
+	MetaProgress.set_setting("intro_seen", false)
+	MetaProgress.set_setting("tutorial_done", false)
+	tutorial_replay_button.text = "RE-ARMED ✓"
 
 func _on_back_pressed() -> void:
 	AudioMan.play_ui_click()

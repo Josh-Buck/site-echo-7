@@ -81,9 +81,9 @@ Tiers:
 ### Game feel
 - [x] **Hit-pause variants** ✓ shipped — three tiers: body kill (0.6 scale × 20ms), headshot (0.35 × 45ms), boss kill (0.2 × 180ms).
 - [x] **Camera weapon sway** ✓ shipped (idle sway in Player.gd).
-- [ ] **Idle viewmodel animation** between shots.
+- [x] **Idle viewmodel animation** ✓ shipped — gentle figure-8 bob on the WeaponHolder while cursor is captured and shake is low. Sells "alive in hand."
 - [x] **Weapon-swap animation** ✓ shipped — `begin_swap_in` springs the new weapon up from below on activate.
-- [ ] **Crosshair customization** (size, color, shape, dot/cross).
+- [x] **Crosshair customization** ✓ shipped — Settings has style (plus/x/dot), size (12-48), and color (white/green/yellow/red/cyan). Visible immediately. Persisted via MetaProgress.
 - [x] **Critical-hit flash** ✓ shipped — headshot tints the zombie body to white for 60ms, scale-pops 18%.
 - [x] **Boss arena variants** ✓ shipped — fluorescent lights (Arena) and vent light (CoolingTower) shift to red + dim energy on wave 10 and 20 start, recover after the wave ends.
 - [ ] **Score popup chains** — combo multiplier feedback on rapid kills.
@@ -103,6 +103,8 @@ Tiers:
 
 ### Engineering
 - [x] **AudioMan pool size** ✓ bumped 16 -> 24 (both 2D and 3D pools).
+- [x] **BloodBurst pooling** ✓ shipped — BloodBurstPool with 6 ring-buffer slots + restart(). Was the per-kill stutter source.
+- [x] **Backup save** ✓ shipped — rotating 3-slot backup chain. load_meta falls through to bak.1 -> bak.2 -> bak.3 if the primary is corrupt.
 - [ ] **BloodBurst pooling** — currently instantiate + queue_free per hit (flagged by AI architect). Pool if perf regresses.
 - [ ] **`SaveSystem.rename_absolute` web warning** — refactor to write-then-overwrite without rename when `user://` resolves to IndexedDB. Cosmetic; saves still work via fallback.
 - [ ] **Spitter acid AOE vs clean-round challenge** — confirm whether acid puddle damage on barrier should disqualify the "clean round" challenges, or be exempt. Open question from challenge agent.
@@ -113,7 +115,7 @@ Tiers:
 
 ## P3 — Nice-to-have / post-launch
 
-- [ ] **FPS counter** (toggle in dev/settings).
+- [x] **FPS counter** ✓ shipped — toggle in Settings; shows in top-right of HUD when on.
 - [ ] **Dev console** (`~` key) for cheat / debug commands during testing.
 - [ ] **Photo mode** — pause + free-fly camera + filter toggles for screenshots.
 - [ ] **Replay / kill-cam** on final death.
@@ -122,13 +124,13 @@ Tiers:
 - [ ] **Content-warning splash** linkable from title screen per CLAUDE.md sensitivity guardrails.
 - [ ] **README polish** — short itch-style write-up at the GH Pages root + a 5-second loop GIF for the README.
 - [ ] **Twitter / itch.io launch art** — title key-art, three gameplay screenshots, a short trailer.
-- [ ] **Procedural arena seed** — even within the same arena scene, randomize prop placement per run for visual variety.
-- [ ] **Boss telegraph audio** — distinct warning sting on boss wave start, longer than the regular tension stinger.
+- [x] **Procedural arena seed** ✓ shipped — Arena now spawns 6 random crates between the barrier and the perimeter wall, different placement each run.
+- [x] **Boss telegraph audio** ✓ shipped — distinct 2.2s descending double-tone synth on wave 10 and 20 start, replaces the regular tension stinger on boss waves.
 - [ ] **Weapon inspect animation** (hold a key to look at the viewmodel) — pure flavor.
-- [ ] **Mouse-smoothing toggle.**
+- [x] **Mouse-smoothing toggle** ✓ shipped — Settings checkbox. When on, mouse motion lerps toward target at ~18/s instead of applying instantly.
 - [ ] **Gamepad rumble** (where supported — web limited).
-- [ ] **Tutorial replay** — let returning players re-trigger the first-run hints from the settings menu.
-- [ ] **Backup save** — keep last-N saves in case of corruption.
+- [x] **Tutorial replay** ✓ shipped — Settings button clears intro_seen + tutorial_done flags so next run re-shows both.
+- [x] **Backup save** ✓ shipped — rotating 3-slot chain.
 - [ ] **Run analytics opt-in** — anonymous round-reached histogram, only with player consent. Aids balance.
 
 ---

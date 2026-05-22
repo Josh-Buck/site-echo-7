@@ -9,6 +9,8 @@ func _get_sensitivity() -> float:
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
+@onready var weapon_holder: Node3D = $CameraPivot/Camera3D/WeaponHolder if has_node("CameraPivot/Camera3D/WeaponHolder") else null
+var _weapon_holder_rest: Vector3 = Vector3.ZERO
 
 var _yaw: float = 0.0
 var _pitch: float = 0.0
@@ -19,6 +21,12 @@ var _shake_amount: float = 0.0
 var _shake_seed: float = 0.0
 var _sway_phase: float = 0.0
 var _fov_punch_amount: float = 0.0  # transient FOV bump on fire, decays each frame
+var _mouse_target_yaw: float = 0.0
+var _mouse_target_pitch: float = 0.0
+var _viewmodel_bob_phase: float = 0.0
+const VIEWMODEL_BOB_AMP_Y: float = 0.004
+const VIEWMODEL_BOB_AMP_X: float = 0.003
+const VIEWMODEL_BOB_FREQ: float = 1.3
 
 const SHAKE_DECAY: float = 14.0
 const SHAKE_MAX: float = 0.8
@@ -36,6 +44,8 @@ func _ready() -> void:
 	EventBus.barrier_destroyed.connect(_on_barrier_destroyed_shake)
 	camera.fov = MetaProgress.get_fov()
 	EventBus.settings_changed.connect(_on_settings_changed)
+	if weapon_holder:
+		_weapon_holder_rest = weapon_holder.position
 
 func _on_settings_changed(key: String, _value) -> void:
 	if key == "fov":
@@ -52,9 +62,19 @@ func _input(event: InputEvent) -> void:
 			return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var sens := _get_sensitivity()
-		_yaw -= event.relative.x * sens
-		_pitch -= event.relative.y * sens
-		_pitch = clamp(_pitch, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
+		var dx: float = event.relative.x * sens
+		var dy: float = event.relative.y * sens
+		if bool(MetaProgress.get_setting("mouse_smoothing", false)):
+			# Accumulate into a target; _process lerps the live yaw/pitch toward it.
+			_mouse_target_yaw -= dx
+			_mouse_target_pitch -= dy
+			_mouse_target_pitch = clamp(_mouse_target_pitch, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
+		else:
+			_yaw -= dx
+			_pitch -= dy
+			_pitch = clamp(_pitch, deg_to_rad(pitch_min_deg), deg_to_rad(pitch_max_deg))
+			_mouse_target_yaw = _yaw
+			_mouse_target_pitch = _pitch
 	elif event.is_action_pressed("dev_reset"):
 		SaveSystem.wipe_meta()
 
@@ -77,8 +97,22 @@ func _process(delta: float) -> void:
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and _shake_amount < 0.05:
 		sway_pitch = sin(_sway_phase * SWAY_FREQ_PITCH) * SWAY_AMP_PITCH
 		sway_yaw = sin(_sway_phase * SWAY_FREQ_YAW + 1.3) * SWAY_AMP_YAW
+	# Apply smoothing toward target if enabled. Without smoothing the targets
+	# stay synced to the live values so this is a no-op.
+	if bool(MetaProgress.get_setting("mouse_smoothing", false)):
+		var smoothing_speed: float = 18.0
+		var s: float = clamp(delta * smoothing_speed, 0.0, 1.0)
+		_yaw = lerp(_yaw, _mouse_target_yaw, s)
+		_pitch = lerp(_pitch, _mouse_target_pitch, s)
 	rotation.y = _yaw + _recoil_yaw + shake_x + sway_yaw
 	camera_pivot.rotation.x = _pitch + _recoil_pitch + shake_y + sway_pitch
+	# Viewmodel idle bob — gentle figure-8 on the WeaponHolder while we hold
+	# the trigger ready (cursor captured + no big shake).
+	if weapon_holder != null and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and _shake_amount < 0.05:
+		_viewmodel_bob_phase += delta * VIEWMODEL_BOB_FREQ
+		var bob_x: float = sin(_viewmodel_bob_phase) * VIEWMODEL_BOB_AMP_X
+		var bob_y: float = sin(_viewmodel_bob_phase * 2.0) * VIEWMODEL_BOB_AMP_Y
+		weapon_holder.position = _weapon_holder_rest + Vector3(bob_x, bob_y, 0)
 	# FOV punch decays exponentially toward 0; apply to live camera fov as a transient offset.
 	if _fov_punch_amount > 0.001:
 		_fov_punch_amount = max(0.0, _fov_punch_amount - delta * 14.0)

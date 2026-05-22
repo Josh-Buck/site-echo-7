@@ -52,8 +52,14 @@ func _build_intercom_label() -> void:
 	_intercom_label.modulate.a = 0.0
 	canvas.add_child(_intercom_label)
 
+const BOSS_ROUNDS_FOR_STING := [10, 20]
+
 func _on_wave_started(round_number: int, _composition: Array) -> void:
-	if round_number >= STINGER_FIRST_ROUND:
+	if round_number in BOSS_ROUNDS_FOR_STING:
+		# Distinct boss telegraph — long descending double-tone instead of the
+		# regular tension stinger.
+		AudioMan.play_sfx("boss_telegraph")
+	elif round_number >= STINGER_FIRST_ROUND:
 		AudioMan.play_2d(TENSION_STINGER, -6.0, 0.0)
 
 func _on_wave_ended(round_number: int) -> void:

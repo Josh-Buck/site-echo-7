@@ -204,8 +204,26 @@ func _synth(id: String) -> AudioStreamWAV:
 		"card_pick": return _synth_card_pick()
 		"shop_open": return _synth_shop_open()
 		"spawn_telegraph": return _synth_spawn_telegraph()
+		"boss_telegraph": return _synth_boss_telegraph()
 	push_warning("[AudioMan] unknown sfx id: %s" % id)
 	return null
+
+func _synth_boss_telegraph() -> AudioStreamWAV:
+	# Long, ominous descending double-tone — distinct from the wave-start tension
+	# stinger so the player learns "this is a boss wave" before they see the boss.
+	var dur := 2.2
+	var n := int(dur * SAMPLE_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(n)
+	for i in n:
+		var t: float = float(i) / SAMPLE_RATE
+		var env: float = clamp(sin(PI * t / dur), 0.0, 1.0) * 0.55
+		var freq_a: float = lerp(90.0, 55.0, t / dur)
+		var freq_b: float = lerp(140.0, 88.0, t / dur)
+		var tone_a: float = sin(2.0 * PI * freq_a * t) * 0.55
+		var tone_b: float = sin(2.0 * PI * freq_b * t) * 0.35
+		samples[i] = (tone_a + tone_b) * env
+	return _make_stream(samples)
 
 func _synth_spawn_telegraph() -> AudioStreamWAV:
 	# Pure tonal descending beep — was reading as a gunshot because of the noise grit.
