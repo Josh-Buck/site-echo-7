@@ -40,10 +40,12 @@ func _build_body() -> RigidBody3D:
 	b.can_sleep = true
 	b.collision_layer = 0  # casings don't get hit by raycasts
 	b.collision_mask = 2   # collide with environment (floor + barrier — layer 2)
-	b.contact_monitor = false
+	b.contact_monitor = true
+	b.max_contacts_reported = 1
 	b.visible = false
 	b.freeze = true
 	b.physics_material_override = _physics_mat()
+	b.body_entered.connect(_on_casing_landed.bind(b))
 	var shape := CollisionShape3D.new()
 	var cyl := CylinderShape3D.new()
 	cyl.radius = 0.008
@@ -61,6 +63,19 @@ func _physics_mat() -> PhysicsMaterial:
 	pm.bounce = 0.3
 	pm.friction = 0.6
 	return pm
+
+# Per-body cooldown so a casing that hops twice doesn't double-clink.
+var _last_clink_at: Dictionary = {}
+const CLINK_COOLDOWN: float = 0.18
+
+func _on_casing_landed(_other: Node, body: RigidBody3D) -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var last: float = float(_last_clink_at.get(body.get_instance_id(), -1.0))
+	if last > 0.0 and (now - last) < CLINK_COOLDOWN:
+		return
+	_last_clink_at[body.get_instance_id()] = now
+	# Tiny metallic tink positional at the casing.
+	AudioMan.play_sfx("barrier_hit", body.global_position)
 
 func _process(_delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0

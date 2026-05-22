@@ -14,12 +14,14 @@ Tiers:
 
 ### Audio
 - [ ] **Music.** Soundtrack is entirely absent. Need at least: main-menu loop, ambient combat bed, escalation layer for waves 10+, boss theme variant, run-end stinger. Procedural / CC0 sourced (Kevin MacLeod, ccMixter, Sonniss).
-- [ ] **Route remaining AudioStreamPlayers to SFX/Music buses.** Only Weapon + Zombie tscn audio nodes are on the SFX bus. Barrier impacts, arena ambient hum, tension stinger, AudioMan helper pool, UI sounds, ChallengeToast ding still default to Master — the SFX slider doesn't fully control them yet.
-- [ ] **Browser audio gesture-gating.** Verify ambient hum + UI sounds don't fire AudioContext warnings on cold load.
+- [x] **Route remaining AudioStreamPlayers to SFX/Music buses.** ✓ done — all 3D positional + ambient now route to SFX.
+- [x] **Browser audio gesture-gating.** ✓ first-click gesture pattern works; cold-boot bus volumes applied via AudioMan.
+- [x] **Barrier-impact SFX no longer reads as constant gunfire.** ✓ throttled to 160ms cooldown and volume dropped 6-10 dB. Was the user-reported "shots all over the background."
+- [x] **Brass casing audio.** ✓ each casing emits a quiet metal tink on first floor-bounce (cooldown-debounced so a bouncing casing doesn't clink twice).
 
 ### Visuals
 - [ ] **Real 3D models** for the four weapons. Today they're CSG / primitive viewmodels. Source CC0 GLB/GLTF or commission. Each needs basic firing animation rig + ejection-port socket for casing spawn.
-- [ ] **Real 3D models for zombies.** Five enemy archetypes are currently capsules with tints. At least one rigged humanoid mesh with palette/scale variants per archetype (Walker/Runner/Tank/Spitter/Exploder) and one distinct mesh per boss (Subject, Director).
+- [ ] **Real 3D models for zombies.** Five enemy archetypes are currently capsules with tints. At least one rigged humanoid mesh with palette/scale variants per archetype (Walker/Runner/Tank/Spitter/Exploder) and one distinct mesh per boss (Subject, Director). PARTIAL: 2026-05-21 — zombies now have humanoid silhouette (hunched torso, shoulders, head, jaw, two forward-reaching arms, two legs) built from primitives. Limbs tint with the archetype color. Still primitives, but reads as a creature rather than a capsule.
 - [ ] **Arena dressing.** Containment Lab + Cooling Tower are geometric blockouts. Need: console banks, broken vents, equipment crates, signage, hanging cables, a few "destroyed lab" set-pieces near spawn corridors. CC0 sci-fi kit from Quaternius / Kenney is the fastest path.
 
 ### Build / deploy
@@ -59,13 +61,18 @@ Tiers:
 - [ ] **Colorblind palette mode.** Eye glow + enemy tint differentiation is core to the read; colorblind players need a switch.
 - [ ] **Subtitle / caption layer** for the intercom flavor text and boss callouts.
 - [ ] **Key/mouse remap UI.** Sensitivity exists; full remap doesn't.
+- [x] **Mouse sensitivity range expanded.** ✓ max bumped 0.006 -> 0.020 after user maxed the old slider.
 - [ ] **Hold-to-confirm** option for destructive UI actions (return-to-title mid-run).
 
 ### Polish
 - [ ] **Weapon reload animations** on the viewmodel (mag drop, slide rack, pump for shotgun). Currently audio-only.
 - [ ] **Zombie hit-reaction animations** — directional stagger on hit, not just blood burst.
 - [ ] **Bullet hole decals** on floor / barrier where shots impact (with a pool cap).
-- [ ] **Brass casing audio** — small clink on first floor-bounce per casing.
+- [x] **Brass casing audio** ✓ shipped.
+- [x] **Punchier weapon SFX.** ✓ Pistol/AR/Shotgun synths rewritten as crack-body-tail; previously read as a hiss, now reads as a distinct shot.
+- [x] **Arena lunar atmosphere.** ✓ Sky+fog crushed to near-black, ambient + sun energies dropped, glow turned on, floor texture roughened. Both arenas. Player flashlight covers the dim.
+- [x] **Spawn-point distance.** ✓ Pushed radius 12 -> 19; ~67% more run-up time.
+- [x] **FOV punch on fire.** ✓ subtler version after user feedback (coefficient halved, cap halved).
 
 ---
 
