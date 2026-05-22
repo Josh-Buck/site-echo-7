@@ -38,18 +38,28 @@ theme_override_constants/margin_bottom = 14
 [node name="HintLabel" type="Label" parent="Panel/Margin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "CONTROLS
+text = "SITE ECHO 7 — CONTROLS
 
-Mouse — aim / turn
-Click / SPACE — fire
-R — reload
-1 / 2 / 3 — pistol / shotgun / AR
-4 — sidearm (∞ ammo)
-Q — next weapon
-ESC — pause
+Mouse  — spin to aim (you don't move)
+Click  — fire
+R      — reload
+1-6    — weapon slot
+Q      — next weapon
+ESC    — pause
 
-Kill zombies for tokens. After each
-wave pick a research card and spend
-tokens at the shop.
+LOOP
+- Kill zombies → tokens drop
+- Wave ends → draft a research note
+  (card permanently buffs a weapon)
+- Then visit the shop to spend tokens
+  on ammo, repairs, or emplacements
 
-(this panel fades after a few kills)"
+OUT OF AMMO? — switch to slot 4
+(sidearm, weaker but infinite reserve)
+
+LOW HP? — barrier alarm starts at 25%
+
+You die when the barrier hits 0.
+20 waves to clear. Director on wave 20.
+
+(panel fades after 5 kills)"

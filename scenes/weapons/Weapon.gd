@@ -17,6 +17,7 @@ const ENEMY_MASK: int = 4  # physics layer 3
 const RAY_MASK: int = 4 | 2  # zombies + world (barrier/floor) for tracer/impact endpoint
 const TRACER_SCENE := preload("res://scenes/weapons/vfx/BulletTracer.tscn")
 const TRACER_POOL_SCENE := preload("res://scenes/weapons/vfx/TracerPool.tscn")
+const BULLETHOLE_POOL_SCENE := preload("res://scenes/weapons/vfx/BulletHolePool.tscn")
 const SPARKS_SCENE := preload("res://scenes/weapons/vfx/ImpactSparks.tscn")
 const WEAPON_METAL_MAT := preload("res://art/materials/weapon_metal/material.tres")
 const WEAPON_POLYMER_MAT := preload("res://art/materials/weapon_polymer/material.tres")
@@ -193,8 +194,9 @@ func _resolve_pellet(cam: Camera3D, payload: Dictionary) -> void:
 	payload["hit_normal"] = endpoint_normal
 	var is_enemy := hit_node.has_method("take_damage") and hit_node.is_in_group("zombies")
 	if not is_enemy:
-		# Hit world (barrier/floor) — sparks, no damage path.
+		# Hit world (barrier/floor) — sparks + bullet hole decal, no damage path.
 		_spawn_sparks(endpoint, endpoint_normal)
+		_stamp_bullethole(endpoint, endpoint_normal)
 		return
 	var hit: Node = hit_node
 	if not hit.has_method("take_damage"):
@@ -274,6 +276,19 @@ func _spawn_tracer(from: Vector3, to: Vector3) -> void:
 		t.setup(muzzle, to)
 
 var _cached_tracer_pool: Node = null
+var _cached_bullethole_pool: Node = null
+
+func _stamp_bullethole(at: Vector3, normal: Vector3) -> void:
+	if _cached_bullethole_pool == null or not is_instance_valid(_cached_bullethole_pool):
+		var existing := get_tree().get_nodes_in_group("bullethole_pool")
+		if existing.is_empty():
+			var p: Node = BULLETHOLE_POOL_SCENE.instantiate()
+			get_tree().current_scene.add_child(p)
+			_cached_bullethole_pool = p
+		else:
+			_cached_bullethole_pool = existing[0]
+	if _cached_bullethole_pool.has_method("stamp"):
+		_cached_bullethole_pool.call("stamp", at, normal)
 
 func _get_tracer_pool() -> Node:
 	if _cached_tracer_pool != null and is_instance_valid(_cached_tracer_pool):

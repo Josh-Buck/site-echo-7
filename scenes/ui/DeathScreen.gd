@@ -40,10 +40,10 @@ func _present(victory: bool) -> void:
 
 	if victory:
 		title_label.text = "SITE ECHO 7 CONTAINED"
-		subtitle_label.text = "All waves survived. The Director is down."
+		subtitle_label.text = _victory_flavor()
 	else:
 		title_label.text = "BARRIER BREACHED"
-		subtitle_label.text = "Site Echo 7 lost containment."
+		subtitle_label.text = _defeat_flavor()
 
 	_populate_stats_grid(rounds, kills, tokens_earned, tokens_left)
 	kills_label.text = _format_kills_by_type()
@@ -59,6 +59,27 @@ func _present(victory: bool) -> void:
 	MetaProgress.record_run_end()
 	SaveSystem.save_meta()
 	_animate_in(rd_earned)
+
+const VICTORY_LINES := [
+	"All hostiles down. Containment restored. Field team en route.",
+	"The Director is down. Site Echo 7 is yours to seal.",
+	"Twenty waves. One barrier. Files declassified.",
+	"Last echo silenced. Recover your notes and exfil.",
+]
+
+const DEFEAT_LINES := [
+	"Barrier integrity zero. Site Echo 7 lost containment.",
+	"Recovered: research notes. Lost: the rest.",
+	"Field log ends here. Next operator's coming with reinforcements.",
+	"You held longer than the last operator. Not long enough.",
+	"They breached. Your data made it out. Most of it.",
+]
+
+func _victory_flavor() -> String:
+	return VICTORY_LINES[randi() % VICTORY_LINES.size()]
+
+func _defeat_flavor() -> String:
+	return DEFEAT_LINES[randi() % DEFEAT_LINES.size()]
 
 func _populate_stats_grid(rounds: int, kills: int, earned: int, leftover: int) -> void:
 	for child in stats_grid.get_children():

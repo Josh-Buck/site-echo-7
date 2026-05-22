@@ -4,7 +4,7 @@ extends Node
 # All sounds cache after first generation. Pure GDScript — no external assets.
 
 const SAMPLE_RATE: int = 22050
-const POOL_SIZE: int = 16
+const POOL_SIZE: int = 24
 
 # Pre-loaded streams for the curated SFX set.
 const UI_CLICK_PATH := "res://audio/sfx/ui/click.ogg"

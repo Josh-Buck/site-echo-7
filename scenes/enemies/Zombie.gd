@@ -357,6 +357,7 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 	EventBus.enemy_damaged.emit(self, amount, source, hit_position, is_headshot)
 	_spawn_blood_burst(hit_position, is_headshot)
 	_check_director_rage()
+	_play_hit_reaction(is_headshot)
 	if current_hp <= 0.0:
 		state = AIState.DIE
 		_die_timer = DISSOLVE_TIME
@@ -396,6 +397,35 @@ func _check_director_rage() -> void:
 	tw.tween_property(self, "scale", scale, 0.32)
 	# Diegetic audio cue: re-use death roar at full pitch as a phase-shift bellow.
 	_play_audio(attack_growl)
+
+var _hit_flash_active: bool = false
+
+func _play_hit_reaction(is_headshot: bool) -> void:
+	# Brief scale-pop + white-tint flash on hit. Sells "you connected" feedback
+	# without the cost of a rigged stagger animation.
+	if _hit_flash_active:
+		return
+	_hit_flash_active = true
+	var base_scale := scale
+	var pop_scale := base_scale * (1.18 if is_headshot else 1.08)
+	var tw := create_tween()
+	tw.tween_property(self, "scale", pop_scale, 0.045).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "scale", base_scale, 0.10)
+	tw.finished.connect(func(): _hit_flash_active = false)
+	if is_headshot:
+		_flash_white()
+
+func _flash_white() -> void:
+	# Critical-hit flash — body briefly tints toward white. Reverts via tween that
+	# re-applies the archetype color.
+	if data == null:
+		return
+	var orig_body := data.body_color
+	_tint_mesh($Mesh, Color(1, 1, 1), false)
+	get_tree().create_timer(0.06).timeout.connect(func():
+		if is_instance_valid(self) and state != AIState.DIE:
+			_tint_mesh($Mesh, orig_body, false)
+	)
 
 func _spawn_blood_burst(at: Vector3, headshot: bool) -> void:
 	if not MetaProgress.gore_enabled():

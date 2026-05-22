@@ -94,6 +94,17 @@ custom_minimum_size = Vector2(280, 48)
 theme_override_font_sizes/font_size = 20
 text = "LIFETIME STATS"
 
+[node name="SpacerBetweenButtons4" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+
+[node name="CreditsButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 40)
+theme_override_font_sizes/font_size = 16
+text = "CREDITS"
+
 [node name="Spacer2" type="Control" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 32)

@@ -1,0 +1,158 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1creditsxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/CreditsScreen.gd" id="1_credits"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.03, 0.04, 0.07, 1)
+
+[node name="CreditsScreen" type="Control"]
+script = ExtResource("1_credits")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = 40.0
+offset_right = -80.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "CREDITS"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "ESC or BACK to return"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 480)
+
+[node name="Content" type="VBoxContainer" parent="VBox/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="L1" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "Engine"
+horizontal_alignment = 1
+
+[node name="L1b" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Godot 4.6 — godotengine.org — MIT"
+horizontal_alignment = 1
+
+[node name="S1" type="Control" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 18)
+
+[node name="L2" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "3D Models"
+horizontal_alignment = 1
+
+[node name="L2b" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Weapons — Quaternius, Ultimate Gun Pack (CC0)
+quaternius.com   no attribution required, included anyway"
+horizontal_alignment = 1
+
+[node name="S2" type="Control" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 18)
+
+[node name="L3" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "Audio"
+horizontal_alignment = 1
+
+[node name="L3b" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Weapon, UI, and ambient SFX — procedurally synthesized at runtime in GDScript (no external samples).
+Zombie groans, barrier impacts, footsteps — CC0 / public-domain field recordings
+sourced via Freesound and OpenGameArt (specific contributors in audio/CREDITS.md)."
+horizontal_alignment = 1
+
+[node name="S3" type="Control" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 18)
+
+[node name="L4" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "Materials"
+horizontal_alignment = 1
+
+[node name="L4b" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Concrete / lab tile / metal panel / rusty steel / weapon polymer + metal
+PBR maps from AmbientCG.com (CC0) and Poly Haven (CC0)."
+horizontal_alignment = 1
+
+[node name="S4" type="Control" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 18)
+
+[node name="L5" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "Design + Code"
+horizontal_alignment = 1
+
+[node name="L5b" type="Label" parent="VBox/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Site Echo 7 — Josh Buck, 2026.
+Built with help from Claude Code (Anthropic)."
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[node name="BackButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(320, 56)
+theme_override_font_sizes/font_size = 22
+text = "← BACK TO TITLE"

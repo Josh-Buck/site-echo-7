@@ -42,6 +42,7 @@ func _show() -> void:
 	panel.visible = true
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_disarm_menu_confirm()  # Reset confirm state on each open
 	AudioMan.play_ui_click()
 
 func _resume() -> void:
@@ -53,8 +54,30 @@ func _resume() -> void:
 func _on_resume_pressed() -> void:
 	_resume()
 
+var _menu_confirm_armed: bool = false
+var _menu_confirm_timer: float = 0.0
+const MENU_CONFIRM_WINDOW: float = 2.5
+
+func _process(delta: float) -> void:
+	if _menu_confirm_armed:
+		_menu_confirm_timer -= delta
+		if _menu_confirm_timer <= 0.0:
+			_disarm_menu_confirm()
+
 func _on_menu_pressed() -> void:
+	if not _menu_confirm_armed:
+		_menu_confirm_armed = true
+		_menu_confirm_timer = MENU_CONFIRM_WINDOW
+		menu_button.text = "CONFIRM: ABANDON RUN"
+		AudioMan.play_ui_click()
+		return
+	# Second press inside the window — actually return to title.
 	AudioMan.play_ui_click()
 	get_tree().paused = false
 	SaveSystem.save_meta()
 	get_tree().change_scene_to_file("res://scenes/ui/TitleScreen.tscn")
+
+func _disarm_menu_confirm() -> void:
+	_menu_confirm_armed = false
+	if menu_button:
+		menu_button.text = "RETURN TO TITLE"

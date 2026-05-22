@@ -7,6 +7,7 @@ extends Control
 @onready var meta_button: Button = $VBox/MetaButton
 @onready var settings_button: Button = $VBox/SettingsButton
 @onready var stats_button: Button = $VBox/StatsButton if has_node("VBox/StatsButton") else null
+@onready var credits_button: Button = $VBox/CreditsButton if has_node("VBox/CreditsButton") else null
 @onready var version_label: Label = $VersionLabel
 
 func _ready() -> void:
@@ -18,6 +19,9 @@ func _ready() -> void:
 	if stats_button:
 		stats_button.pressed.connect(_on_stats_pressed)
 		hover_buttons.append(stats_button)
+	if credits_button:
+		credits_button.pressed.connect(_on_credits_pressed)
+		hover_buttons.append(credits_button)
 	for b in hover_buttons:
 		b.mouse_entered.connect(AudioMan.play_ui_hover)
 	_refresh_stats()
@@ -52,6 +56,11 @@ func _on_stats_pressed() -> void:
 	AudioMan.register_first_gesture()
 	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/LifetimeStatsScreen.tscn")
+
+func _on_credits_pressed() -> void:
+	AudioMan.register_first_gesture()
+	AudioMan.play_ui_click()
+	get_tree().change_scene_to_file("res://scenes/ui/CreditsScreen.tscn")
 
 func _refresh_stats() -> void:
 	var lines: Array[String] = []

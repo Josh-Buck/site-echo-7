@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1bulletholexyz"]
+
+[ext_resource type="Script" path="res://scenes/weapons/vfx/BulletHolePool.gd" id="1_bh"]
+
+[node name="BulletHolePool" type="Node"]
+script = ExtResource("1_bh")

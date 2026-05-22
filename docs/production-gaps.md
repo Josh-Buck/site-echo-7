@@ -31,8 +31,8 @@ Tiers:
 - [ ] **Frame-time budget.** Profile at peak horde with all VFX on; 16.6ms 95th percentile target.
 
 ### Onboarding
-- [ ] **First-run tutorial polish.** Current Tutorial panel exists but is barebones. Needs: spin-to-aim hint, reload hint, card-system explainer (one card draft walkthrough), shop explainer, sidearm fallback hint.
-- [ ] **Title-screen Continue button** — confirm mid-run save reload works end-to-end (design-plan.md M2 line; needs verification).
+- [x] **First-run tutorial polish.** ✓ rewritten — explains the spin-to-aim loop, card→shop cadence, sidearm fallback, alarm-at-25%-HP cue, 20-wave structure / boss on wave 20.
+- [ ] **Title-screen Continue button** — requires a mid-run save format that doesn't currently exist. Parked: needs `GameState`-to-disk + arena/zombie state snapshot which is a much bigger lift than the rest of v1.0. Deferred to post-1.0.
 
 ---
 
@@ -42,7 +42,7 @@ Tiers:
 - [x] **5th weapon: SMG** ✓ shipped — high RPM, low damage, 35 mag, slot 5 / key 5, 550 RD unlock.
 - [x] **6th weapon: Bolt-Action Rifle** ✓ shipped — 0.7 rps, 60 dmg, HS×3, slot 6 / key 6, 700 RD unlock.
 - [x] **Spitter + Exploder** ✓ shipped (M3d earlier).
-- [ ] **Elite / armored variants** of basic enemies for mid-round spice.
+- [x] **Elite / armored variants** ✓ shipped — Armored Walker (60 HP, armor, +14 dmg, blue-grey palette, glowing blue eyes). Appears in waves 5 and 8.
 - [x] **Curse cards** ✓ shipped — Glass Cannon, Field Trauma, Gambler (tradeoff cards).
 - [x] **Synergy cards** ✓ shipped — Pyromaniac (fire ≥3), Surgical Precision (precision ≥2), Munitions Specialist (ammo ≥2). Tag map in CardSystem.CARD_TAGS.
 - [x] **More boss phases** ✓ shipped — Director phase-2 rage at HP < 50% (speed +50%, damage +25%, body recolor). Subject mid-boss still single-phase.
@@ -55,19 +55,19 @@ Tiers:
 - [x] **Card hover preview** ✓ shipped — projects stat deltas on the active weapon when hovering a draft card.
 - [x] **Reload hint flash** ✓ shipped (M3-polish).
 - [x] **Wave intro banner with composition** ✓ shipped (M3-polish). Also now includes "Deck:" reminder line.
-- [ ] **Resume-run flow** on title screen — Continue / New Run buttons, confirm-dialog if New overrides save.
+- [ ] **Resume-run flow** on title screen — parked, same blocker as P0 Continue button.
 
 ### Accessibility
 - [ ] **Colorblind palette mode.** Eye glow + enemy tint differentiation is core to the read; colorblind players need a switch.
 - [ ] **Subtitle / caption layer** for the intercom flavor text and boss callouts.
 - [ ] **Key/mouse remap UI.** Sensitivity exists; full remap doesn't.
 - [x] **Mouse sensitivity range expanded.** ✓ max bumped 0.006 -> 0.020 after user maxed the old slider.
-- [ ] **Hold-to-confirm** option for destructive UI actions (return-to-title mid-run).
+- [x] **Hold-to-confirm** ✓ shipped — PauseMenu "Return to Title" now requires a second press inside 2.5s. Button text flips to "CONFIRM: ABANDON RUN" while armed.
 
 ### Polish
-- [ ] **Weapon reload animations** on the viewmodel (mag drop, slide rack, pump for shotgun). Currently audio-only.
-- [ ] **Zombie hit-reaction animations** — directional stagger on hit, not just blood burst.
-- [ ] **Bullet hole decals** on floor / barrier where shots impact (with a pool cap).
+- [ ] **Weapon reload animations** on the viewmodel (mag drop, slide rack, pump for shotgun). Requires rigged GLBs; current Quaternius models aren't rigged.
+- [x] **Zombie hit-reaction** ✓ shipped — brief scale-pop on every hit (bigger on headshot) + white critical-hit flash on headshot.
+- [x] **Bullet hole decals** ✓ shipped — `BulletHolePool` (48 slots, ~6s lifetime + last-30% fade). Stamps a small dark quad oriented to the hit normal on world impacts (barrier/floor).
 - [x] **Brass casing audio** ✓ shipped.
 - [x] **Punchier weapon SFX.** ✓ Pistol/AR/Shotgun synths rewritten as crack-body-tail; previously read as a hiss, now reads as a distinct shot.
 - [x] **Arena lunar atmosphere.** ✓ Sky+fog crushed to near-black, ambient + sun energies dropped, glow turned on, floor texture roughened. Both arenas. Player flashlight covers the dim.
@@ -79,12 +79,12 @@ Tiers:
 ## P2 — Polish and depth
 
 ### Game feel
-- [ ] **Hit-pause variants** — currently only on headshot kills. Add a smaller pause on regular kill, a longer one on boss-phase transition.
-- [ ] **Camera weapon sway** when idle (gentle breathing).
+- [x] **Hit-pause variants** ✓ shipped — three tiers: body kill (0.6 scale × 20ms), headshot (0.35 × 45ms), boss kill (0.2 × 180ms).
+- [x] **Camera weapon sway** ✓ shipped (idle sway in Player.gd).
 - [ ] **Idle viewmodel animation** between shots.
-- [ ] **Weapon-swap animation** (lower / raise) when cycling slots.
+- [x] **Weapon-swap animation** ✓ shipped — `begin_swap_in` springs the new weapon up from below on activate.
 - [ ] **Crosshair customization** (size, color, shape, dot/cross).
-- [ ] **Critical-hit flash** — enemy briefly tints white on headshot before blood spawns.
+- [x] **Critical-hit flash** ✓ shipped — headshot tints the zombie body to white for 60ms, scale-pops 18%.
 - [ ] **Boss arena variants** — lights dim red during boss waves; ambient hum drops out.
 - [ ] **Score popup chains** — combo multiplier feedback on rapid kills.
 - [ ] **Combo-break sound** when the streak resets.
@@ -99,10 +99,10 @@ Tiers:
 ### Fiction / atmosphere
 - [ ] **Intercom flavor lines** — short procedural / written research-note fragments that play between waves to sell the Site Echo-7 fiction. Synthesized voice or text-only.
 - [ ] **Story intro** — 10-second opening on a new run: "Two hours after containment failure. Site Echo-7. Observation ring secured." Brief, skippable.
-- [ ] **Death-screen flavor text** — randomized end-of-run "research note" tying the run to the fiction.
+- [x] **Death-screen flavor text** ✓ shipped — randomized victory and defeat lines on the DeathScreen subtitle.
 
 ### Engineering
-- [ ] **AudioMan pool size** — bump from 16+16 to 24+24 if peak-wave SFX truncation is observed.
+- [x] **AudioMan pool size** ✓ bumped 16 -> 24 (both 2D and 3D pools).
 - [ ] **BloodBurst pooling** — currently instantiate + queue_free per hit (flagged by AI architect). Pool if perf regresses.
 - [ ] **`SaveSystem.rename_absolute` web warning** — refactor to write-then-overwrite without rename when `user://` resolves to IndexedDB. Cosmetic; saves still work via fallback.
 - [ ] **Spitter acid AOE vs clean-round challenge** — confirm whether acid puddle damage on barrier should disqualify the "clean round" challenges, or be exempt. Open question from challenge agent.
@@ -118,7 +118,7 @@ Tiers:
 - [ ] **Photo mode** — pause + free-fly camera + filter toggles for screenshots.
 - [ ] **Replay / kill-cam** on final death.
 - [ ] **Localization scaffolding** — extract every UI string to a translation file even if v1.0 ships English-only.
-- [ ] **Credits screen** — assets + libraries + sources from `audio/CREDITS.md` and `art/CREDITS.md`.
+- [x] **Credits screen** ✓ shipped — CreditsScreen.tscn reachable from title. Lists Godot engine, Quaternius weapon pack, AmbientCG/Poly Haven PBR maps, audio sources, design + code credit.
 - [ ] **Content-warning splash** linkable from title screen per CLAUDE.md sensitivity guardrails.
 - [ ] **README polish** — short itch-style write-up at the GH Pages root + a 5-second loop GIF for the README.
 - [ ] **Twitter / itch.io launch art** — title key-art, three gameplay screenshots, a short trailer.
