@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var tokens_label: Label = $Panel/VBox/TokensLabel
 @onready var offer_row: HBoxContainer = $Panel/VBox/OfferRow
 @onready var continue_button: Button = $Panel/VBox/ContinueButton
+@onready var browse_cards_button: Button = $Panel/VBox/BrowseCardsButton if has_node("Panel/VBox/BrowseCardsButton") else null
 
 const OFFER_POOL: Array[Dictionary] = [
 	{"id": "ammo_topup", "name": "Ammo Top-Up", "desc": "Refill active weapon's reserve ammo.", "cost": 30},
@@ -31,6 +32,9 @@ func _ready() -> void:
 	EventBus.run_started.connect(_on_run_started)
 	continue_button.pressed.connect(_on_continue_pressed)
 	continue_button.mouse_entered.connect(AudioMan.play_ui_hover)
+	if browse_cards_button:
+		browse_cards_button.pressed.connect(_on_browse_cards_pressed)
+		browse_cards_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
 func _on_run_started() -> void:
 	_allow_open = false
@@ -193,3 +197,12 @@ func _on_continue_pressed() -> void:
 	panel.visible = false
 	# Stay paused — WaveComplete is the next overlay and will re-affirm pause.
 	EventBus.shop_done.emit()
+
+func _on_browse_cards_pressed() -> void:
+	AudioMan.play_ui_click()
+	# Hand off to the targeted-card-buy overlay. Shop panel stays visible
+	# underneath; the browse panel sits on top (layer 25 vs 11).
+	var scene := get_tree().current_scene
+	var browse := scene.get_node_or_null("CardBrowseScreen") if scene else null
+	if browse and browse.has_method("open"):
+		browse.call("open")

@@ -32,6 +32,7 @@
 [ext_resource type="PackedScene" uid="uid://b1tutorialxyz" path="res://scenes/ui/Tutorial.tscn" id="30_tut"]
 [ext_resource type="PackedScene" uid="uid://b1deathxyz" path="res://scenes/ui/DeathScreen.tscn" id="31_death"]
 [ext_resource type="PackedScene" uid="uid://b1devconsolexyz" path="res://scenes/ui/DevConsole.tscn" id="32_dev"]
+[ext_resource type="PackedScene" uid="uid://b1cardbrowsxyz" path="res://scenes/ui/CardBrowseScreen.tscn" id="33_browse"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -60,3 +61,5 @@ waves = Array[Resource]([ExtResource("5_wave1"), ExtResource("6_wave2"), ExtReso
 [node name="DeathScreen" parent="." instance=ExtResource("31_death")]
 
 [node name="DevConsole" parent="." instance=ExtResource("32_dev")]
+
+[node name="CardBrowseScreen" parent="." instance=ExtResource("33_browse")]

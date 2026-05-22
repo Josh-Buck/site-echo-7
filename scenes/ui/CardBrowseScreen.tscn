@@ -1,0 +1,77 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1cardbrowsxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/CardBrowseScreen.gd" id="1_browse"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.03, 0.04, 0.07, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.45, 0.6, 0.6)
+
+[node name="CardBrowseScreen" type="CanvasLayer"]
+layer = 25
+process_mode = 3
+script = ExtResource("1_browse")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -300.0
+offset_right = 440.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="V" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Header" type="HBoxContainer" parent="Panel/V"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Panel/V/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+text = "TARGETED UPGRADES"
+
+[node name="TokensLabel" type="Label" parent="Panel/V/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Tokens Available: 0"
+horizontal_alignment = 2
+
+[node name="HintLabel" type="Label" parent="Panel/V"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Buy a specific card with tokens. Costlier than the random draft but no RNG. Save up between waves for the picks you want."
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/V"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 460)
+
+[node name="CardList" type="VBoxContainer" parent="Panel/V/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Footer" type="HBoxContainer" parent="Panel/V"]
+layout_mode = 2
+alignment = 2
+
+[node name="CloseButton" type="Button" parent="Panel/V/Footer"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 44)
+theme_override_font_sizes/font_size = 18
+text = "← BACK TO ACTION"

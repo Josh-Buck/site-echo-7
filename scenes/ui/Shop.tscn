@@ -54,7 +54,18 @@ alignment = 1
 
 [node name="Spacer2" type="Control" parent="Panel/VBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 16)
+
+[node name="BrowseCardsButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(360, 48)
+theme_override_font_sizes/font_size = 18
+text = "BROWSE CARDS — buy a specific upgrade"
+
+[node name="Spacer3" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
 
 [node name="ContinueButton" type="Button" parent="Panel/VBox"]
 layout_mode = 2

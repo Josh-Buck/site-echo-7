@@ -128,6 +128,7 @@ Tiers:
 - [x] **Boss telegraph audio** ✓ shipped — distinct 2.2s descending double-tone synth on wave 10 and 20 start, replaces the regular tension stinger on boss waves.
 - [x] **Weapon inspect animation** ✓ shipped — Hold I to inspect. WeaponHolder lerps toward an offset (left, up, forward) + rotates ~20deg toward the lens. Bob auto-disables while inspecting.
 - [x] **Mouse-smoothing toggle** ✓ shipped — Settings checkbox. When on, mouse motion lerps toward target at ~18/s instead of applying instantly.
+- [x] **Targeted upgrade shop** ✓ shipped — Shop now has a "BROWSE CARDS" button that opens CardBrowseScreen. Lists every card not yet in your deck. Cost scales by rarity (100/175/280/80 tokens for Common/Rare/Legendary/Curse). Player saves tokens between waves and buys specific picks instead of relying on the random draft.
 - [x] **Gamepad rumble** ✓ shipped — Input.start_joy_vibration on weapon_fired with weak/strong magnitudes scaled by recoil_vertical. Best-effort on web (browsers limit this); pistol is subtle, bolt-action is heavy.
 - [x] **Tutorial replay** ✓ shipped — Settings button clears intro_seen + tutorial_done flags so next run re-shows both.
 - [x] **Backup save** ✓ shipped — rotating 3-slot chain.
@@ -172,4 +173,11 @@ The remaining `[ ]` items all require user / asset intervention I can't do auton
 
 ## Parked / acknowledged
 
-- **Turret model** — current Turret.tscn (cylinder base + box barrel) looks under-polished. Acknowledged by user 2026-05-22; parked until a real CC0 emplacement model lands (Quaternius Sci-Fi Essentials has a few).
+- **Turret model** — current Turret.tscn (cylinder base + box barrel) looks under-polished. Acknowledged by user 2026-05-22. Sci-Fi Essentials Kit doesn't ship a turret asset; needs a separate CC0 source or commission.
+- **Hand model on weapon viewmodel** — user-requested 2026-05-22. Currently the gun "floats" in front of the camera without a visible hand pulling the trigger. Needs a rigged hand GLB and IK setup on the existing weapon viewmodels. Defer until rigged Mixamo character can be re-targeted onto the FPS rig.
+- **Card-driven visual weapon mods** — user-requested 2026-05-22. When a card drops (e.g. recoil-down), the weapon should show an accessory (foregrip, extended mag, bigger barrel) reflecting the buff. Requires:
+    1. Quaternius gun accessory pack (or commission)
+    2. Empty Marker3D attach points on every weapon viewmodel
+    3. EventBus.card_drafted listener on each Weapon that toggles attached accessory visibility based on active deck contents
+  Substantial feature, deferred for now.
+- **Wave 10 difficulty** — user feedback 2026-05-22: can't reach wave 10 yet. Could be balance or skill curve. Deferred until more playtest data; no change yet.
