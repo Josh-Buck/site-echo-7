@@ -31,6 +31,36 @@ func _ready() -> void:
 	_build_perimeter_walls()
 	_build_dust_motes()
 	_start_ambient_hum()
+	# Boss-wave lighting variant — fluorescents dim to red while a boss is alive.
+	EventBus.wave_started.connect(_on_wave_started)
+	EventBus.wave_ended.connect(_on_wave_ended)
+
+const BOSS_ROUNDS := [10, 20]
+
+func _on_wave_started(round_number: int, _composition: Array) -> void:
+	if round_number in BOSS_ROUNDS:
+		_set_boss_lighting(true)
+
+func _on_wave_ended(round_number: int) -> void:
+	if round_number in BOSS_ROUNDS:
+		_set_boss_lighting(false)
+
+func _set_boss_lighting(on: bool) -> void:
+	# Boss waves dim the lights and shift them toward red — sells the threat.
+	var target_color: Color = Color(1.0, 0.25, 0.25, 1) if on else Color(0.7, 0.78, 0.92, 1)
+	var target_energy: float = 0.45 if on else 0.8
+	for light in [fluor_east, fluor_west]:
+		if light == null:
+			continue
+		var tw := create_tween()
+		tw.tween_property(light, "light_color", target_color, 1.2)
+		tw.parallel().tween_property(light, "light_energy", target_energy, 1.2)
+	if on:
+		_east_base_energy = target_energy
+		_west_base_energy = target_energy
+	else:
+		_east_base_energy = 0.8
+		_west_base_energy = 0.8
 
 func _process(delta: float) -> void:
 	if _hum and not _hum.playing and AudioMan.can_play():

@@ -29,6 +29,23 @@ func _ready() -> void:
 	_build_girders()
 	_build_dust_motes()
 	_start_ambient_hum()
+	EventBus.wave_started.connect(_on_wave_started)
+	EventBus.wave_ended.connect(_on_wave_ended)
+
+func _on_wave_started(round_number: int, _composition: Array) -> void:
+	if round_number == 20 and vent_light:
+		# Director boss wave: vent light shifts red, energy drops.
+		var tw := create_tween()
+		tw.tween_property(vent_light, "light_color", Color(1.0, 0.25, 0.25, 1), 1.2)
+		tw.parallel().tween_property(vent_light, "light_energy", 0.5, 1.2)
+		_vent_base_energy = 0.5
+
+func _on_wave_ended(round_number: int) -> void:
+	if round_number == 20 and vent_light:
+		var tw := create_tween()
+		tw.tween_property(vent_light, "light_color", Color(0.55, 0.7, 0.92, 1), 1.5)
+		tw.parallel().tween_property(vent_light, "light_energy", 1.0, 1.5)
+		_vent_base_energy = 1.0
 
 func _process(delta: float) -> void:
 	if _hum and not _hum.playing and AudioMan.can_play():

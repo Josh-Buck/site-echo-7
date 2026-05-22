@@ -85,7 +85,7 @@ Tiers:
 - [x] **Weapon-swap animation** ✓ shipped — `begin_swap_in` springs the new weapon up from below on activate.
 - [ ] **Crosshair customization** (size, color, shape, dot/cross).
 - [x] **Critical-hit flash** ✓ shipped — headshot tints the zombie body to white for 60ms, scale-pops 18%.
-- [ ] **Boss arena variants** — lights dim red during boss waves; ambient hum drops out.
+- [x] **Boss arena variants** ✓ shipped — fluorescent lights (Arena) and vent light (CoolingTower) shift to red + dim energy on wave 10 and 20 start, recover after the wave ends.
 - [ ] **Score popup chains** — combo multiplier feedback on rapid kills.
 - [ ] **Combo-break sound** when the streak resets.
 
@@ -97,8 +97,8 @@ Tiers:
 - [ ] **More cards** — design-plan.md M3 says "30 cards." Confirmed at 30. Push to 40–50 once curse + synergy categories land.
 
 ### Fiction / atmosphere
-- [ ] **Intercom flavor lines** — short procedural / written research-note fragments that play between waves to sell the Site Echo-7 fiction. Synthesized voice or text-only.
-- [ ] **Story intro** — 10-second opening on a new run: "Two hours after containment failure. Site Echo-7. Observation ring secured." Brief, skippable.
+- [x] **Intercom flavor lines** ✓ shipped — Main.gd maintains an `INTERCOM_LINES` dict keyed by round_number. Fades the line in/out on the lower-left after the matching wave_ended. 13 lines covering wave 1, 2, 3, 5, 7, 9, 10, 11, 14, 16, 18, 19.
+- [x] **Story intro** ✓ shipped — `StoryIntro.tscn` overlays Main on first run, 4 lines × ~2.4s each, click/space/ESC to skip. Fades out and queue_frees.
 - [x] **Death-screen flavor text** ✓ shipped — randomized victory and defeat lines on the DeathScreen subtitle.
 
 ### Engineering
