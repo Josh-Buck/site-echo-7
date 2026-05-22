@@ -89,19 +89,8 @@ func _apply_pbr_materials() -> void:
 			shell.set_surface_override_material(0, shell_mat)
 
 func _start_ambient_hum() -> void:
-	_hum = AudioStreamPlayer.new()
-	_hum.stream = LAB_HUM
-	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
-	# Industrial feel: slightly louder + pitched down for a deeper drone.
-	_hum.volume_db = -40.0
-	_hum.pitch_scale = 0.89
-	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
-	if LAB_HUM is AudioStreamOggVorbis:
-		var hum: AudioStreamOggVorbis = LAB_HUM
-		hum.loop = true
-	add_child(_hum)
-	if AudioMan.can_play():
-		_hum.play()
+	# Cooling-tower hum disabled in v0.9 audio restart — see Arena.gd context.
+	pass
 
 func _build_perimeter_pipes() -> void:
 	# Vertical industrial pipes ringing the chamber.

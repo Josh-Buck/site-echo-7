@@ -111,14 +111,10 @@ func _update_alarm() -> void:
 		_stop_alarm()
 
 func _start_alarm() -> void:
-	if _alarm_player == null or _alarm_active:
-		return
-	_alarm_active = true
-	if AudioMan.can_play():
-		_alarm_player.play()
+	# Critical alarm disabled in v0.9 audio restart. The looping OGG was
+	# loud enough at low HP to potentially be mistaken for background gunfire.
+	# Visual LowHpVignette in the HUD already pulses red when HP is critical.
+	pass
 
 func _stop_alarm() -> void:
-	if _alarm_player == null or not _alarm_active:
-		return
-	_alarm_active = false
-	_alarm_player.stop()
+	pass

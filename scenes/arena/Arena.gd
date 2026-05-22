@@ -96,18 +96,10 @@ func _apply_pbr_materials() -> void:
 			floor_mesh.set_surface_override_material(0, tiled)
 
 func _start_ambient_hum() -> void:
-	_hum = AudioStreamPlayer.new()
-	_hum.stream = LAB_HUM
-	_hum.bus = &"SFX" if AudioServer.get_bus_index("SFX") >= 0 else &"Master"
-	_hum.volume_db = -40.0
-	_hum.process_mode = Node.PROCESS_MODE_ALWAYS
-	if LAB_HUM is AudioStreamOggVorbis:
-		var hum: AudioStreamOggVorbis = LAB_HUM
-		hum.loop = true
-	add_child(_hum)
-	if AudioMan.can_play():
-		_hum.play()
-	# else: _process polls AudioMan.can_play() and starts the hum once the user gestures.
+	# Lab hum disabled in the v0.9 audio restart. Even at -40 dB the OGG was
+	# still a continuous loop; removing entirely is safer than relying on it
+	# being inaudible.
+	pass
 
 func _build_perimeter_walls() -> void:
 	var mat: Material

@@ -223,25 +223,15 @@ func _finish_reload() -> void:
 	EventBus.weapon_reloaded.emit(self)
 
 func _play_fire_sfx() -> void:
-	# Route through the AudioMan 3D pool (round-robin across 16 players) so rapid fire
-	# never clips a prior shot's attack transient. Calling .play() on a single shared
-	# AudioStreamPlayer3D at high RPM (e.g. AR ~10/s vs ~90 ms sample) cut the previous
-	# play mid-attack, which read as audio "lag" against the muzzle flash.
-	var stream: AudioStream = null
-	if _fire_sfx_player != null and _fire_sfx_player.stream != null:
-		stream = _fire_sfx_player.stream
-	elif data != null and data.fire_sfx != null:
-		stream = data.fire_sfx
-	if stream == null:
-		# Synth fallback in AudioMan handles the no-stream case via weapon_fired signal.
-		return
-	AudioMan.play_3d_at(stream, _muzzle_origin(), 0.0, 40.0, 0.05)
+	# Single, explicit call. No more dual paths (in-tscn stream + AudioMan synth)
+	# layering on top of each other. AudioMan handles the synth lookup by weapon id.
+	if data != null:
+		AudioMan.play_weapon_fire(data.id)
 
 func _play_reload_sfx() -> void:
-	if _reload_sfx_player == null or _reload_sfx_player.stream == null:
-		return
-	_reload_sfx_player.pitch_scale = randf_range(0.97, 1.03)
-	_reload_sfx_player.play()
+	# Same single-path treatment for reload. No more in-tscn AudioStreamPlayer3D
+	# autoplay-style behavior alongside the synth.
+	AudioMan.play_weapon_reload()
 
 func _flash_muzzle() -> void:
 	if muzzle_light == null or not (muzzle_light is OmniLight3D):
