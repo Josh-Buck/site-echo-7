@@ -3,8 +3,12 @@ class_name HitPause extends Node
 # Brief slow-mo on headshot kills for impact. UI tweens are on CanvasLayers with
 # their own process_mode and run unscaled, so they keep pace.
 
-@export var slow_scale: float = 0.05
-@export var duration_sec: float = 0.07
+# Much subtler than before — slow_scale 0.05 / dur 0.07 was reading as a
+# game-wide freeze on every headshot kill (which is most kills with the bolt
+# action or pistol-with-Marksman). Tighter values still register as impact
+# but don't interrupt the shooting cadence.
+@export var slow_scale: float = 0.35
+@export var duration_sec: float = 0.045
 
 var _restore_at: float = -1.0
 

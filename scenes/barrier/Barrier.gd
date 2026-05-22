@@ -98,25 +98,19 @@ func get_hp_fraction() -> float:
 	return current_hp / max_hp
 
 func _play_impact(amount: float, attacker: Node) -> void:
-	# Throttle: collapse rapid-fire impacts from a horde into a single audible thud.
-	# Heavy hits bypass the throttle so the player hears Tank/Director impacts.
+	# Heavy hits only — the per-zombie light-attack thuds were the user's
+	# "constant gunshots in the background." Silenced entirely. Heavy hits
+	# (Tank / Director / boss class) still play to telegraph real danger.
+	if amount < _heavy_threshold:
+		return
 	var now: float = Time.get_ticks_msec() / 1000.0
-	var is_heavy := amount >= _heavy_threshold
-	if not is_heavy and (now - _last_impact_sfx_at) < IMPACT_SFX_COOLDOWN:
+	if (now - _last_impact_sfx_at) < IMPACT_SFX_COOLDOWN:
 		return
 	_last_impact_sfx_at = now
 	var pos := global_position + Vector3(0, 0.5, 0)
 	if attacker is Node3D:
 		pos = (attacker as Node3D).global_position
-	var stream: AudioStream
-	var vol_db: float
-	if is_heavy:
-		stream = HIT_HEAVY
-		vol_db = -8.0
-	else:
-		stream = HIT_LIGHT_B if randi() % 2 == 0 else HIT_LIGHT_A
-		vol_db = -16.0
-	AudioMan.play_3d_at(stream, pos, vol_db, 22.0, 0.05)
+	AudioMan.play_3d_at(HIT_HEAVY, pos, -10.0, 18.0, 0.05)
 
 func _update_alarm() -> void:
 	var frac := get_hp_fraction()

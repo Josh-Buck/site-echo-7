@@ -64,18 +64,10 @@ func _physics_mat() -> PhysicsMaterial:
 	pm.friction = 0.6
 	return pm
 
-# Per-body cooldown so a casing that hops twice doesn't double-clink.
-var _last_clink_at: Dictionary = {}
-const CLINK_COOLDOWN: float = 0.18
-
-func _on_casing_landed(_other: Node, body: RigidBody3D) -> void:
-	var now: float = Time.get_ticks_msec() / 1000.0
-	var last: float = float(_last_clink_at.get(body.get_instance_id(), -1.0))
-	if last > 0.0 and (now - last) < CLINK_COOLDOWN:
-		return
-	_last_clink_at[body.get_instance_id()] = now
-	# Tiny metallic tink positional at the casing.
-	AudioMan.play_sfx("barrier_hit", body.global_position)
+func _on_casing_landed(_other: Node, _body: RigidBody3D) -> void:
+	# Casing clinks were turning into a percussive backdrop during sustained fire —
+	# silenced for now. Re-enable once we have a quieter dedicated stream.
+	pass
 
 func _process(_delta: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0

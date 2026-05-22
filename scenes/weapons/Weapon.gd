@@ -16,6 +16,7 @@ var _suppress_until_release: bool = true  # block fire until cursor captured + t
 const ENEMY_MASK: int = 4  # physics layer 3
 const RAY_MASK: int = 4 | 2  # zombies + world (barrier/floor) for tracer/impact endpoint
 const TRACER_SCENE := preload("res://scenes/weapons/vfx/BulletTracer.tscn")
+const TRACER_POOL_SCENE := preload("res://scenes/weapons/vfx/TracerPool.tscn")
 const SPARKS_SCENE := preload("res://scenes/weapons/vfx/ImpactSparks.tscn")
 const WEAPON_METAL_MAT := preload("res://art/materials/weapon_metal/material.tres")
 const WEAPON_POLYMER_MAT := preload("res://art/materials/weapon_polymer/material.tres")
@@ -25,6 +26,8 @@ var _kick_offset: Vector3 = Vector3.ZERO
 var _kick_pitch: float = 0.0
 var _rest_position: Vector3 = Vector3.ZERO
 var _kick_recovery: float = 0.12
+var _muzzle_flash_active: bool = false
+const MUZZLE_DECAY_PER_SEC: float = 75.0  # energy 9 -> ~0 in ~0.12s
 const KICK_BACK_M: float = 0.06
 const KICK_PITCH_DEG: float = 3.0
 
@@ -58,6 +61,7 @@ func get_effective_fire_rate() -> float:
 
 func _process(delta: float) -> void:
 	_update_kick(delta)
+	_decay_muzzle_flash(delta)
 	if _fire_cooldown > 0.0:
 		_fire_cooldown = max(0.0, _fire_cooldown - delta)
 	if _reloading:
@@ -243,8 +247,9 @@ func _flash_muzzle() -> void:
 	var ml: OmniLight3D = muzzle_light
 	ml.light_energy = 9.0
 	ml.omni_range = 6.5
-	var tw := create_tween()
-	tw.tween_property(ml, "light_energy", 0.0, 0.12)
+	# No tween — decays in _process below. Avoids allocating a Tween node every shot,
+	# which was a small but real cost on the web build (~12x per shotgun pull).
+	_muzzle_flash_active = true
 
 func _muzzle_origin() -> Vector3:
 	if muzzle_light is Node3D:
@@ -252,17 +257,35 @@ func _muzzle_origin() -> Vector3:
 	return global_position
 
 func _spawn_tracer(from: Vector3, to: Vector3) -> void:
-	# Anchor the tracer at the muzzle for visual fidelity. Camera is the true ray source,
-	# but the eye reads it from the gun.
+	# Pooled — was allocating a BulletTracer + StandardMaterial3D every shot,
+	# which stuttered the web build (shotgun fired 12 of them per pull).
 	var muzzle := _muzzle_origin()
-	var dir_to_target := (to - muzzle)
-	var dist := dir_to_target.length()
+	var dist := (to - muzzle).length()
 	if dist < 0.05:
 		return
+	var pool := _get_tracer_pool()
+	if pool != null and pool.has_method("fire"):
+		pool.call("fire", muzzle, to)
+		return
+	# Fallback: legacy per-shot instantiate. Used only if the pool didn't spawn.
 	var t := TRACER_SCENE.instantiate()
 	get_tree().current_scene.add_child(t)
 	if t.has_method("setup"):
 		t.setup(muzzle, to)
+
+var _cached_tracer_pool: Node = null
+
+func _get_tracer_pool() -> Node:
+	if _cached_tracer_pool != null and is_instance_valid(_cached_tracer_pool):
+		return _cached_tracer_pool
+	var pools := get_tree().get_nodes_in_group("tracer_pool")
+	if pools.is_empty():
+		var p: Node = TRACER_POOL_SCENE.instantiate()
+		get_tree().current_scene.add_child(p)
+		_cached_tracer_pool = p
+	else:
+		_cached_tracer_pool = pools[0]
+	return _cached_tracer_pool
 
 func _spawn_sparks(at: Vector3, normal: Vector3) -> void:
 	var s := SPARKS_SCENE.instantiate() as Node3D
@@ -289,6 +312,15 @@ func begin_swap_in() -> void:
 	# Drop the weapon below its rest position and let _update_kick spring it up.
 	_kick_offset.y = -0.18
 	_kick_pitch = deg_to_rad(-4.0)
+
+func _decay_muzzle_flash(delta: float) -> void:
+	if not _muzzle_flash_active or muzzle_light == null:
+		return
+	var ml: OmniLight3D = muzzle_light
+	ml.light_energy = max(0.0, ml.light_energy - MUZZLE_DECAY_PER_SEC * delta)
+	if ml.light_energy <= 0.001:
+		ml.light_energy = 0.0
+		_muzzle_flash_active = false
 
 func _update_kick(delta: float) -> void:
 	var decay := exp(-delta / max(0.02, _kick_recovery))

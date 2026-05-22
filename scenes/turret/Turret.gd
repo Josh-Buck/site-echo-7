@@ -63,8 +63,9 @@ func _fire(target: Node3D) -> void:
 	get_tree().current_scene.add_child(t)
 	if t.has_method("setup"):
 		t.setup(from, to)
-	# Quiet pop so turrets don't drown out the player.
-	AudioMan.play_sfx("ar_fire", from)
+	# Turrets used to play the AR-fire synth, which made it sound like extra
+	# gunshots were going off when the player wasn't firing. Visual tracer
+	# is enough feedback for an automated emplacement.
 	if target.has_method("take_damage"):
 		# Pass self as the source — turret kills aren't credited to a weapon.
 		target.take_damage(DAMAGE, self, false, to)
