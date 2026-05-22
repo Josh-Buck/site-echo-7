@@ -27,6 +27,9 @@ var _viewmodel_bob_phase: float = 0.0
 const VIEWMODEL_BOB_AMP_Y: float = 0.004
 const VIEWMODEL_BOB_AMP_X: float = 0.003
 const VIEWMODEL_BOB_FREQ: float = 1.3
+# Inspect-mode pose offset, lerped between resting and "tilted up at camera".
+var _inspect_t: float = 0.0
+const INSPECT_LERP_SPEED: float = 6.0
 
 const SHAKE_DECAY: float = 14.0
 const SHAKE_MAX: float = 0.8
@@ -106,13 +109,21 @@ func _process(delta: float) -> void:
 		_pitch = lerp(_pitch, _mouse_target_pitch, s)
 	rotation.y = _yaw + _recoil_yaw + shake_x + sway_yaw
 	camera_pivot.rotation.x = _pitch + _recoil_pitch + shake_y + sway_pitch
-	# Viewmodel idle bob — gentle figure-8 on the WeaponHolder while we hold
-	# the trigger ready (cursor captured + no big shake).
-	if weapon_holder != null and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and _shake_amount < 0.05:
-		_viewmodel_bob_phase += delta * VIEWMODEL_BOB_FREQ
-		var bob_x: float = sin(_viewmodel_bob_phase) * VIEWMODEL_BOB_AMP_X
-		var bob_y: float = sin(_viewmodel_bob_phase * 2.0) * VIEWMODEL_BOB_AMP_Y
-		weapon_holder.position = _weapon_holder_rest + Vector3(bob_x, bob_y, 0)
+	# Viewmodel idle bob + inspect lerp. Hold I to inspect the weapon — pulls
+	# it closer to camera and rotates ~20deg toward the lens.
+	if weapon_holder != null and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var want_inspect: float = 1.0 if Input.is_action_pressed("inspect") else 0.0
+		_inspect_t = lerp(_inspect_t, want_inspect, clamp(delta * INSPECT_LERP_SPEED, 0.0, 1.0))
+		var bob_x: float = 0.0
+		var bob_y: float = 0.0
+		if _shake_amount < 0.05 and _inspect_t < 0.1:
+			_viewmodel_bob_phase += delta * VIEWMODEL_BOB_FREQ
+			bob_x = sin(_viewmodel_bob_phase) * VIEWMODEL_BOB_AMP_X
+			bob_y = sin(_viewmodel_bob_phase * 2.0) * VIEWMODEL_BOB_AMP_Y
+		# Inspect offset: pull gun left + up + forward a touch.
+		var inspect_offset := Vector3(-0.18, 0.06, 0.12) * _inspect_t
+		weapon_holder.position = _weapon_holder_rest + Vector3(bob_x, bob_y, 0) + inspect_offset
+		weapon_holder.rotation = Vector3(-_inspect_t * 0.18, _inspect_t * 0.35, _inspect_t * 0.12)
 	# FOV punch decays exponentially toward 0; apply to live camera fov as a transient offset.
 	if _fov_punch_amount > 0.001:
 		_fov_punch_amount = max(0.0, _fov_punch_amount - delta * 14.0)
@@ -139,6 +150,13 @@ func _on_weapon_fired(weapon: Node, _payload: Dictionary) -> void:
 	# this frame." Recovers via the existing FOV setting since we only nudge transiently.
 	# Lower coefficient + lower cap than the first pass — user wanted subtler.
 	_fov_punch_amount = clamp(_fov_punch_amount + w.data.recoil_vertical * recoil_mult * 0.08, 0.0, 2.0)
+	# Gamepad rumble — best-effort. Browsers expose this via Gamepad API; Godot
+	# wraps it. weak/strong magnitudes scale with the weapon's recoil so a
+	# bolt-action feels heavier than the pistol.
+	var strong: float = clamp(w.data.recoil_vertical * recoil_mult * 0.12, 0.0, 0.6)
+	var weak: float = clamp(w.data.recoil_vertical * recoil_mult * 0.06, 0.0, 0.4)
+	if strong > 0.01:
+		Input.start_joy_vibration(0, weak, strong, 0.08)
 
 func _on_barrier_damaged_shake(amount: float, _attacker: Node) -> void:
 	add_shake(0.2 + amount * 0.05)

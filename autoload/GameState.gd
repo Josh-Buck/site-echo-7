@@ -3,7 +3,7 @@ extends Node
 # Bump on every push so the title screen reflects the build the user is playing.
 # Format: vMAJOR.MINOR.PATCH — bump PATCH on every commit, MINOR on a feature/system
 # landing, MAJOR at 1.0 (release).
-const VERSION: String = "v0.6.7"
+const VERSION: String = "v0.7.0"
 
 # Current-run state. Reset on death. Not persisted.
 
@@ -16,6 +16,14 @@ var kills_by_type: Dictionary = {}  # display_name -> int
 var card_usage: Dictionary = {}  # card display_name -> kills-while-equipped
 # Token-shop emplacement state.
 var turret_count: int = 0
+# Run modifiers — selected on the title screen before Start Run. Read by
+# systems that gate behavior on them (Shop, WeaponManager, SpawnRing, CardSystem).
+# Persisted in MetaProgress.settings.active_modifiers so the choice survives
+# scene changes during the run.
+var active_modifiers: Array[StringName] = []
+
+func has_modifier(id: StringName) -> bool:
+	return id in active_modifiers
 # Applied to zombie move_speed at spawn; reset to 1.0 once a wave starts so the
 # slow lasts exactly one wave (the wave you bought it for).
 var zombie_speed_mult_next_wave: float = 1.0
@@ -39,6 +47,12 @@ func start_run() -> void:
 	zombie_speed_mult_next_wave = 1.0
 	kills_by_type.clear()
 	card_usage.clear()
+	# Pull modifiers from persisted settings.
+	active_modifiers.clear()
+	var saved: Variant = MetaProgress.get_setting("active_modifiers", [])
+	if saved is Array:
+		for m in saved:
+			active_modifiers.append(StringName(m))
 	# Apply meta-unlocked run-start perks.
 	if MetaProgress.has_unlock(&"perk_combat_veteran"):
 		tokens += 20

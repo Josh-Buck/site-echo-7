@@ -19,13 +19,16 @@ var _active_index: int = -1
 
 func _ready() -> void:
 	_slots.resize(SLOT_COUNT)
-	# Place each child weapon into its assigned slot if the player owns it.
-	# Locked weapons are freed so the WeaponHolder doesn't carry the cost.
+	# Run modifier — locked_weapon hides every slot except the pistol.
+	var locked: bool = GameState.has_modifier(&"locked_weapon")
 	for child in get_children():
 		if child is Weapon:
 			var w := child as Weapon
 			var id: StringName = w.data.id if w.data != null else &""
 			if not SLOT_BY_ID.has(id):
+				continue
+			if locked and id != &"pistol_m1":
+				w.queue_free()
 				continue
 			if not MetaProgress.has_weapon(String(id)):
 				w.queue_free()

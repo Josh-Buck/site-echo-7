@@ -1,0 +1,124 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1modifiersxyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/ModifiersScreen.gd" id="1_mods"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.03, 0.04, 0.07, 1)
+
+[node name="ModifiersScreen" type="Control"]
+script = ExtResource("1_mods")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -280.0
+offset_right = 400.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "RUN MODIFIERS"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Stack the deck against yourself. Active modifiers apply to your next run."
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 28)
+
+[node name="NoShopRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 50)
+
+[node name="NoShopLabel" type="Label" parent="VBox/NoShopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "No Shop  ·  Token shop never opens between waves."
+
+[node name="NoShopButton" type="CheckButton" parent="VBox/NoShopRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 36)
+text = "OFF"
+
+[node name="NoCardsRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 50)
+
+[node name="NoCardsLabel" type="Label" parent="VBox/NoCardsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "No Cards  ·  Card draft is skipped every wave."
+
+[node name="NoCardsButton" type="CheckButton" parent="VBox/NoCardsRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 36)
+text = "OFF"
+
+[node name="LockedWeaponRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 50)
+
+[node name="LockedWeaponLabel" type="Label" parent="VBox/LockedWeaponRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Locked Weapon  ·  Pistol only. No swaps."
+
+[node name="LockedWeaponButton" type="CheckButton" parent="VBox/LockedWeaponRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 36)
+text = "OFF"
+
+[node name="DoubleSpawnRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 50)
+
+[node name="DoubleSpawnLabel" type="Label" parent="VBox/DoubleSpawnRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Double Spawn  ·  Every wave count is doubled. Brutal."
+
+[node name="DoubleSpawnButton" type="CheckButton" parent="VBox/DoubleSpawnRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 36)
+text = "OFF"
+
+[node name="Spacer2" type="Control" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 32)
+
+[node name="BackButton" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(320, 56)
+theme_override_font_sizes/font_size = 22
+text = "← BACK TO TITLE"

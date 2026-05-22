@@ -129,6 +129,10 @@ func reset_run_deck() -> void:
 	_first_draft_done = false
 
 func _on_wave_ended(_round_n: int) -> void:
+	# Run modifier — skip the card draft entirely.
+	if GameState.has_modifier(&"no_cards"):
+		EventBus.card_offered.emit([])
+		return
 	var count := 3
 	if not _first_draft_done and MetaProgress.has_unlock(&"perk_quick_draft"):
 		count = 5

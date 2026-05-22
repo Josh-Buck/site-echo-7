@@ -57,9 +57,11 @@ func _start_wave(wd: WaveData) -> void:
 	_spawn_queue.clear()
 	_active_count = 0
 	_pending_count = 0
+	# Run modifier — doubles enemy counts per wave.
+	var mult: int = 2 if GameState.has_modifier(&"double_spawn") else 1
 	for i in wd.composition.size():
 		var enemy = wd.composition[i]
-		var count: int = wd.counts[i] if i < wd.counts.size() else 0
+		var count: int = (wd.counts[i] if i < wd.counts.size() else 0) * mult
 		for _j in count:
 			_spawn_queue.append(enemy)
 	_spawn_queue.shuffle()

@@ -8,6 +8,7 @@ extends Control
 @onready var settings_button: Button = $VBox/SettingsButton
 @onready var stats_button: Button = $VBox/StatsButton if has_node("VBox/StatsButton") else null
 @onready var credits_button: Button = $VBox/CreditsButton if has_node("VBox/CreditsButton") else null
+@onready var modifiers_button: Button = $VBox/ModifiersButton if has_node("VBox/ModifiersButton") else null
 @onready var version_label: Label = $VersionLabel
 
 func _ready() -> void:
@@ -27,6 +28,9 @@ func _ready() -> void:
 	if credits_button:
 		credits_button.pressed.connect(_on_credits_pressed)
 		hover_buttons.append(credits_button)
+	if modifiers_button:
+		modifiers_button.pressed.connect(_on_modifiers_pressed)
+		hover_buttons.append(modifiers_button)
 	for b in hover_buttons:
 		b.mouse_entered.connect(AudioMan.play_ui_hover)
 	_refresh_stats()
@@ -70,12 +74,22 @@ func _on_credits_pressed() -> void:
 	AudioMan.play_ui_click()
 	get_tree().change_scene_to_file("res://scenes/ui/CreditsScreen.tscn")
 
+func _on_modifiers_pressed() -> void:
+	AudioMan.register_first_gesture()
+	AudioMan.play_ui_click()
+	get_tree().change_scene_to_file("res://scenes/ui/ModifiersScreen.tscn")
+
 func _refresh_stats() -> void:
 	var lines: Array[String] = []
 	var title: String = _earned_title()
 	if title != "":
 		lines.append("[ %s ]" % title)
 		lines.append("")
+	# Daily challenge — picked deterministically per UTC date.
+	var daily: Dictionary = DailyChallenge.today_goal()
+	var dstr: String = "DAILY: " + String(daily["text"]) + ("  ✓" if DailyChallenge.today_completed() else "  +%d RD" % int(daily["reward"]))
+	lines.append(dstr)
+	lines.append("")
 	lines.append("Lifetime stats")
 	lines.append("")
 	lines.append("Kills:           %d" % MetaProgress.lifetime_kills)

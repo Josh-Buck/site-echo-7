@@ -90,8 +90,8 @@ Tiers:
 - [x] **Combo-break sound** ✓ shipped — short 440->370 Hz minor-third tsk-tsk fires when a streak of 3+ resets via barrier damage.
 
 ### Content extras
-- [ ] **Daily seeded challenge** — fixed RNG per UTC date, leaderboard-less but lets the player compare runs against their previous self.
-- [ ] **Run modifiers / mutators** unlock-able post-v1.0 (one-life, no-shop, locked-weapon, double-spawn).
+- [x] **Daily seeded challenge** ✓ shipped — DailyChallenge autoload picks today's goal deterministically by UTC date hash from a 10-template pool (kills, headshots, round-reached, tokens-earned, deck-size, clean-round). Displayed on title screen above lifetime stats. Awards bonus RD (80-200) once per day on completion.
+- [x] **Run modifiers / mutators** ✓ shipped — `RUN MODIFIERS` screen reachable from title. Four toggles persist between runs: No Shop, No Cards, Locked Weapon (pistol only), Double Spawn. GameState.has_modifier() gates each system.
 - [x] **Cosmetic titles** ✓ shipped — derived from highest milestone (Director's Bane > Site Cleared > Subject Hunter > Containment Officer > Field Operator > Untouched > Veteran > Recruit). Shown on the title screen above lifetime stats.
 - [ ] **Weapon skins** as RD spend tier (low priority but matches the meta-progression catalog in design-plan.md).
 - [x] **More cards** ✓ partial — pool now at 38 cards. Added Field Sights, Quickdraw, Heavy Slugs, Suppressing Fire, Tactical Reload. Push to 45+ with more conditional effects (Hollow Points anti-armor, Knockback Loads, etc.) — needs CardSystem effect_id support.
@@ -126,9 +126,9 @@ Tiers:
 - [ ] **Twitter / itch.io launch art** — title key-art, three gameplay screenshots, a short trailer.
 - [x] **Procedural arena seed** ✓ shipped — Arena now spawns 6 random crates between the barrier and the perimeter wall, different placement each run.
 - [x] **Boss telegraph audio** ✓ shipped — distinct 2.2s descending double-tone synth on wave 10 and 20 start, replaces the regular tension stinger on boss waves.
-- [ ] **Weapon inspect animation** (hold a key to look at the viewmodel) — pure flavor.
+- [x] **Weapon inspect animation** ✓ shipped — Hold I to inspect. WeaponHolder lerps toward an offset (left, up, forward) + rotates ~20deg toward the lens. Bob auto-disables while inspecting.
 - [x] **Mouse-smoothing toggle** ✓ shipped — Settings checkbox. When on, mouse motion lerps toward target at ~18/s instead of applying instantly.
-- [ ] **Gamepad rumble** (where supported — web limited).
+- [x] **Gamepad rumble** ✓ shipped — Input.start_joy_vibration on weapon_fired with weak/strong magnitudes scaled by recoil_vertical. Best-effort on web (browsers limit this); pistol is subtle, bolt-action is heavy.
 - [x] **Tutorial replay** ✓ shipped — Settings button clears intro_seen + tutorial_done flags so next run re-shows both.
 - [x] **Backup save** ✓ shipped — rotating 3-slot chain.
 - [ ] **Run analytics opt-in** — anonymous round-reached histogram, only with player consent. Aids balance.

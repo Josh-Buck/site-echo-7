@@ -41,6 +41,11 @@ func _on_wave_ended(_round_n: int) -> void:
 func _on_card_drafted(_card) -> void:
 	if not _allow_open:
 		return
+	# Run modifier — skip the shop entirely if active.
+	if GameState.has_modifier(&"no_shop"):
+		_allow_open = false
+		EventBus.shop_done.emit()
+		return
 	# One-shot per wave so a mid-run perk draft (e.g. future card pool refresh) can't
 	# re-trigger the shop.
 	_allow_open = false
