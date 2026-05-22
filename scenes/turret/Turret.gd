@@ -11,15 +11,27 @@ const TRACER_SCENE := preload("res://scenes/weapons/vfx/BulletTracer.tscn")
 
 var _cooldown: float = 0.0
 
-@onready var _base: MeshInstance3D = $Base
-@onready var _barrel: MeshInstance3D = $Barrel
-@onready var _muzzle: Marker3D = $Barrel/Muzzle
+@onready var _yoke: Node3D = $Yoke
+@onready var _muzzle: Marker3D = $Yoke/Muzzle
+@onready var _indicator: MeshInstance3D = $Yoke/Indicator if has_node("Yoke/Indicator") else null
+var _indicator_mat: StandardMaterial3D = null
+var _indicator_pulse: float = 0.0
 
 func _ready() -> void:
 	# Start with a small random offset so multiple turrets don't fire in lockstep.
 	_cooldown = randf_range(0.0, FIRE_INTERVAL)
+	if _indicator != null:
+		var mat: Material = _indicator.get_active_material(0)
+		if mat is StandardMaterial3D:
+			_indicator_mat = (mat as StandardMaterial3D).duplicate()
+			_indicator.set_surface_override_material(0, _indicator_mat)
 
 func _process(delta: float) -> void:
+	# Slow pulse on the indicator LED so the turret reads as "active."
+	if _indicator_mat != null:
+		_indicator_pulse += delta * 3.0
+		var k: float = 0.5 + 0.5 * sin(_indicator_pulse)
+		_indicator_mat.emission_energy_multiplier = lerp(1.5, 4.0, k)
 	_cooldown -= delta
 	if _cooldown > 0.0:
 		return
@@ -48,10 +60,13 @@ func _pick_target() -> Node3D:
 	return closest
 
 func _aim_at(target_pos: Vector3) -> void:
+	# Rotate the Yoke (head only), not the whole turret — base stays planted.
+	if _yoke == null:
+		return
 	var p := target_pos
-	p.y = global_position.y + 0.4
-	look_at(p, Vector3.UP)
-	# Look_at points -Z at the target; the barrel mesh is along +Z, so flip the visual.
+	# Aim slightly above feet so the barrel doesn't dip into the floor.
+	p.y = _yoke.global_position.y
+	_yoke.look_at(p, Vector3.UP)
 
 func _fire(target: Node3D) -> void:
 	if target == null or not is_instance_valid(target):

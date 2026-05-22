@@ -173,7 +173,7 @@ The remaining `[ ]` items all require user / asset intervention I can't do auton
 
 ## Parked / acknowledged
 
-- **Turret model** — current Turret.tscn (cylinder base + box barrel) looks under-polished. Acknowledged by user 2026-05-22. Sci-Fi Essentials Kit doesn't ship a turret asset; needs a separate CC0 source or commission.
+- **Turret model** — REDESIGNED v0.9.3. Static pedestal (cylindrical base + two support posts) + a rotating Yoke head (box body, yoke arms, cylindrical barrel, pulsing red indicator LED, muzzle marker). Aim rotates the Yoke only, not the whole node, so the base stays planted. Reads as a proper sentry emplacement instead of a stick-with-a-box. Real CC0 turret asset (when found) can drop in as a Model child.
 - **Hand model on weapon viewmodel** — user-requested 2026-05-22. Currently the gun "floats" in front of the camera without a visible hand pulling the trigger. Needs a rigged hand GLB and IK setup on the existing weapon viewmodels. Defer until rigged Mixamo character can be re-targeted onto the FPS rig.
 - **Card-driven visual weapon mods** — INITIAL PASS SHIPPED v0.9.1. Weapon.tscn now ships placeholder primitive accessories (Grip, ExtendedMag, MuzzleBrake, Sight) toggled by Weapon._refresh_card_mods() based on the active card deck. Per-weapon attach points + real accessory meshes (Quaternius gun accessory pack) is the next iteration.
 - **Wave 10 difficulty** — user feedback 2026-05-22: can't reach wave 10 yet. Could be balance or skill curve. Deferred until more playtest data; no change yet.

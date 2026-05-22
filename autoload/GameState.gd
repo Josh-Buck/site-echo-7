@@ -3,7 +3,7 @@ extends Node
 # Bump on every push so the title screen reflects the build the user is playing.
 # Format: vMAJOR.MINOR.PATCH — bump PATCH on every commit, MINOR on a feature/system
 # landing, MAJOR at 1.0 (release).
-const VERSION: String = "v0.9.2"
+const VERSION: String = "v0.9.3"
 
 # Current-run state. Reset on death. Not persisted.
 
