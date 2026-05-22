@@ -161,11 +161,15 @@ Tiers:
 
 ## What's left for v1.0
 
-The remaining `[ ]` items all require user / asset intervention I can't do autonomously:
+The remaining `[ ]` items all require user / asset intervention I can't do autonomously. **See `docs/asset-pipeline.md` for step-by-step walkthroughs of each.**
 
 - **Music** — needs a curated CC0 soundtrack source decision (Kevin MacLeod, ccMixter, Sonniss) and a few hours of triage + import.
-- **Rigged zombie meshes** — Mixamo requires an Adobe login. Once that's available, retarget animations to Quaternius zombies or commission a humanoid base mesh.
-- **Arena dressing** — additional CC0 sci-fi prop kit (Quaternius Sci-Fi Essentials, Kenney Space Kit) integration.
-- **Cross-browser smoke / DevTools heap / frame budget** — manual browser testing (Chrome, Firefox, Safari).
+- **Rigged zombie meshes** — Mixamo requires an Adobe login. Walkthrough: `docs/asset-pipeline.md` § 1.
+- **Arena dressing** — additional CC0 sci-fi prop kit. Walkthrough: `docs/asset-pipeline.md` § 2.
+- **Cross-browser smoke / DevTools heap / frame budget** — manual browser testing. Walkthrough: `docs/asset-pipeline.md` § 3.
 - **Continue / Resume-run + weapon reload animations** — bigger system designs that need product decisions on scope (mid-run save format, rigged-weapon retarget pipeline).
 - **Twitter / itch.io launch art** — manual asset production (key art, screenshots, trailer).
+
+## Parked / acknowledged
+
+- **Turret model** — current Turret.tscn (cylinder base + box barrel) looks under-polished. Acknowledged by user 2026-05-22; parked until a real CC0 emplacement model lands (Quaternius Sci-Fi Essentials has a few).
