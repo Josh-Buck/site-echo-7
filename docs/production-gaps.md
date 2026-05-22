@@ -175,9 +175,5 @@ The remaining `[ ]` items all require user / asset intervention I can't do auton
 
 - **Turret model** — current Turret.tscn (cylinder base + box barrel) looks under-polished. Acknowledged by user 2026-05-22. Sci-Fi Essentials Kit doesn't ship a turret asset; needs a separate CC0 source or commission.
 - **Hand model on weapon viewmodel** — user-requested 2026-05-22. Currently the gun "floats" in front of the camera without a visible hand pulling the trigger. Needs a rigged hand GLB and IK setup on the existing weapon viewmodels. Defer until rigged Mixamo character can be re-targeted onto the FPS rig.
-- **Card-driven visual weapon mods** — user-requested 2026-05-22. When a card drops (e.g. recoil-down), the weapon should show an accessory (foregrip, extended mag, bigger barrel) reflecting the buff. Requires:
-    1. Quaternius gun accessory pack (or commission)
-    2. Empty Marker3D attach points on every weapon viewmodel
-    3. EventBus.card_drafted listener on each Weapon that toggles attached accessory visibility based on active deck contents
-  Substantial feature, deferred for now.
+- **Card-driven visual weapon mods** — INITIAL PASS SHIPPED v0.9.1. Weapon.tscn now ships placeholder primitive accessories (Grip, ExtendedMag, MuzzleBrake, Sight) toggled by Weapon._refresh_card_mods() based on the active card deck. Per-weapon attach points + real accessory meshes (Quaternius gun accessory pack) is the next iteration.
 - **Wave 10 difficulty** — user feedback 2026-05-22: can't reach wave 10 yet. Could be balance or skill curve. Deferred until more playtest data; no change yet.
