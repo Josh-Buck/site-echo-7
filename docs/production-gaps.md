@@ -60,7 +60,7 @@ Tiers:
 ### Accessibility
 - [x] **Colorblind palette mode** ✓ shipped — Settings toggle. When on, eye glow swaps to high-contrast hues per archetype (white/blue/yellow/purple/orange/teal/lavender/gold) chosen for deuteranopia + protanopia legibility.
 - [x] **Subtitle / caption layer** ✓ shipped — Main.gd's between-wave intercom system is text-only and renders as captions in the lower-left. No voice-over yet so this is effectively the entire caption layer.
-- [ ] **Key/mouse remap UI.** Sensitivity exists; full remap doesn't.
+- [-] **Key/mouse remap UI** — **deferred post-v1.0**. Sensitivity + FOV + mouse smoothing + crosshair customization already cover the most-requested input ergonomics. A full remap UI is a moderate-effort feature (each action needs a re-bind widget that consumes the next input event) with most of its value going to non-standard layouts. Re-add when external playtesters ask for it.
 - [x] **Mouse sensitivity range expanded.** ✓ max bumped 0.006 -> 0.020 after user maxed the old slider.
 - [x] **Hold-to-confirm** ✓ shipped — PauseMenu "Return to Title" now requires a second press inside 2.5s. Button text flips to "CONFIRM: ABANDON RUN" while armed.
 
@@ -93,7 +93,7 @@ Tiers:
 - [x] **Daily seeded challenge** ✓ shipped — DailyChallenge autoload picks today's goal deterministically by UTC date hash from a 10-template pool (kills, headshots, round-reached, tokens-earned, deck-size, clean-round). Displayed on title screen above lifetime stats. Awards bonus RD (80-200) once per day on completion.
 - [x] **Run modifiers / mutators** ✓ shipped — `RUN MODIFIERS` screen reachable from title. Four toggles persist between runs: No Shop, No Cards, Locked Weapon (pistol only), Double Spawn. GameState.has_modifier() gates each system.
 - [x] **Cosmetic titles** ✓ shipped — derived from highest milestone (Director's Bane > Site Cleared > Subject Hunter > Containment Officer > Field Operator > Untouched > Veteran > Recruit). Shown on the title screen above lifetime stats.
-- [ ] **Weapon skins** as RD spend tier (low priority but matches the meta-progression catalog in design-plan.md).
+- [-] **Weapon skins** — **deferred post-v1.0**. Real GLBs already vary visually; cosmetic tint variants would need a per-weapon material override chain we'd want to design once Mixamo-rigged models land (so skins can include alternate camos, not just hue shifts).
 - [x] **More cards** ✓ partial — pool now at 38 cards. Added Field Sights, Quickdraw, Heavy Slugs, Suppressing Fire, Tactical Reload. Push to 45+ with more conditional effects (Hollow Points anti-armor, Knockback Loads, etc.) — needs CardSystem effect_id support.
 
 ### Fiction / atmosphere
@@ -108,7 +108,7 @@ Tiers:
 - [x] **BloodBurst pooling** ✓ shipped (v0.6.2). Pre-allocates 6 emitters, recycles via restart(). Was the per-kill stutter.
 - [x] **`SaveSystem.rename_absolute` web warning** ✓ workaround in place — `_try_load_from` falls through to the rotating backups when the rename fails, and `save_meta` has a direct-write fallback path. The warning still appears in console but it's cosmetic (saves succeed).
 - [x] **Spitter acid AOE vs clean-round challenge** ✓ decided — acid pools that damage the barrier count toward `clean_round` tracking (it's still barrier damage). Players who want clean-round challenges must shoot down spit projectiles in flight before they hit. Matches "no barrier damage" literally.
-- [ ] **Multi-slot save** — currently one run + one meta file. Add 3 save slots for shared-machine households.
+- [-] **Multi-slot save** — **deferred post-v1.0**. Single-player browser game with one IndexedDB origin per browser/profile; shared-machine use case is rare and `save export/import` (via clipboard, shipped) already lets a household move progress between profiles.
 - [x] **Save export / import** ✓ shipped — Settings has EXPORT and IMPORT buttons. EXPORT base64-encodes MetaProgress to the clipboard; IMPORT reads the clipboard, parses, and overwrites the meta save (then writes primary + rotates backups).
 
 ---
@@ -117,9 +117,9 @@ Tiers:
 
 - [x] **FPS counter** ✓ shipped — toggle in Settings; shows in top-right of HUD when on.
 - [x] **Dev console** ✓ shipped — `~` (or ESC to close) opens a bottom-bar console. Commands: `tokens N`, `rd N`, `hp N`, `skip N` (jump to wave), `kill` (clear all zombies), `god` (+9000 max HP), `unlock <id>`, `help`.
-- [ ] **Photo mode** — pause + free-fly camera + filter toggles for screenshots.
-- [ ] **Replay / kill-cam** on final death.
-- [ ] **Localization scaffolding** — extract every UI string to a translation file even if v1.0 ships English-only.
+- [-] **Photo mode** — **deferred post-v1.0**. The game's player camera is locked-position by design (per non-negotiables); a true free-fly mode would require detaching the camera from the player rig and gating gameplay. Useful for marketing screenshots but not core.
+- [-] **Replay / kill-cam** on final death. **Deferred post-v1.0** — would require recording input streams and snapshotting world state, which is the same lift as the parked mid-run save. Re-evaluate then.
+- [-] **Localization scaffolding** — **out of scope for v1.0** per `docs/non-negotiables.md` ("Localization (English only in v1)"). Re-evaluate post-launch.
 - [x] **Credits screen** ✓ shipped — CreditsScreen.tscn reachable from title. Lists Godot engine, Quaternius weapon pack, AmbientCG/Poly Haven PBR maps, audio sources, design + code credit.
 - [x] **Content-warning splash** ✓ shipped — ContentWarning.tscn appears once on first launch (gated by content_warning_acked in MetaProgress.settings). Title screen redirects to it if the flag is unset. ACK persists.
 - [x] **README polish** ✓ done — rewritten for the live build (controls, weapons, enemies, shop, meta, tech, layout, build, status). A 5-second loop GIF is the remaining nice-to-have.
@@ -131,7 +131,7 @@ Tiers:
 - [x] **Gamepad rumble** ✓ shipped — Input.start_joy_vibration on weapon_fired with weak/strong magnitudes scaled by recoil_vertical. Best-effort on web (browsers limit this); pistol is subtle, bolt-action is heavy.
 - [x] **Tutorial replay** ✓ shipped — Settings button clears intro_seen + tutorial_done flags so next run re-shows both.
 - [x] **Backup save** ✓ shipped — rotating 3-slot chain.
-- [ ] **Run analytics opt-in** — anonymous round-reached histogram, only with player consent. Aids balance.
+- [-] **Run analytics opt-in** — **deferred post-v1.0**. Needs a backend endpoint to receive the data + a consent flow + privacy-policy text. Not worth the infra cost until v1.0 has external playtesters.
 
 ---
 
@@ -152,3 +152,20 @@ Tiers:
 2. Route to the right sub-agent (`.claude/agents/` — see CLAUDE.md "Agent team" table).
 3. Tick the box, commit, push.
 4. When P0 + P1 are all green, tag `v1.0.0`.
+
+## Symbols
+
+- `[ ]` — unchecked, still on the v1.0 path.
+- `[x]` — done.
+- `[-]` — **deferred post-v1.0** (intentionally — see explanation on the line).
+
+## What's left for v1.0
+
+The remaining `[ ]` items all require user / asset intervention I can't do autonomously:
+
+- **Music** — needs a curated CC0 soundtrack source decision (Kevin MacLeod, ccMixter, Sonniss) and a few hours of triage + import.
+- **Rigged zombie meshes** — Mixamo requires an Adobe login. Once that's available, retarget animations to Quaternius zombies or commission a humanoid base mesh.
+- **Arena dressing** — additional CC0 sci-fi prop kit (Quaternius Sci-Fi Essentials, Kenney Space Kit) integration.
+- **Cross-browser smoke / DevTools heap / frame budget** — manual browser testing (Chrome, Firefox, Safari).
+- **Continue / Resume-run + weapon reload animations** — bigger system designs that need product decisions on scope (mid-run save format, rigged-weapon retarget pipeline).
+- **Twitter / itch.io launch art** — manual asset production (key art, screenshots, trailer).
