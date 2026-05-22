@@ -23,12 +23,16 @@ var _t: float = 0.0
 var _line_idx: int = 0
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS  # survive any incidental pause
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 50
 	panel.color = Color(0, 0, 0, 1)
 	line_label.modulate.a = 0.0
 	skip_hint.modulate.a = 0.0
 	skip_hint.text = "click / space to skip"
+	# CRITICAL: pause the tree while the intro plays — otherwise wave 1 spawns in
+	# the background and the player walks into a barrier already under attack.
+	get_tree().paused = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	_show_next_line()
 	var hint_tw := create_tween()
 	hint_tw.tween_property(skip_hint, "modulate:a", 0.7, 0.8)
@@ -58,6 +62,10 @@ func _finish() -> void:
 	if _done:
 		return
 	_done = true
+	# Hand control back to gameplay before the fade so the player isn't watching
+	# zombies move through a fading-to-clear overlay.
+	get_tree().paused = false
+	MetaProgress.set_setting("intro_seen", true)
 	var tw := create_tween()
 	tw.tween_property(panel, "color:a", 0.0, 0.35)
 	tw.tween_property(line_label, "modulate:a", 0.0, 0.05)

@@ -10,6 +10,9 @@ func setup(headshot: bool) -> void:
 
 func _ready() -> void:
 	one_shot = true
+	# When pool-owned, the pool drives emit/restart and we shouldn't queue_free.
+	if is_in_group("pooled_burst"):
+		return
 	emitting = true
 	await get_tree().create_timer(lifetime + 0.2).timeout
 	queue_free()

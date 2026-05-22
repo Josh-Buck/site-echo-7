@@ -29,9 +29,10 @@ func _ready() -> void:
 	GameState.start_run()
 	EventBus.wave_ended.connect(_on_wave_ended)
 	EventBus.wave_started.connect(_on_wave_started)
-	# Show the story intro once per run on first launch (not on returning from
-	# a between-wave UI). The intro queue_frees itself after a few seconds or a click.
-	add_child(STORY_INTRO_SCENE.instantiate())
+	# Show the story intro only on the player's very first run. Subsequent runs
+	# skip it — they've seen it. Persisted in MetaProgress.settings.
+	if not bool(MetaProgress.get_setting("intro_seen", false)):
+		add_child(STORY_INTRO_SCENE.instantiate())
 	_build_intercom_label()
 	print("[Main] M1 ready, lifetime_score=%d" % MetaProgress.lifetime_score)
 

@@ -16,6 +16,8 @@ extends CanvasLayer
 @onready var damage_arrow_anchor: Control = $DamageArrowAnchor
 @onready var damage_arrow: Label = $DamageArrowAnchor/DamageArrow
 @onready var wave_intro_banner: Label = $WaveIntroBanner
+@onready var crosshair: Label = $Crosshair if has_node("Crosshair") else null
+@onready var fps_label: Label = $FpsLabel if has_node("FpsLabel") else null
 
 var _active_weapon: Node = null
 var _hit_marker_timer: float = 0.0
@@ -25,6 +27,8 @@ var _damage_arrow_timer: float = 0.0
 
 func _process(delta: float) -> void:
 	click_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
+	if crosshair:
+		crosshair.visible = Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 	if _active_weapon and _active_weapon.has_method("get_ammo_state"):
 		_update_ammo_from_weapon(_active_weapon)
 	if _hit_marker_timer > 0.0:
@@ -38,6 +42,8 @@ func _process(delta: float) -> void:
 			damage_arrow.modulate.a = 0.0
 		else:
 			damage_arrow.modulate.a = clamp(_damage_arrow_timer / 0.6, 0.0, 1.0)
+	if fps_label and fps_label.visible:
+		fps_label.text = "%d fps" % int(Engine.get_frames_per_second())
 
 func _ready() -> void:
 	EventBus.barrier_damaged.connect(_on_barrier_damaged)
@@ -65,6 +71,42 @@ func _ready() -> void:
 	# the initial weapon_swapped emit fires before this _ready connects. Poll once
 	# so the ammo label shows real numbers instead of "-- / --" until first shot.
 	call_deferred("_seed_active_weapon")
+	_apply_crosshair_settings()
+	_apply_fps_setting()
+	EventBus.settings_changed.connect(_on_settings_changed)
+
+func _on_settings_changed(key: String, _value) -> void:
+	if key == "crosshair_size" or key == "crosshair_style" or key == "crosshair_color":
+		_apply_crosshair_settings()
+	elif key == "show_fps":
+		_apply_fps_setting()
+
+func _apply_crosshair_settings() -> void:
+	if crosshair == null:
+		return
+	var style: String = String(MetaProgress.get_setting("crosshair_style", "cross"))
+	var size: int = int(MetaProgress.get_setting("crosshair_size", 22))
+	var hue: String = String(MetaProgress.get_setting("crosshair_color", "white"))
+	match style:
+		"dot":     crosshair.text = "·"
+		"x":       crosshair.text = "×"
+		"plus":    crosshair.text = "+"
+		"cross":   crosshair.text = "+"
+		_:         crosshair.text = "+"
+	crosshair.add_theme_font_size_override("font_size", size)
+	var col: Color = Color(0.9, 0.95, 1, 0.85)
+	match hue:
+		"white":   col = Color(0.9, 0.95, 1, 0.85)
+		"green":   col = Color(0.4, 1, 0.5, 0.85)
+		"yellow":  col = Color(1, 0.95, 0.4, 0.85)
+		"red":     col = Color(1, 0.4, 0.4, 0.85)
+		"cyan":    col = Color(0.4, 0.95, 1, 0.85)
+	crosshair.add_theme_color_override("font_color", col)
+
+func _apply_fps_setting() -> void:
+	if fps_label == null:
+		return
+	fps_label.visible = bool(MetaProgress.get_setting("show_fps", false))
 
 func _seed_active_weapon() -> void:
 	var scene := get_tree().current_scene

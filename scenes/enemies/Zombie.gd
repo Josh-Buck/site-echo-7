@@ -427,31 +427,40 @@ func _flash_white() -> void:
 			_tint_mesh($Mesh, orig_body, false)
 	)
 
+const BLOOD_POOL_SCENE := preload("res://scenes/enemies/vfx/BloodBurstPool.tscn")
+var _cached_blood_pool: Node = null
+
+func _get_blood_pool() -> Node:
+	if _cached_blood_pool != null and is_instance_valid(_cached_blood_pool):
+		return _cached_blood_pool
+	var existing := get_tree().get_nodes_in_group("bloodburst_pool")
+	if existing.is_empty():
+		var p := BLOOD_POOL_SCENE.instantiate()
+		get_tree().current_scene.add_child(p)
+		_cached_blood_pool = p
+	else:
+		_cached_blood_pool = existing[0]
+	return _cached_blood_pool
+
 func _spawn_blood_burst(at: Vector3, headshot: bool) -> void:
 	if not MetaProgress.gore_enabled():
 		return
 	var p := at
 	if p == Vector3.ZERO:
 		p = global_position + Vector3(0, 1.0, 0)
-	var b := BLOOD_BURST_SCENE.instantiate() as Node3D
-	get_tree().current_scene.add_child(b)
-	b.global_position = p
-	if b.has_method("setup"):
-		b.setup(headshot)
+	# Pooled — was instantiating + queue_freeing a GPUParticles3D + ParticleProcessMaterial
+	# per kill which uploaded shader/material to GPU each time. Stutter on web.
+	var pool := _get_blood_pool()
+	if pool != null and pool.has_method("burst"):
+		pool.call("burst", p, headshot)
 
 func _begin_dissolve() -> void:
-	# Slump + fade. Avoid replacing every surface material — just override on the whole
-	# CharacterBody3D's child MeshInstance3Ds with a transparency-enabled copy.
-	for child in _all_mesh_instances(self):
-		var mat: Material = child.get_active_material(0)
-		var sm := mat as StandardMaterial3D
-		var dup: StandardMaterial3D = sm.duplicate() if sm else StandardMaterial3D.new()
-		dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		child.set_surface_override_material(0, dup)
-		var tw := create_tween()
-		tw.tween_property(dup, "albedo_color:a", 0.0, DISSOLVE_TIME)
-	var tw2 := create_tween()
-	tw2.tween_property(self, "scale:y", scale.y * 0.15, DISSOLVE_TIME).set_trans(Tween.TRANS_CUBIC)
+	# Previously this duplicated the StandardMaterial3D on every child mesh and made
+	# a fade tween per mesh — 9 allocations + 9 tweens per kill on the humanoid
+	# zombie, which was the user's per-kill hitch. Now: one tween that scales the
+	# whole zombie down to a sliver. Visual reads as "they collapsed."
+	var tw := create_tween()
+	tw.tween_property(self, "scale", Vector3(scale.x * 0.05, scale.y * 0.05, scale.z * 0.05), DISSOLVE_TIME).set_trans(Tween.TRANS_CUBIC)
 
 func _all_mesh_instances(n: Node) -> Array:
 	var out: Array = []
