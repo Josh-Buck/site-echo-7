@@ -2,7 +2,7 @@
 
 Quick-reference for "where does X live." Skim before changing anything; update when adding new systems.
 
-Counts current as of latest audit: ~30 .gd files, ~4,400 LOC, ~110 .tres data files.
+Counts current as of latest audit: ~40 .gd files, ~5,500 LOC, ~115 .tres data files, ~10 .glb 3D models.
 
 ---
 
@@ -17,7 +17,9 @@ Counts current as of latest audit: ~30 .gd files, ~4,400 LOC, ~110 .tres data fi
    5. `SaveSystem` — `user://meta.save` (IndexedDB on web)
    6. `CardSystem` — active deck, draft pool, effect mutation
    7. `ChallengeTracker` — achievement progress + RD payouts
-3. TitleScreen.tscn → user clicks START RUN → `Main.tscn` loads → Arena loads → SpawnRing starts wave 1
+3. If `content_warning_acked` is unset in MetaProgress.settings, TitleScreen redirects to ContentWarning.tscn on first launch.
+4. TitleScreen.tscn → user clicks START RUN → `Main.tscn` loads → Arena loads → SpawnRing starts wave 1
+5. On first run only (intro_seen unset): StoryIntro overlay pauses the tree for ~10s of 4-line fade text. Click/space/ESC skips. After dismiss, tree unpauses and wave 1 spawns kick in.
 
 ---
 
@@ -32,6 +34,7 @@ Counts current as of latest audit: ~30 .gd files, ~4,400 LOC, ~110 .tres data fi
 | `SaveSystem.gd` | Versioned JSON to user://meta.save. | `save_meta()`, `load_meta()`, `wipe_meta()` |
 | `CardSystem.gd` | Draft + active deck + payload mutation. | `offer_cards(n)`, `pick_card(idx)`, `skip_draft()`, `get_modifier(stat)`, `mutate_payload(p)` |
 | `ChallengeTracker.gd` | Tracks 26 challenges, awards RD. | listens to EventBus, persists via `MetaProgress.settings` |
+| `DailyChallenge.gd` | One UTC-date-seeded goal per day. | `today_goal()`, `today_completed()`, signal `daily_completed_today`. Persists `daily_completed_date` in MetaProgress.settings. |
 
 ## EventBus signal vocabulary
 
@@ -64,31 +67,36 @@ Producers and primary consumers. Add a row when you add a signal.
 ## Scene flow (gameplay)
 
 ```
+[Boot]
+  └─ ContentWarning (first launch only) → TitleScreen
 TitleScreen
   ├─ START RUN → Main.tscn
-  ├─ META PROGRESSION → MetaScreen.tscn → ESC/back → TitleScreen
-  └─ SETTINGS → SettingsScreen.tscn → ESC/back → TitleScreen
+  ├─ META PROGRESSION → MetaScreen → ChallengesScreen
+  ├─ SETTINGS → SettingsScreen
+  ├─ LIFETIME STATS → LifetimeStatsScreen
+  ├─ RUN MODIFIERS → ModifiersScreen
+  ├─ CREDITS → CreditsScreen
+  └─ all back via ESC/back button
 
 Main.tscn (root: Node3D)
 ├─ Arena (Arena.tscn OR CoolingTower.tscn)
-│   ├─ Floor, walls, lighting, NavigationRegion3D
+│   ├─ Floor, walls, lighting, NavigationRegion3D, random Debris crates
 │   ├─ Barrier (Barrier.tscn instance)
-│   └─ SpawnPoint0..N (Marker3D, group "spawn_points")
+│   └─ SpawnPoint0..7 (Marker3D, group "spawn_points", radius 19)
 ├─ Player (Player.tscn instance, transform 0,1.6,0)
 │   └─ CameraPivot/Camera3D/WeaponHolder (WeaponManager.gd)
-│       ├─ Pistol (Pistol.tscn)     — slot 0 (key 1, starter)
-│       ├─ AR (AR.tscn)             — slot 1 (key 2, RD-locked 250)
-│       ├─ Shotgun (Shotgun.tscn)   — slot 2 (key 3, RD-locked 400)
-│       ├─ Sidearm (Sidearm.tscn)   — slot 3 (key 4, starter, infinite ammo)
-│       ├─ SMG (SMG.tscn)           — slot 4 (key 5, RD-locked 550)
-│       └─ BoltAction (BoltAction.tscn) — slot 5 (key 6, RD-locked 700)
-├─ SpawnRing (SpawnRing.gd) — drives wave queue
-├─ HUD (HUD.tscn) — CanvasLayer
-├─ CardDraft (CardDraft.tscn) — between-wave overlay #1
-├─ Shop (Shop.tscn) — between-wave overlay #2
-├─ WaveComplete (WaveComplete.tscn) — between-wave overlay #3
-├─ PauseMenu (PauseMenu.tscn) — ESC overlay
-└─ Tutorial (Tutorial.tscn) — first-run hints, dismisses self
+│       ├─ Pistol / Sidearm / AR / Shotgun / SMG / BoltAction (Quaternius GLBs)
+│       └─ Slots 1-6 hot-swappable via keys 1-6 or Q to cycle
+├─ SpawnRing — wave queue, 0.9s spawn telegraph (visual only)
+├─ HUD — wave/HP/ammo/score/tokens/crosshair/FPS/streak/intercom subtitles
+├─ CardDraft — between-wave overlay #1 (buffer + draft)
+├─ Shop — between-wave overlay #2 (token spend, gated by no_shop modifier)
+├─ WaveComplete — between-wave overlay #3 (NEXT WAVE button)
+├─ PauseMenu — ESC overlay, hold-to-confirm Return to Title
+├─ Tutorial — first-run hints (5 kills or 25s self-dismiss)
+├─ DeathScreen — run end, victory/defeat flavor text
+├─ DevConsole — ~ key debug commands
+└─ StoryIntro — first-run only, pauses tree until dismissed
 ```
 
 Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pick_card → `card_drafted` → Shop → `shop_done` → WaveComplete → NEXT WAVE → SpawnRing.start_next_wave.
@@ -108,19 +116,22 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 | `data/weapon_data.gd` | `WeaponData` Resource class. |
 | `data/*.tres` | `pistol_m1`, `ar`, `shotgun`, `sidearm`, `smg`, `bolt_action` — stat resources. |
 | `data/attachments/*.tres` | Schema stub. Not yet wired into gameplay. |
-| `vfx/BulletTracer.gd/tscn` | Per-shot tracer line. |
+| `vfx/BulletTracer.gd/tscn` | Per-shot tracer line (legacy, unused — superseded by pool). |
+| `vfx/TracerPool.gd/tscn` | Pre-allocated tracer ring (32 slots, shared material). Used by Weapon._spawn_tracer. |
 | `vfx/ImpactSparks.gd/tscn` | Spark burst at non-enemy hit point. |
+| `vfx/BulletHolePool.gd/tscn` | 48-slot decal pool. Stamps a dark quad on world impacts, fades after 6s. |
 
 ### Enemies (`scenes/enemies/`)
 
 | File | Purpose |
 |---|---|
-| `Zombie.gd` | All enemy behavior. State machine (Idle/Chase/Attack/Stagger/Die). Direct steering (no navmesh). Per-archetype tinting + size from EnemyData. Director enters phase-2 rage at HP<50% (speed/dmg+color shift). |
-| `Zombie.tscn` | Body + head + eyes capsule rig. Used by every archetype. |
+| `Zombie.gd` | All enemy behavior. State machine (Idle/Chase/Attack/Stagger/Die). Direct steering (no navmesh). Per-archetype tinting + size from EnemyData. Director enters phase-2 rage at HP<50%. White-flash + scale-pop on hit. Dissolve = single scale tween (no per-mesh allocations). |
+| `Zombie.tscn` | Humanoid silhouette built from primitives — hunched torso, shoulders, head, jaw, two forward-reaching arms, two legs. |
 | `data/enemy_data.gd` | `EnemyData` Resource class. |
-| `data/*.tres` | walker, runner, tank, exploder, spitter, subject (mini-boss), director (final boss). |
+| `data/*.tres` | walker, walker_elite, runner, tank, exploder, spitter, subject (mini-boss), director (final boss). |
 | `AcidSpit.gd/tscn` | Spitter projectile. Area3D, hits barrier. |
 | `vfx/BloodBurst.gd/tscn` | Gore particle on hit (gated by Settings → Gore). |
+| `vfx/BloodBurstPool.gd/tscn` | 6-slot pre-allocated emitter pool. Recycles via restart(). |
 
 ### Arena (`scenes/arena/`)
 
@@ -131,31 +142,42 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 | `SpawnRing.gd` | Wave queue runner. Hands out enemies from shuffled queue, respects active cap, fires wave_started / wave_ended. 0.9s spawn telegraph (light pulse + sting) precedes each zombie pop-in. |
 | `data/wave_data.gd` + `wave_1..wave_20.tres` | Per-wave composition + counts. |
 
+### Turret (`scenes/turret/`)
+
+| File | Purpose |
+|---|---|
+| `Turret.gd/tscn` | Auto-emplacement bought from Shop. 8 dmg / 1.6s fire interval, 14m range. Stacks to 4. No SFX (visual tracer only). |
+
 ### UI (`scenes/ui/`)
 
 | File | Purpose |
 |---|---|
-| `HUD.gd/tscn` | In-game HUD: HP, ammo, weapon name, wave, score, tokens, deck, hit marker, damage numbers, streak, vignette, damage arrow, boss banner, wave intro banner. |
-| `TitleScreen.gd/tscn` | Boot screen. Start / Meta / Settings. |
+| `HUD.gd/tscn` | In-game HUD: HP, ammo, weapon name, wave, score, tokens, deck, hit marker, damage numbers, streak, vignette, damage arrow, boss banner, wave intro banner. Also: dynamic crosshair (settings-driven), FPS counter toggle, ×N score popups on streak kills. |
+| `TitleScreen.gd/tscn` | Boot screen. Start / Meta / Settings / Lifetime Stats / Run Modifiers / Credits. Daily challenge + cosmetic title shown above lifetime stats. |
 | `MetaScreen.gd/tscn` | Spend RD on perks, barrier upgrades, weapon unlocks. Includes VIEW CHALLENGES button → ChallengesScreen. |
-| `SettingsScreen.gd/tscn` | Sensitivity, FOV, fullscreen, gore toggle, Master/SFX/Music volumes. |
+| `SettingsScreen.gd/tscn` | Sensitivity, FOV, fullscreen, gore toggle, Master/SFX/Music volumes, crosshair (style/size/color), FPS counter, mouse smoothing, tutorial replay, colorblind mode, save export/import. |
 | `ChallengesScreen.gd/tscn` | Browser for all 26 challenges with tier-coloured rows, progress counters, completion state. Reachable from MetaScreen. |
 | `LifetimeStatsScreen.gd/tscn` | Career / Combat / Per-weapon / Challenges totals. Reachable from TitleScreen. |
+| `ModifiersScreen.gd/tscn` | 4 run modifiers (No Shop, No Cards, Locked Weapon, Double Spawn). Persists active set. Read by GameState.start_run. |
+| `CreditsScreen.gd/tscn` | Engine + asset sources + code credit. Reachable from TitleScreen. |
+| `ContentWarning.gd/tscn` | First-launch splash. Persists ack flag. Title redirects to it if unset. |
+| `StoryIntro.gd/tscn` | 4-line first-run intro. Pauses tree while shown so wave 1 doesn't tick under the overlay. Skippable. Persists intro_seen. |
+| `DevConsole.gd/tscn` | ~ key opens a bottom bar with debug commands (tokens, rd, hp, skip, kill, god, unlock). |
 | `CardDraft.gd/tscn` | Between-wave card pick. Buffer → awaiting-gate → interactive state machine. Live hover preview projects card's stat deltas onto the active weapon. |
-| `Shop.gd/tscn` | Between-wave token spending. |
+| `Shop.gd/tscn` | Between-wave token spending. Skipped if `no_shop` modifier active. |
 | `WaveComplete.gd/tscn` | Wave summary + NEXT WAVE / RESTART. Also handles game-over (barrier breached) and victory (all waves cleared). |
-| `PauseMenu.gd/tscn` | ESC pause overlay. process_mode ALWAYS so it works during get_tree().paused. |
+| `PauseMenu.gd/tscn` | ESC pause overlay. Hold-to-confirm "Return to Title" (second press inside 2.5s). |
 | `Tutorial.gd/tscn` | First-run hint panel. Dismisses after 5 kills or 25s. |
 | `ChallengeToast.gd/tscn` | Slide-in toast when a challenge completes. |
-| `DeathScreen.gd/tscn` | Run-end screen with stats (alt path to WaveComplete? — see audit below). |
+| `DeathScreen.gd/tscn` | Run-end screen with stats + randomized victory/defeat flavor text. |
 
 ### Player (`scenes/player/`)
 
 | File | Purpose |
 |---|---|
-| `Player.gd/tscn` | Camera rig (yaw/pitch), recoil decay, shake, idle sway, mouse capture, settings sync. |
+| `Player.gd/tscn` | Camera rig (yaw/pitch), recoil decay, shake, idle sway, mouse capture, settings sync, viewmodel bob, inspect mode (hold I), gamepad rumble on fire, mouse smoothing toggle, FOV punch on fire. |
 | `CasingPool.gd` | Reusable brass casings ejected from weapons. Pool node lives in Player.tscn. |
-| `HitPause.gd` | Helper for brief Engine.time_scale dip on crits. |
+| `HitPause.gd` | Tiered Engine.time_scale dip on kills — body (0.6/20ms), headshot (0.35/45ms), boss (0.2/180ms). |
 
 ### Art / Audio assets (`art/`, `audio/`)
 
@@ -168,7 +190,7 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 
 ### Cards (`scenes/cards/data/`)
 
-30 card .tres files + `card_data.gd` (schema). 26 challenge .tres files in `challenges/` + `challenge_data.gd`. Both lists are *manifested* in their respective autoload (`CardSystem.STARTER_CARDS`, `ChallengeTracker.CHALLENGE_PATHS`) — adding a new .tres requires editing the manifest, otherwise it won't load. This is a deliberate trade for web-PCK reliability (DirAccess on `res://` returns empty in shipped builds).
+38 card .tres files + `card_data.gd` (schema). 26 challenge .tres files in `challenges/` + `challenge_data.gd`. Both lists are *manifested* in their respective autoload (`CardSystem.STARTER_CARDS`, `ChallengeTracker.CHALLENGE_PATHS`) — adding a new .tres requires editing the manifest, otherwise it won't load. This is a deliberate trade for web-PCK reliability (DirAccess on `res://` returns empty in shipped builds).
 
 ---
 

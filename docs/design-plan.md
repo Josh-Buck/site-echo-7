@@ -1,6 +1,10 @@
 # Design plan — godot-shooter
 
-> **Status (live).** M0 / M1 / M2 are shipped end-to-end. M3 is *substantially* complete — all listed weapons, enemies, bosses, cards (30 + 3 synergy = 33), challenges (26), shop, card draft + buffer, card hover preview, lifetime stats screen, challenges browser, Director phase-2 rage, spawn telegraph, pause menu, settings, two arenas (Containment Lab + Cooling Tower), procedural audio + real CC0 SFX, weapon kick/PBR/casings, blood VFX, hit pause, screen shake, damage numbers, hit markers, wave intro banner with composition + deck reminder. The unticked items below are historical — see **`docs/production-gaps.md`** for the live punch list of what still blocks v1.0 (mostly real 3D art, music, accessibility, and a few P1 polish items).
+> **Status (live, v0.7.x).** Game is feature-complete for v1.0 except for music + rigged zombie meshes. M0 / M1 / M2 / M3 all shipped end-to-end.
+>
+> **In the build:** 6 weapons (real CC0 GLBs from Quaternius), 6 enemy archetypes including the Armored Walker, 2 bosses (Subject + Director with phase-2 rage), 38 cards including 3 synergies + 3 curses, 26 challenges across 4 tiers, daily seeded challenge, 4 run modifiers, token shop with 9 offers including auto-turret emplacement, card draft + shop + wave-complete chain, lifetime stats + challenges browser + credits screens, content-warning splash, story intro, intercom flavor lines, two arenas (Containment Lab + Cooling Tower) with boss-wave red lighting variants, procedural audio + lunar atmospheric pass, full settings (sensitivity, FOV, volumes, gore, fullscreen, crosshair style/size/color, FPS counter, mouse smoothing, tutorial replay, colorblind mode, save export/import), HUD with crosshair + FPS counter + streak labels + score popups + intercom subtitles, dev console (~ key), pooled VFX (TracerPool/BulletHolePool/BloodBurstPool/CasingPool), 3-slot rotating save backups, hold-to-confirm destructive UI actions, weapon inspect animation, gamepad rumble.
+>
+> See **`docs/production-gaps.md`** for the live punch list of what still blocks v1.0.
 
 The locked, milestone-by-milestone plan. Companion to `CLAUDE.md` (the rules) and `docs/non-negotiables.md` (the constraints). Open questions at the bottom.
 
