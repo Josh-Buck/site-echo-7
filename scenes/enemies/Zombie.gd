@@ -122,35 +122,23 @@ func _apply_data_visuals() -> void:
 	if data == null:
 		return
 	scale = Vector3.ONE * data.size_scale
-	# Now that the model is the Quaternius GLB (one MeshInstance3D with a
-	# baked texture atlas), per-archetype color comes through modulation of the
-	# imported material. Walk the Model subtree and tint each mesh with the
-	# archetype body color blended over the baked texture.
-	var model := get_node_or_null("Model")
-	if model != null:
-		_tint_model_subtree(model, data.body_color)
+	_tint_mesh($Mesh, data.body_color, false)
+	_tint_mesh($Head, data.head_color, false)
+	_tint_mesh($EyeL, data.eye_color, true, 4.0)
+	_tint_mesh($EyeR, data.eye_color, true, 4.0)
+	# Tint limbs to a darkened variant of the body so the whole zombie reads as one
+	# decaying creature instead of a body + grey detached limbs.
+	var limb_color: Color = data.body_color.darkened(0.25)
+	_tint_mesh_if_present(&"ArmL", limb_color, false)
+	_tint_mesh_if_present(&"ArmR", limb_color, false)
+	_tint_mesh_if_present(&"LegL", limb_color, false)
+	_tint_mesh_if_present(&"LegR", limb_color, false)
+	_tint_mesh_if_present(&"Shoulders", data.body_color.darkened(0.4), false)
 
-func _tint_model_subtree(root: Node, tint: Color) -> void:
-	for child in root.get_children():
-		if child is MeshInstance3D:
-			var mi: MeshInstance3D = child
-			# Duplicate the imported material so we don't mutate the shared resource
-			# (would tint every zombie identically and leak across runs).
-			var src: Material = mi.get_active_material(0)
-			if src is StandardMaterial3D:
-				var dup: StandardMaterial3D = (src as StandardMaterial3D).duplicate()
-				# albedo_color multiplies over the texture — gives a per-archetype hue
-				# while keeping the baked detail.
-				dup.albedo_color = tint
-				mi.set_surface_override_material(0, dup)
-			else:
-				# Fallback: just override with a flat tint if the imported material
-				# wasn't standard (BaseMaterial3D variant or shader).
-				var fallback := StandardMaterial3D.new()
-				fallback.albedo_color = tint
-				fallback.roughness = 0.92
-				mi.set_surface_override_material(0, fallback)
-		_tint_model_subtree(child, tint)
+func _tint_mesh_if_present(node_name: StringName, color: Color, glowy: bool) -> void:
+	var m := get_node_or_null(NodePath(node_name)) as MeshInstance3D
+	if m != null:
+		_tint_mesh(m, color, glowy)
 
 func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength: float = 3.0) -> void:
 	if m == null:
@@ -166,9 +154,20 @@ func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength:
 	m.set_surface_override_material(0, mat)
 
 func _apply_pbr_body_material() -> void:
-	# No-op with the GLB model — tinting is handled in _apply_data_visuals via
-	# the imported material duplication.
-	pass
+	# Body + head get a PBR base (polymer for grunts, rusty steel for armored Tanks)
+	# while preserving the per-archetype tint that distinguishes the silhouette.
+	# Eye glow logic is untouched.
+	if data == null:
+		return
+	var id: StringName = data.id
+	var path := TANK_BODY_MAT_PATH if (id == &"tank" or id == &"director") else BODY_MAT_PATH
+	if not ResourceLoader.exists(path):
+		return
+	var base: StandardMaterial3D = load(path)
+	if base == null:
+		return
+	_apply_tinted_pbr($Mesh, base, data.body_color)
+	_apply_tinted_pbr($Head, base, data.head_color)
 
 func _apply_tinted_pbr(m: MeshInstance3D, base: StandardMaterial3D, tint: Color) -> void:
 	if m == null:
@@ -186,8 +185,11 @@ func _find_target() -> void:
 func _physics_process(delta: float) -> void:
 	_groan_timer -= delta
 	if _groan_timer <= 0.0 and state != AIState.DIE and state != AIState.ATTACK:
-		_groan_timer = randf_range(4.0, 10.0)
-		_play_random_groan()
+		# Longer interval + half the time skip the groan entirely. With 10+ zombies
+		# the old 4-10s cadence stacked into a constant ambient roar that read as gunfire.
+		_groan_timer = randf_range(10.0, 22.0)
+		if randf() < 0.5:
+			_play_random_groan()
 	if state == AIState.CHASE:
 		_footstep_timer -= delta
 		if _footstep_timer <= 0.0:
@@ -388,10 +390,14 @@ func _check_director_rage() -> void:
 	if current_hp > data.max_hp * 0.5:
 		return
 	_enraged = true
+	# Recolor body + head to a brighter red, intensify eye glow.
 	var rage_body := Color(0.85, 0.05, 0.08, 1)
-	var model := get_node_or_null("Model")
-	if model != null:
-		_tint_model_subtree(model, rage_body)
+	var rage_head := Color(1.0, 0.1, 0.12, 1)
+	var rage_eyes := Color(1.0, 0.4, 0.3, 1)
+	_tint_mesh($Mesh, rage_body, false)
+	_tint_mesh($Head, rage_head, false)
+	_tint_mesh($EyeL, rage_eyes, true, 7.0)
+	_tint_mesh($EyeR, rage_eyes, true, 7.0)
 	# Brief scale-pop tween — visual exclamation.
 	var tw := create_tween()
 	tw.tween_property(self, "scale", scale * 1.15, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

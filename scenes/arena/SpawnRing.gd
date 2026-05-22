@@ -97,7 +97,10 @@ func _telegraph_and_schedule_spawn() -> void:
 	t.timeout.connect(_finalize_spawn.bind(enemy, sp))
 
 func _play_telegraph_at(world_pos: Vector3) -> void:
-	AudioMan.play_sfx("spawn_telegraph", world_pos)
+	# Visual-only telegraph for now — the synth beep stacked with other 3D sources
+	# and read as background gunfire in playtest. Re-add as a single 2D beep later.
+	# AudioMan.play_sfx("spawn_telegraph", world_pos)
+	pass
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.25, 0.15, 1)
 	light.light_energy = 5.0
