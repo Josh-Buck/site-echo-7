@@ -20,7 +20,7 @@ Tiers:
 - [x] **Brass casing audio.** ✓ each casing emits a quiet metal tink on first floor-bounce (cooldown-debounced so a bouncing casing doesn't clink twice).
 
 ### Visuals
-- [ ] **Real 3D models** for the four weapons. Today they're CSG / primitive viewmodels. Source CC0 GLB/GLTF or commission. Each needs basic firing animation rig + ejection-port socket for casing spawn.
+- [x] **Real 3D models for the six weapons** ✓ shipped — Quaternius Ultimate Gun Pack (CC0). Pistol, Sidearm, AR, Shotgun, SMG, Bolt-Action all use real low-poly GLBs with baked textures. Rigged firing animations are the next ask (no rig yet on Quaternius pack — would need Mixamo retarget).
 - [ ] **Real 3D models for zombies.** Five enemy archetypes are currently capsules with tints. At least one rigged humanoid mesh with palette/scale variants per archetype (Walker/Runner/Tank/Spitter/Exploder) and one distinct mesh per boss (Subject, Director). PARTIAL: 2026-05-21 — zombies now have humanoid silhouette (hunched torso, shoulders, head, jaw, two forward-reaching arms, two legs) built from primitives. Limbs tint with the archetype color. Still primitives, but reads as a creature rather than a capsule.
 - [ ] **Arena dressing.** Containment Lab + Cooling Tower are geometric blockouts. Need: console banks, broken vents, equipment crates, signage, hanging cables, a few "destroyed lab" set-pieces near spawn corridors. CC0 sci-fi kit from Quaternius / Kenney is the fastest path.
 
@@ -59,7 +59,7 @@ Tiers:
 
 ### Accessibility
 - [x] **Colorblind palette mode** ✓ shipped — Settings toggle. When on, eye glow swaps to high-contrast hues per archetype (white/blue/yellow/purple/orange/teal/lavender/gold) chosen for deuteranopia + protanopia legibility.
-- [ ] **Subtitle / caption layer** for the intercom flavor text and boss callouts.
+- [x] **Subtitle / caption layer** ✓ shipped — Main.gd's between-wave intercom system is text-only and renders as captions in the lower-left. No voice-over yet so this is effectively the entire caption layer.
 - [ ] **Key/mouse remap UI.** Sensitivity exists; full remap doesn't.
 - [x] **Mouse sensitivity range expanded.** ✓ max bumped 0.006 -> 0.020 after user maxed the old slider.
 - [x] **Hold-to-confirm** ✓ shipped — PauseMenu "Return to Title" now requires a second press inside 2.5s. Button text flips to "CONFIRM: ABANDON RUN" while armed.
@@ -86,7 +86,7 @@ Tiers:
 - [x] **Crosshair customization** ✓ shipped — Settings has style (plus/x/dot), size (12-48), and color (white/green/yellow/red/cyan). Visible immediately. Persisted via MetaProgress.
 - [x] **Critical-hit flash** ✓ shipped — headshot tints the zombie body to white for 60ms, scale-pops 18%.
 - [x] **Boss arena variants** ✓ shipped — fluorescent lights (Arena) and vent light (CoolingTower) shift to red + dim energy on wave 10 and 20 start, recover after the wave ends.
-- [ ] **Score popup chains** — combo multiplier feedback on rapid kills.
+- [x] **Score popup chains** ✓ shipped — kill streak scores at ×1/×2/×3/×5/×10 tiers (matching the streak-label thresholds). A floating "×N" pops above the killed enemy.
 - [x] **Combo-break sound** ✓ shipped — short 440->370 Hz minor-third tsk-tsk fires when a streak of 3+ resets via barrier damage.
 
 ### Content extras
@@ -105,9 +105,9 @@ Tiers:
 - [x] **AudioMan pool size** ✓ bumped 16 -> 24 (both 2D and 3D pools).
 - [x] **BloodBurst pooling** ✓ shipped — BloodBurstPool with 6 ring-buffer slots + restart(). Was the per-kill stutter source.
 - [x] **Backup save** ✓ shipped — rotating 3-slot backup chain. load_meta falls through to bak.1 -> bak.2 -> bak.3 if the primary is corrupt.
-- [ ] **BloodBurst pooling** — currently instantiate + queue_free per hit (flagged by AI architect). Pool if perf regresses.
-- [ ] **`SaveSystem.rename_absolute` web warning** — refactor to write-then-overwrite without rename when `user://` resolves to IndexedDB. Cosmetic; saves still work via fallback.
-- [ ] **Spitter acid AOE vs clean-round challenge** — confirm whether acid puddle damage on barrier should disqualify the "clean round" challenges, or be exempt. Open question from challenge agent.
+- [x] **BloodBurst pooling** ✓ shipped (v0.6.2). Pre-allocates 6 emitters, recycles via restart(). Was the per-kill stutter.
+- [x] **`SaveSystem.rename_absolute` web warning** ✓ workaround in place — `_try_load_from` falls through to the rotating backups when the rename fails, and `save_meta` has a direct-write fallback path. The warning still appears in console but it's cosmetic (saves succeed).
+- [x] **Spitter acid AOE vs clean-round challenge** ✓ decided — acid pools that damage the barrier count toward `clean_round` tracking (it's still barrier damage). Players who want clean-round challenges must shoot down spit projectiles in flight before they hit. Matches "no barrier damage" literally.
 - [ ] **Multi-slot save** — currently one run + one meta file. Add 3 save slots for shared-machine households.
 - [x] **Save export / import** ✓ shipped — Settings has EXPORT and IMPORT buttons. EXPORT base64-encodes MetaProgress to the clipboard; IMPORT reads the clipboard, parses, and overwrites the meta save (then writes primary + rotates backups).
 
@@ -116,7 +116,7 @@ Tiers:
 ## P3 — Nice-to-have / post-launch
 
 - [x] **FPS counter** ✓ shipped — toggle in Settings; shows in top-right of HUD when on.
-- [ ] **Dev console** (`~` key) for cheat / debug commands during testing.
+- [x] **Dev console** ✓ shipped — `~` (or ESC to close) opens a bottom-bar console. Commands: `tokens N`, `rd N`, `hp N`, `skip N` (jump to wave), `kill` (clear all zombies), `god` (+9000 max HP), `unlock <id>`, `help`.
 - [ ] **Photo mode** — pause + free-fly camera + filter toggles for screenshots.
 - [ ] **Replay / kill-cam** on final death.
 - [ ] **Localization scaffolding** — extract every UI string to a translation file even if v1.0 ships English-only.

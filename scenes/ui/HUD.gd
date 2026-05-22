@@ -232,17 +232,48 @@ func _show_boss_banner(text: String) -> void:
 	tw.tween_property(boss_banner, "modulate:a", 0.0, 1.5)
 	tw.tween_callback(func(): boss_banner.visible = false)
 
-func _on_enemy_killed(_enemy: Node, _src: Node, headshot: bool, _pos: Vector3) -> void:
-	GameState.current_score += 1
+func _on_enemy_killed(enemy: Node, _src: Node, headshot: bool, pos: Vector3) -> void:
+	# Multiplier scales score by streak tier — adds the combo-chain feedback.
+	var mult: int = _score_multiplier(_kill_streak)
+	GameState.current_score += mult
 	score_label.text = "%d" % GameState.current_score
 	MetaProgress.lifetime_kills += 1
 	_kill_streak += 1
 	_update_streak_label()
 	if _kill_streak == 3 or _kill_streak == 5 or _kill_streak == 10 or _kill_streak == 20:
 		_pop_streak_tier()
+	if mult >= 2 and enemy is Node3D:
+		_spawn_score_pop("×%d" % mult, (enemy as Node3D).global_position)
 	# Kill-flavored hit marker stacks on top of the damage-flavored one.
 	# Headshot hit-pause is owned by the HitPause node (Player.tscn child) — single owner of time_scale.
 	_flash_hit_marker(headshot, true)
+
+func _score_multiplier(streak: int) -> int:
+	if streak >= 20: return 10
+	if streak >= 10: return 5
+	if streak >= 5: return 3
+	if streak >= 3: return 2
+	return 1
+
+func _spawn_score_pop(text: String, world_pos: Vector3) -> void:
+	# Brief floating "×N" label that drifts up + fades. Cheap to make, no pool —
+	# triggers only on streak kills which are rare enough.
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	if cam.is_position_behind(world_pos):
+		return
+	var screen_pos: Vector2 = cam.unproject_position(world_pos)
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.add_theme_font_size_override("font_size", 28)
+	lbl.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
+	lbl.position = screen_pos - Vector2(20, 0)
+	add_child(lbl)
+	var tw := create_tween()
+	tw.tween_property(lbl, "position:y", lbl.position.y - 60.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(lbl, "modulate:a", 0.0, 0.7)
+	tw.tween_callback(lbl.queue_free)
 
 func _streak_tier(streak: int) -> Dictionary:
 	if streak >= 20:

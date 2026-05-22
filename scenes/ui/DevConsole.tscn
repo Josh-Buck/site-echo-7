@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1devconsolexyz"]
+
+[ext_resource type="Script" path="res://scenes/ui/DevConsole.gd" id="1_dc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.03, 0.04, 0.07, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.45, 0.6, 1)
+
+[node name="DevConsole" type="CanvasLayer"]
+layer = 60
+process_mode = 3
+script = ExtResource("1_dc")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="V" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Log" type="Label" parent="Panel/V"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.85, 0.95, 1, 0.9)
+text = "Dev console — type 'help'"
+
+[node name="Input" type="LineEdit" parent="Panel/V"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+placeholder_text = "command (e.g. 'tokens 100', 'skip 10', 'kill')"
