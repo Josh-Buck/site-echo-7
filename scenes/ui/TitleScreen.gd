@@ -11,6 +11,11 @@ extends Control
 @onready var version_label: Label = $VersionLabel
 
 func _ready() -> void:
+	# First-launch content warning. Redirects once acknowledged; that flag
+	# is checked here so re-runs skip straight to the title.
+	if not bool(MetaProgress.get_setting("content_warning_acked", false)):
+		call_deferred("_go_content_warning")
+		return
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	start_button.pressed.connect(_on_start_pressed)
 	meta_button.pressed.connect(_on_meta_pressed)
@@ -41,6 +46,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE:
 			print("[TitleScreen] fallback keypress detected, starting run")
 			_on_start_pressed()
+
+func _go_content_warning() -> void:
+	get_tree().change_scene_to_file("res://scenes/ui/ContentWarning.tscn")
 
 func _on_meta_pressed() -> void:
 	AudioMan.register_first_gesture()

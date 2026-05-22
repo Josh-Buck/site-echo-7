@@ -25,7 +25,7 @@ Tiers:
 - [ ] **Arena dressing.** Containment Lab + Cooling Tower are geometric blockouts. Need: console banks, broken vents, equipment crates, signage, hanging cables, a few "destroyed lab" set-pieces near spawn corridors. CC0 sci-fi kit from Quaternius / Kenney is the fastest path.
 
 ### Build / deploy
-- [ ] **Verify Initial Memory = 256 MB** in the Godot editor Web export preset. The web doctor flagged it doesn't appear in `export_presets.cfg` if at default. OOM crashes silently mid-horde otherwise.
+- [x] **Verify Initial Memory = 256 MB** ✓ added `application/run/initial_size_mb=256` under preset.0.options.custom_features in export_presets.cfg.
 - [ ] **Cross-browser smoke test** — Chrome, Firefox, Safari on macOS. Currently unverified after this session's churn.
 - [ ] **DevTools heap watch.** Peak wave 20 with full audio + PBR; confirm < 256 MB.
 - [ ] **Frame-time budget.** Profile at peak horde with all VFX on; 16.6ms 95th percentile target.
@@ -121,7 +121,7 @@ Tiers:
 - [ ] **Replay / kill-cam** on final death.
 - [ ] **Localization scaffolding** — extract every UI string to a translation file even if v1.0 ships English-only.
 - [x] **Credits screen** ✓ shipped — CreditsScreen.tscn reachable from title. Lists Godot engine, Quaternius weapon pack, AmbientCG/Poly Haven PBR maps, audio sources, design + code credit.
-- [ ] **Content-warning splash** linkable from title screen per CLAUDE.md sensitivity guardrails.
+- [x] **Content-warning splash** ✓ shipped — ContentWarning.tscn appears once on first launch (gated by content_warning_acked in MetaProgress.settings). Title screen redirects to it if the flag is unset. ACK persists.
 - [x] **README polish** ✓ done — rewritten for the live build (controls, weapons, enemies, shop, meta, tech, layout, build, status). A 5-second loop GIF is the remaining nice-to-have.
 - [ ] **Twitter / itch.io launch art** — title key-art, three gameplay screenshots, a short trailer.
 - [x] **Procedural arena seed** ✓ shipped — Arena now spawns 6 random crates between the barrier and the perimeter wall, different placement each run.
