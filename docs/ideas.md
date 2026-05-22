@@ -2,6 +2,12 @@
 
 Stuff that's NOT in v1 (or not yet decided). Park here so the code stays clean. Promote to a real spec only when a milestone explicitly pulls it in.
 
+## Asset credits
+
+CC0 assets pulled in this session:
+- **Quaternius — Ultimate Gun Pack (July 2019).** 40+ low-poly gun models. CC0, no attribution required. Used six .blend files (Pistol_1, Pistol_3, AssaultRifle_1, Shotgun_1, SubmachineGun_1, SniperRifle_1), converted to .glb via headless Blender 5.1.
+- **Quaternius — Animated Zombie Pack (January 2018).** Single textured humanoid zombie OBJ + 32×32 texture atlas. Per-archetype color comes from runtime material duplication + albedo tint. CC0.
+
 ## Player asks parked from 2026-05-21 session (post-audit)
 
 These came directly from the user after their first playthrough. Audio + spawn distance + shop expansions landed in-session. The items below are bigger and need their own milestone.
