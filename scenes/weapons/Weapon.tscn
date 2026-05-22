@@ -1,6 +1,40 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1weaponxyz"]
+[gd_scene load_steps=10 format=3 uid="uid://b1weaponxyz"]
 
 [ext_resource type="Script" path="res://scenes/weapons/Weapon.gd" id="1_weapon"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_grip"]
+size = Vector3(0.025, 0.075, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="Mat_accessory"]
+albedo_color = Color(0.12, 0.13, 0.15, 1)
+metallic = 0.55
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_mag"]
+size = Vector3(0.04, 0.11, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="Mat_mag"]
+albedo_color = Color(0.18, 0.16, 0.14, 1)
+metallic = 0.2
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="CylMesh_brake"]
+top_radius = 0.018
+bottom_radius = 0.016
+height = 0.06
+
+[sub_resource type="StandardMaterial3D" id="Mat_brake"]
+albedo_color = Color(0.22, 0.22, 0.24, 1)
+metallic = 0.85
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_sight"]
+size = Vector3(0.022, 0.022, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="Mat_sight"]
+albedo_color = Color(0.08, 0.09, 0.11, 1)
+metallic = 0.7
+roughness = 0.4
 
 [node name="Weapon" type="Node3D"]
 script = ExtResource("1_weapon")
@@ -21,3 +55,31 @@ bus = &"SFX"
 unit_size = 4.0
 max_distance = 30.0
 bus = &"SFX"
+
+; Card-driven visual mod accessories. Toggled by Weapon._refresh_card_mods()
+; based on the cards in CardSystem.active_deck. All start invisible.
+[node name="Accessories" type="Node3D" parent="."]
+
+[node name="Grip" type="MeshInstance3D" parent="Accessories"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, -0.12)
+visible = false
+mesh = SubResource("BoxMesh_grip")
+surface_material_override/0 = SubResource("Mat_accessory")
+
+[node name="ExtendedMag" type="MeshInstance3D" parent="Accessories"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10, -0.02)
+visible = false
+mesh = SubResource("BoxMesh_mag")
+surface_material_override/0 = SubResource("Mat_mag")
+
+[node name="MuzzleBrake" type="MeshInstance3D" parent="Accessories"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.04, -0.30)
+visible = false
+mesh = SubResource("CylMesh_brake")
+surface_material_override/0 = SubResource("Mat_brake")
+
+[node name="Sight" type="MeshInstance3D" parent="Accessories"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, -0.04)
+visible = false
+mesh = SubResource("BoxMesh_sight")
+surface_material_override/0 = SubResource("Mat_sight")

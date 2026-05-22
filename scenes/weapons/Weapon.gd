@@ -47,6 +47,10 @@ func _ready() -> void:
 		_reload_sfx_player.stream = data.reload_sfx
 	_rest_position = position
 	_apply_pbr_materials()
+	# Card-driven visual mods on the viewmodel — grip / extended mag / muzzle
+	# brake / sight show/hide based on the active card deck.
+	EventBus.card_drafted.connect(_on_card_drafted_for_mods)
+	_refresh_card_mods()
 
 func get_effective_mag_size() -> int:
 	return int(data.mag_size * CardSystem.get_modifier(&"mag_size"))
@@ -349,6 +353,42 @@ func _find_casing_pool() -> CasingPool:
 	if p is CasingPool:
 		return p
 	return null
+
+func _on_card_drafted_for_mods(_card) -> void:
+	_refresh_card_mods()
+
+func _refresh_card_mods() -> void:
+	# Walk the active deck and decide which visual accessories should be visible.
+	# Active = at least one card in the deck pushes the relevant stat in the
+	# direction this accessory represents.
+	#   Grip         — recoil_mult < 1.0 (recoil down)
+	#   ExtendedMag  — mag_size_mult > 1.0 OR reserve_mult > 1.0
+	#   MuzzleBrake  — damage_mult > 1.0
+	#   Sight        — headshot_mult_mult > 1.0
+	var accessories := get_node_or_null("Accessories")
+	if accessories == null:
+		return
+	var grip := false
+	var ext_mag := false
+	var brake := false
+	var sight := false
+	for c in CardSystem.active_deck:
+		if c == null:
+			continue
+		if c.recoil_mult < 0.999:        grip = true
+		if c.mag_size_mult > 1.001:      ext_mag = true
+		if c.reserve_mult > 1.001:       ext_mag = true
+		if c.damage_mult > 1.001:        brake = true
+		if c.headshot_mult_mult > 1.001: sight = true
+	_set_acc_visible(accessories, "Grip", grip)
+	_set_acc_visible(accessories, "ExtendedMag", ext_mag)
+	_set_acc_visible(accessories, "MuzzleBrake", brake)
+	_set_acc_visible(accessories, "Sight", sight)
+
+func _set_acc_visible(parent: Node, child_name: String, on: bool) -> void:
+	var n := parent.get_node_or_null(child_name)
+	if n != null and n is MeshInstance3D:
+		(n as MeshInstance3D).visible = on
 
 func _apply_pbr_materials() -> void:
 	# Skip override on weapons that bring their own GLB model — the imported
