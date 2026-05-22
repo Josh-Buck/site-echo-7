@@ -67,6 +67,7 @@ func get_effective_fire_rate() -> float:
 func _process(delta: float) -> void:
 	_update_kick(delta)
 	_decay_muzzle_flash(delta)
+	_update_trigger_pull(delta)
 	if _fire_cooldown > 0.0:
 		_fire_cooldown = max(0.0, _fire_cooldown - delta)
 	if _reloading:
@@ -316,6 +317,20 @@ func _kick() -> void:
 	# Instantly add the kick; _update_kick springs it back to rest.
 	_kick_offset.z = KICK_BACK_M
 	_kick_pitch = deg_to_rad(KICK_PITCH_DEG)
+	# Pull the index finger toward the trigger; _update_trigger_pull springs it back.
+	_trigger_pull_t = 1.0
+
+var _trigger_pull_t: float = 0.0  # 1.0 = trigger pulled, 0.0 = at rest
+
+func _update_trigger_pull(delta: float) -> void:
+	if _trigger_pull_t <= 0.0:
+		return
+	_trigger_pull_t = max(0.0, _trigger_pull_t - delta * 8.0)
+	var finger := get_node_or_null("Hand/Finger1")
+	if finger == null:
+		return
+	# Slide the index finger back along +Z (toward camera) while pulled.
+	(finger as Node3D).position = Vector3(0.018, -0.005, -0.015 + _trigger_pull_t * 0.020)
 
 func begin_swap_in() -> void:
 	# Drop the weapon below its rest position and let _update_kick spring it up.

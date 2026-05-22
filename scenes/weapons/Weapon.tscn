@@ -1,6 +1,30 @@
-[gd_scene load_steps=10 format=3 uid="uid://b1weaponxyz"]
+[gd_scene load_steps=16 format=3 uid="uid://b1weaponxyz"]
 
 [ext_resource type="Script" path="res://scenes/weapons/Weapon.gd" id="1_weapon"]
+
+; --- Hand primitives ---
+
+[sub_resource type="StandardMaterial3D" id="Mat_skin"]
+albedo_color = Color(0.78, 0.58, 0.46, 1)
+metallic = 0.0
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_forearm"]
+size = Vector3(0.055, 0.055, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="Mat_sleeve"]
+albedo_color = Color(0.22, 0.26, 0.18, 1)
+metallic = 0.0
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_palm"]
+size = Vector3(0.05, 0.07, 0.07)
+
+[sub_resource type="BoxMesh" id="BoxMesh_finger"]
+size = Vector3(0.012, 0.012, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_thumb"]
+size = Vector3(0.02, 0.018, 0.045)
 
 [sub_resource type="BoxMesh" id="BoxMesh_grip"]
 size = Vector3(0.025, 0.075, 0.04)
@@ -55,6 +79,53 @@ bus = &"SFX"
 unit_size = 4.0
 max_distance = 30.0
 bus = &"SFX"
+
+; --- Hand on the gun ---
+; A primitive right hand visible holding the grip. Positions are approximate
+; for the Quaternius gun GLBs (origin at grip, barrel along -Z after the
+; -90 Y rotation). The hand sits behind the gun toward the camera so it
+; reads as "the player is gripping this." Pure primitives — not a rigged
+; FPS hand. Iterate when a real rigged hand asset lands.
+[node name="Hand" type="Node3D" parent="."]
+
+; Forearm sleeve (military fatigue green) extending toward camera.
+[node name="Forearm" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.005, -0.06, 0.10)
+mesh = SubResource("BoxMesh_forearm")
+surface_material_override/0 = SubResource("Mat_sleeve")
+
+; Palm (skin tone) wrapping the grip.
+[node name="Palm" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.005, -0.025, 0.025)
+mesh = SubResource("BoxMesh_palm")
+surface_material_override/0 = SubResource("Mat_skin")
+
+; Thumb pointing forward (wraps over the top of the grip).
+[node name="Thumb" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(0.985, 0, -0.174, 0, 1, 0, 0.174, 0, 0.985, 0.018, 0.005, 0.005)
+mesh = SubResource("BoxMesh_thumb")
+surface_material_override/0 = SubResource("Mat_skin")
+
+; Four fingers wrapping the front of the grip (toward the trigger).
+[node name="Finger1" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, -0.005, -0.015)
+mesh = SubResource("BoxMesh_finger")
+surface_material_override/0 = SubResource("Mat_skin")
+
+[node name="Finger2" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, -0.02, -0.015)
+mesh = SubResource("BoxMesh_finger")
+surface_material_override/0 = SubResource("Mat_skin")
+
+[node name="Finger3" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, -0.035, -0.015)
+mesh = SubResource("BoxMesh_finger")
+surface_material_override/0 = SubResource("Mat_skin")
+
+[node name="Finger4" type="MeshInstance3D" parent="Hand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, -0.05, -0.015)
+mesh = SubResource("BoxMesh_finger")
+surface_material_override/0 = SubResource("Mat_skin")
 
 ; Card-driven visual mod accessories. Toggled by Weapon._refresh_card_mods()
 ; based on the cards in CardSystem.active_deck. All start invisible.
