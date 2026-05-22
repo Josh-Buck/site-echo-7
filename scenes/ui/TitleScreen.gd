@@ -64,12 +64,37 @@ func _on_credits_pressed() -> void:
 
 func _refresh_stats() -> void:
 	var lines: Array[String] = []
+	var title: String = _earned_title()
+	if title != "":
+		lines.append("[ %s ]" % title)
+		lines.append("")
 	lines.append("Lifetime stats")
 	lines.append("")
 	lines.append("Kills:           %d" % MetaProgress.lifetime_kills)
 	lines.append("Best Wave:       %d" % MetaProgress.best_round)
 	lines.append("Research Data:   %d" % MetaProgress.research_data)
 	stats_label.text = "\n".join(lines)
+
+func _earned_title() -> String:
+	# Derived from completed challenges and best wave. The most prestigious one
+	# earned shows on the title screen as a cosmetic title.
+	if MetaProgress.has_unlock(&"director_defeated") or ChallengeTracker.is_completed(&"defeat_director"):
+		return "Director's Bane"
+	if MetaProgress.best_round >= 20:
+		return "Site Cleared"
+	if ChallengeTracker.is_completed(&"defeat_subject"):
+		return "Subject Hunter"
+	if MetaProgress.best_round >= 15:
+		return "Containment Officer"
+	if MetaProgress.best_round >= 10:
+		return "Field Operator"
+	if ChallengeTracker.is_completed(&"clean_round_streak_5"):
+		return "Untouched"
+	if MetaProgress.lifetime_kills >= 500:
+		return "Veteran"
+	if MetaProgress.lifetime_kills >= 100:
+		return "Recruit"
+	return ""
 
 var _starting: bool = false
 

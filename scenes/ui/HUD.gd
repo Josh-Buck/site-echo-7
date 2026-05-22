@@ -155,6 +155,9 @@ func _on_barrier_damaged(_amount: float, attacker: Node) -> void:
 		var b = barriers[0]
 		_update_hp(b.current_hp, b.max_hp)
 	# Reset kill streak when the barrier takes any damage.
+	if _kill_streak >= 3:
+		# Audible streak-break feedback. Only fires if we lost an actual streak.
+		AudioMan.play_sfx("streak_break")
 	_kill_streak = 0
 	streak_label.visible = false
 	_show_damage_arrow_toward(attacker)

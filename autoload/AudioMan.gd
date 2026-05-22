@@ -205,8 +205,23 @@ func _synth(id: String) -> AudioStreamWAV:
 		"shop_open": return _synth_shop_open()
 		"spawn_telegraph": return _synth_spawn_telegraph()
 		"boss_telegraph": return _synth_boss_telegraph()
+		"streak_break":   return _synth_streak_break()
 	push_warning("[AudioMan] unknown sfx id: %s" % id)
 	return null
+
+func _synth_streak_break() -> AudioStreamWAV:
+	# Short downward minor-third — a "tsk tsk" cue when the player loses a streak.
+	# Two quick sine notes 440 -> 370 Hz, ~140ms total.
+	var dur := 0.18
+	var n := int(dur * SAMPLE_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(n)
+	for i in n:
+		var t: float = float(i) / SAMPLE_RATE
+		var f: float = 440.0 if t < dur * 0.45 else 370.0
+		var env: float = exp(-t * 6.0) * 0.4
+		samples[i] = sin(2.0 * PI * f * t) * env
+	return _make_stream(samples)
 
 func _synth_boss_telegraph() -> AudioStreamWAV:
 	# Long, ominous descending double-tone — distinct from the wave-start tension

@@ -87,12 +87,12 @@ Tiers:
 - [x] **Critical-hit flash** ✓ shipped — headshot tints the zombie body to white for 60ms, scale-pops 18%.
 - [x] **Boss arena variants** ✓ shipped — fluorescent lights (Arena) and vent light (CoolingTower) shift to red + dim energy on wave 10 and 20 start, recover after the wave ends.
 - [ ] **Score popup chains** — combo multiplier feedback on rapid kills.
-- [ ] **Combo-break sound** when the streak resets.
+- [x] **Combo-break sound** ✓ shipped — short 440->370 Hz minor-third tsk-tsk fires when a streak of 3+ resets via barrier damage.
 
 ### Content extras
 - [ ] **Daily seeded challenge** — fixed RNG per UTC date, leaderboard-less but lets the player compare runs against their previous self.
 - [ ] **Run modifiers / mutators** unlock-able post-v1.0 (one-life, no-shop, locked-weapon, double-spawn).
-- [ ] **Cosmetic titles** earned through challenges, displayed on title screen.
+- [x] **Cosmetic titles** ✓ shipped — derived from highest milestone (Director's Bane > Site Cleared > Subject Hunter > Containment Officer > Field Operator > Untouched > Veteran > Recruit). Shown on the title screen above lifetime stats.
 - [ ] **Weapon skins** as RD spend tier (low priority but matches the meta-progression catalog in design-plan.md).
 - [x] **More cards** ✓ partial — pool now at 38 cards. Added Field Sights, Quickdraw, Heavy Slugs, Suppressing Fire, Tactical Reload. Push to 45+ with more conditional effects (Hollow Points anti-armor, Knockback Loads, etc.) — needs CardSystem effect_id support.
 
@@ -122,7 +122,7 @@ Tiers:
 - [ ] **Localization scaffolding** — extract every UI string to a translation file even if v1.0 ships English-only.
 - [x] **Credits screen** ✓ shipped — CreditsScreen.tscn reachable from title. Lists Godot engine, Quaternius weapon pack, AmbientCG/Poly Haven PBR maps, audio sources, design + code credit.
 - [ ] **Content-warning splash** linkable from title screen per CLAUDE.md sensitivity guardrails.
-- [ ] **README polish** — short itch-style write-up at the GH Pages root + a 5-second loop GIF for the README.
+- [x] **README polish** ✓ done — rewritten for the live build (controls, weapons, enemies, shop, meta, tech, layout, build, status). A 5-second loop GIF is the remaining nice-to-have.
 - [ ] **Twitter / itch.io launch art** — title key-art, three gameplay screenshots, a short trailer.
 - [x] **Procedural arena seed** ✓ shipped — Arena now spawns 6 random crates between the barrier and the perimeter wall, different placement each run.
 - [x] **Boss telegraph audio** ✓ shipped — distinct 2.2s descending double-tone synth on wave 10 and 20 start, replaces the regular tension stinger on boss waves.

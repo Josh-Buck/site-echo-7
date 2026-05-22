@@ -1,95 +1,104 @@
 # Site Echo 7
 
-3D stationary horde shooter with a draft-deck weapon-modifier system. Browser-playable. Godot 4.6, GDScript only, single-threaded web build, GitHub Pages.
+A 3D first-person stationary horde shooter. Built in Godot 4.6, deployed to GitHub Pages.
 
-→ Design docs: [`CLAUDE.md`](CLAUDE.md) · [`docs/design-plan.md`](docs/design-plan.md) · [`docs/non-negotiables.md`](docs/non-negotiables.md) · [`docs/ideas.md`](docs/ideas.md)
+**Play it now:** https://josh-buck.github.io/site-echo-7/
+
+You stand behind a circular barrier in a research-facility arena, spin 360° to fire at zombies coming from every direction, draft research-note cards between rounds that hot-modify your weapons, and survive 20 waves to the Director boss fight.
+
+## How to play
+
+- **Mouse** — spin to aim (you don't move)
+- **L-Click** — fire
+- **R** — reload
+- **1-6** — weapon slot
+- **Q** — cycle weapons
+- **ESC** — pause
+
+Run length: ~10-20 minutes. Death banks Research Data toward permanent unlocks for next run.
+
+## Core hook
+
+- **Draft a research-note card** at the end of every wave. Cards permanently buff a weapon stat (fire rate, damage, mag size, recoil, headshot multiplier, reserve ammo) or unlock a conditional effect (Marksman refunds ammo on headshot, Last Round triples damage on the final mag round, Lifesteal heals the barrier per kill).
+- **Synergy cards** stack with categories — Pyromaniac needs 3 fire-tagged cards in your deck; once it activates, +50% damage / +20% fire rate to the lot.
+- **Curse cards** trade safety for power — Glass Cannon doubles damage but halves your effective barrier HP.
+
+## Weapons (6 slots)
+
+| Slot | Weapon         | Notes                                              |
+|------|----------------|----------------------------------------------------|
+| 1    | M1 Pistol      | Starter. Semi-auto, balanced.                      |
+| 2    | Assault Rifle  | Auto. Higher RPM, smaller mag.                     |
+| 3    | Combat Shotgun | 12-pellet spread. Devastating up close.            |
+| 4    | Sidearm        | **Infinite reserve.** Weak fallback, always available. |
+| 5    | Compact SMG    | 12 rps, 35 mag, low per-shot. Spray and pray.      |
+| 6    | Bolt-Action    | 0.7 rps, 60 dmg, ×3 headshot. One round chambered. |
+
+## Enemies
+
+Walker, Runner, Tank, Spitter, Exploder, Armored Walker, plus two bosses: The Subject (wave 10) and The Director (wave 20). Director enters a phase-2 rage below 50% HP — faster, harder hits, body recolors.
+
+## Token shop (between waves)
+
+Tokens drop from kills. Spend on:
+- **Ammo Top-Up / Full Resupply / Speed Loader** — refill reserves.
+- **Barrier Repair / Field Welder** — patch barrier HP.
+- **Auto-Turret** — deploy a static emplacement. Stacks to 4.
+- **Field Regenerator** — barrier auto-heals +1 HP/s next wave.
+- **Reinforced Plating** — permanent +15 max barrier HP.
+- **Chill Emitter** — zombies move 20% slower next wave.
+
+## Meta-progression
+
+Research Data persists across runs. Unlocks new weapons (AR 350 RD, Shotgun 450 RD, SMG 550 RD, Bolt 700 RD), barrier upgrades, perks (Quartermaster pre-drafts a card, Combat Veteran starts with 20 tokens, Quick Draft = 5-card first draft). 26 challenges across Bronze/Silver/Gold/Platinum tiers grant additional RD. Cosmetic titles unlock from challenges and best-wave milestones.
+
+## Tech
+
+- **Godot 4.6** Compatibility renderer for web export
+- **GDScript only**, single-threaded (no .gdextension, no Thread — web build constraints)
+- **CC0 assets**: Quaternius Ultimate Gun Pack (weapons), AmbientCG + Poly Haven (PBR materials)
+- **Audio synthesized at runtime** (procedural WAVs in `AudioMan.gd`) plus a few real ambient .ogg samples
+- **GitHub Actions deploy** on every push to `main` → GitHub Pages
+
+## Folder layout
+
+```
+autoload/      GameState, MetaProgress, SaveSystem, EventBus, AudioMan, CardSystem, ChallengeTracker
+scenes/
+  player/      Player + WeaponManager + HitPause + CasingPool
+  weapons/     Weapon base + 6 weapon scenes + .tres data + vfx (TracerPool, sparks, BulletHolePool)
+  enemies/     Zombie + AcidSpit + enemy .tres + BloodBurstPool
+  barrier/     Barrier defense + alarm
+  arena/       Containment Lab + Cooling Tower + SpawnRing + wave .tres
+  cards/       CardData + 38 cards + 26 challenge .tres
+  turret/      Auto-turret emplacement
+  ui/          HUD + CardDraft + Shop + Title + Settings + Meta + LifetimeStats + Credits + StoryIntro + ChallengeToast + WaveComplete + DeathScreen + PauseMenu + Tutorial
+art/           PBR materials + weapon GLBs
+audio/         Procedural synth in AudioMan + a few real .ogg samples
+docs/          Design plan, production gaps, test backlog, codebase map, ideas
+tools/         smoke_test.tscn — headless E2E test, 35+ assertions
+```
+
+## Build / test
+
+```bash
+# Local headless smoke test (~10s):
+godot --headless res://tools/smoke_test.tscn
+
+# Local web export (requires Godot 4.6 web export templates installed):
+mkdir -p build/web
+godot --headless --import || true
+godot --headless --export-release "Web" build/web/index.html
+python3 -m http.server -d build/web 8080
+# then open http://localhost:8080
+```
+
+CI runs both on every push.
 
 ## Status
 
-**M0 — Scaffold.** The browser smoke test: a 3D cube in front of an orbiting camera, press SPACE to score, the score persists across page reloads via `user://meta.save` (IndexedDB on web). Proves the pipeline works end-to-end before we build anything real.
+See `docs/production-gaps.md` for the live punch list. Most P1 items shipped (lunar arena, 6 weapons + 5 enemies + 2 bosses, 38 cards inc. 3 synergies + 3 curses, 26 challenges, token shop with 9 offers, lifetime stats, credits, colorblind mode, save export/import, hold-to-confirm, hit-pause variants, boss telegraph audio, story intro, intercom flavor lines, randomized debris). Real rigged zombie meshes and a music soundtrack are the remaining P0 holdouts.
 
-## Local dev
+## License
 
-Requires Godot 4.6-stable. Open `project.godot` in the editor. Hit F5.
-
-The editor will likely prompt to set the main scene the first time — it should auto-detect `res://scenes/Main.tscn` from `project.godot`, but confirm.
-
-### Smoke test in editor
-
-1. Open project → see the cube + UI labels rendering.
-2. Press SPACE (or click). Cube bounces, lifetime score increments.
-3. Close, reopen — score persists.
-4. Press R to wipe the save.
-
-### Smoke test as web build (local)
-
-```sh
-mkdir -p build/web
-godot --headless --export-release "Web" build/web/index.html
-python3 -m http.server -d build/web 8080
-```
-
-Open `http://localhost:8080` in a browser. Same test as above. **Note:** `localhost:8080` is OK because the page is loaded from a server, not `file://`.
-
-## Pushing to GitHub & enabling Pages
-
-The repo isn't on GitHub yet — set this up once.
-
-```sh
-cd ~/godot-shooter
-# Create empty repo on github.com/Josh-Buck/site-echo-7 first (no README, no .gitignore).
-git remote add origin git@github.com:Josh-Buck/site-echo-7.git
-git push -u origin main
-```
-
-Then, in repo Settings → Pages:
-- **Source: GitHub Actions** (not "Deploy from branch")
-- Save.
-
-Push triggers `.github/workflows/deploy.yml`. First run takes ~5–8 minutes (downloads Godot + templates; subsequent runs cached). When green, the build is live at:
-
-`https://josh-buck.github.io/site-echo-7/`
-
-## Things to verify on the live build
-
-1. Page loads, you see the cube + score UI.
-2. SPACE / click increments lifetime score.
-3. Hard-reload (Ctrl+Shift+R) the page — score persists.
-4. Browser DevTools → Application → IndexedDB → there's an entry for `/site-echo-7/`.
-
-If any of these fail, M0 isn't done. See `docs/design-plan.md` verification plan.
-
-## Project layout
-
-```
-project.godot            Godot main config (autoloads, renderer, main scene)
-export_presets.cfg       Web export preset (single-threaded, 256MB heap, PWA off)
-icon.svg                 Game icon
-.gitignore               Godot 4 standard ignores
-
-autoload/                Singletons (registered in project.godot [autoload])
-  GameState.gd           Current-run state
-  MetaProgress.gd        Persistent unlocks, lifetime stats
-  EventBus.gd            Signal hub
-  AudioMan.gd            Audio + first-gesture gate
-  SaveSystem.gd          user:// JSON persistence, versioned
-  CardSystem.gd          Card draft + effect pipeline (stub for M0)
-
-scenes/
-  Main.tscn / Main.gd    M0 smoke test scene
-
-art/                     PBR materials, models, textures (empty in M0)
-audio/                   SFX, music, generated audio (empty in M0)
-
-docs/                    Design docs — read these before changing scope
-  design-plan.md
-  ideas.md
-  non-negotiables.md
-
-.github/workflows/
-  deploy.yml             GitHub Actions → actions/deploy-pages
-```
-
-## After M0 lands green
-
-Open `docs/design-plan.md` → M1 checklist. Next up: first-person camera, mouse-look spin, the M1 Pistol with real recoil/reload/ammo, one Walker zombie type, the circular barrier, single-wave loop.
+Source under MIT. Quaternius assets are CC0. Audio is procedural / public-domain.
