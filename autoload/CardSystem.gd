@@ -47,6 +47,11 @@ const CARD_TAGS := {
 	&"vampire_rounds":     [],  # neutral effect — no tag needed
 	&"cold_steel":         ["precision"],  # recoil-down helps precision feel
 	&"recoil_down":        ["precision"],
+	&"field_sights":       ["precision"],
+	&"quickdraw":          ["rate", "ammo"],
+	&"heavy_slugs":        ["fire"],
+	&"suppressing_fire":   ["rate"],
+	&"tactical_reload":    ["ammo"],
 }
 
 const STARTER_CARDS: Array[String] = [
@@ -83,6 +88,11 @@ const STARTER_CARDS: Array[String] = [
 	"res://scenes/cards/data/pyromaniac.tres",
 	"res://scenes/cards/data/surgical_precision.tres",
 	"res://scenes/cards/data/munitions_specialist.tres",
+	"res://scenes/cards/data/field_sights.tres",
+	"res://scenes/cards/data/quickdraw.tres",
+	"res://scenes/cards/data/heavy_slugs.tres",
+	"res://scenes/cards/data/suppressing_fire.tres",
+	"res://scenes/cards/data/tactical_reload.tres",
 ]
 
 func _ready() -> void:

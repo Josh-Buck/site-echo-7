@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardheavyslugsxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"heavy_slugs"
+display_name = "Heavy Slugs"
+description = "Oversized loads. +60% damage, -40% fire rate."
+rarity = 1
+draft_weight = 0.8
+damage_mult = 1.6
+fire_rate_mult = 0.6

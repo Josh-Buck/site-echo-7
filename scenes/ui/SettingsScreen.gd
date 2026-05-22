@@ -19,6 +19,9 @@ extends Control
 @onready var fps_button: CheckButton = $VBox/FpsRow/FpsButton if has_node("VBox/FpsRow/FpsButton") else null
 @onready var mouse_smooth_button: CheckButton = $VBox/MouseSmoothRow/MouseSmoothButton if has_node("VBox/MouseSmoothRow/MouseSmoothButton") else null
 @onready var tutorial_replay_button: Button = $VBox/TutorialReplayRow/TutorialReplayButton if has_node("VBox/TutorialReplayRow/TutorialReplayButton") else null
+@onready var colorblind_button: CheckButton = $VBox/ColorblindRow/ColorblindButton if has_node("VBox/ColorblindRow/ColorblindButton") else null
+@onready var export_save_button: Button = $VBox/ExportSaveRow/ExportSaveButton if has_node("VBox/ExportSaveRow/ExportSaveButton") else null
+@onready var import_save_button: Button = $VBox/ExportSaveRow/ImportSaveButton if has_node("VBox/ExportSaveRow/ImportSaveButton") else null
 @onready var back_button: Button = $VBox/BackButton
 
 const DEFAULT_SENS: float = 0.002
@@ -58,6 +61,8 @@ func _ready() -> void:
 	_init_fps_control()
 	_init_mouse_smooth_control()
 	_init_tutorial_replay_control()
+	_init_colorblind_control()
+	_init_save_export_controls()
 
 	sens_slider.value_changed.connect(_on_sens_changed)
 	fov_slider.value_changed.connect(_on_fov_changed)
@@ -227,6 +232,55 @@ func _on_tutorial_replay_pressed() -> void:
 	MetaProgress.set_setting("intro_seen", false)
 	MetaProgress.set_setting("tutorial_done", false)
 	tutorial_replay_button.text = "RE-ARMED ✓"
+
+func _init_colorblind_control() -> void:
+	if colorblind_button == null:
+		return
+	colorblind_button.button_pressed = bool(MetaProgress.get_setting("colorblind", false))
+	colorblind_button.text = "ON" if colorblind_button.button_pressed else "OFF"
+	colorblind_button.toggled.connect(_on_colorblind_toggled)
+
+func _on_colorblind_toggled(pressed: bool) -> void:
+	MetaProgress.set_setting("colorblind", pressed)
+	colorblind_button.text = "ON" if pressed else "OFF"
+
+func _init_save_export_controls() -> void:
+	if export_save_button != null:
+		export_save_button.pressed.connect(_on_export_pressed)
+	if import_save_button != null:
+		import_save_button.pressed.connect(_on_import_pressed)
+
+func _on_export_pressed() -> void:
+	# Encode MetaProgress to a base64 string and copy to clipboard so the user
+	# can paste it elsewhere (different browser / device / backup file).
+	var payload := {"version": 1, "data": MetaProgress.to_dict()}
+	var json := JSON.stringify(payload)
+	var b64 := Marshalls.utf8_to_base64(json)
+	DisplayServer.clipboard_set(b64)
+	export_save_button.text = "COPIED ✓"
+
+func _on_import_pressed() -> void:
+	# Read base64 from clipboard, decode + JSON parse + apply to MetaProgress.
+	var b64 := DisplayServer.clipboard_get()
+	if b64.is_empty():
+		import_save_button.text = "EMPTY CLIPBOARD"
+		return
+	var raw := Marshalls.base64_to_utf8(b64)
+	if raw.is_empty():
+		import_save_button.text = "BAD FORMAT"
+		return
+	var parsed: Variant = JSON.parse_string(raw)
+	if not parsed is Dictionary:
+		import_save_button.text = "BAD JSON"
+		return
+	var p: Dictionary = parsed
+	var data: Dictionary = p.get("data", {})
+	if data.is_empty():
+		import_save_button.text = "EMPTY SAVE"
+		return
+	MetaProgress.from_dict(data)
+	SaveSystem.save_meta()
+	import_save_button.text = "IMPORTED ✓"
 
 func _on_back_pressed() -> void:
 	AudioMan.play_ui_click()

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardfieldsightsxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"field_sights"
+display_name = "Field Sights"
+description = "Adjustable iron sights — recoil drops 20%, headshot damage climbs 25%."
+rarity = 1
+draft_weight = 0.9
+recoil_mult = 0.8
+headshot_mult_mult = 1.25

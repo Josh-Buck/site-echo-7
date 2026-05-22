@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardquickdrawxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"quickdraw"
+display_name = "Quickdraw"
+description = "Spring-loaded magwell. Reloads 30% faster, fire rate +10%."
+rarity = 0
+draft_weight = 1.0
+fire_rate_mult = 1.1
+reload_time_mult = 0.7

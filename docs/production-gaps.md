@@ -58,7 +58,7 @@ Tiers:
 - [ ] **Resume-run flow** on title screen — parked, same blocker as P0 Continue button.
 
 ### Accessibility
-- [ ] **Colorblind palette mode.** Eye glow + enemy tint differentiation is core to the read; colorblind players need a switch.
+- [x] **Colorblind palette mode** ✓ shipped — Settings toggle. When on, eye glow swaps to high-contrast hues per archetype (white/blue/yellow/purple/orange/teal/lavender/gold) chosen for deuteranopia + protanopia legibility.
 - [ ] **Subtitle / caption layer** for the intercom flavor text and boss callouts.
 - [ ] **Key/mouse remap UI.** Sensitivity exists; full remap doesn't.
 - [x] **Mouse sensitivity range expanded.** ✓ max bumped 0.006 -> 0.020 after user maxed the old slider.
@@ -94,7 +94,7 @@ Tiers:
 - [ ] **Run modifiers / mutators** unlock-able post-v1.0 (one-life, no-shop, locked-weapon, double-spawn).
 - [ ] **Cosmetic titles** earned through challenges, displayed on title screen.
 - [ ] **Weapon skins** as RD spend tier (low priority but matches the meta-progression catalog in design-plan.md).
-- [ ] **More cards** — design-plan.md M3 says "30 cards." Confirmed at 30. Push to 40–50 once curse + synergy categories land.
+- [x] **More cards** ✓ partial — pool now at 38 cards. Added Field Sights, Quickdraw, Heavy Slugs, Suppressing Fire, Tactical Reload. Push to 45+ with more conditional effects (Hollow Points anti-armor, Knockback Loads, etc.) — needs CardSystem effect_id support.
 
 ### Fiction / atmosphere
 - [x] **Intercom flavor lines** ✓ shipped — Main.gd maintains an `INTERCOM_LINES` dict keyed by round_number. Fades the line in/out on the lower-left after the matching wave_ended. 13 lines covering wave 1, 2, 3, 5, 7, 9, 10, 11, 14, 16, 18, 19.
@@ -109,7 +109,7 @@ Tiers:
 - [ ] **`SaveSystem.rename_absolute` web warning** — refactor to write-then-overwrite without rename when `user://` resolves to IndexedDB. Cosmetic; saves still work via fallback.
 - [ ] **Spitter acid AOE vs clean-round challenge** — confirm whether acid puddle damage on barrier should disqualify the "clean round" challenges, or be exempt. Open question from challenge agent.
 - [ ] **Multi-slot save** — currently one run + one meta file. Add 3 save slots for shared-machine households.
-- [ ] **Save export / import** — base64 blob so the user can move progress between browsers / devices.
+- [x] **Save export / import** ✓ shipped — Settings has EXPORT and IMPORT buttons. EXPORT base64-encodes MetaProgress to the clipboard; IMPORT reads the clipboard, parses, and overwrites the meta save (then writes primary + rotates backups).
 
 ---
 

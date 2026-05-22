@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3 uid="uid://b1cardtacreloadxyz"]
+
+[ext_resource type="Script" path="res://scenes/cards/data/card_data.gd" id="1_cd"]
+
+[resource]
+script = ExtResource("1_cd")
+id = &"tactical_reload"
+display_name = "Tactical Reload"
+description = "Half a step ahead. Reload 35% faster, mag size +15%."
+rarity = 0
+draft_weight = 1.0
+mag_size_mult = 1.15
+reload_time_mult = 0.65

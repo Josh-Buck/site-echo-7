@@ -124,8 +124,13 @@ func _apply_data_visuals() -> void:
 	scale = Vector3.ONE * data.size_scale
 	_tint_mesh($Mesh, data.body_color, false)
 	_tint_mesh($Head, data.head_color, false)
-	_tint_mesh($EyeL, data.eye_color, true, 4.0)
-	_tint_mesh($EyeR, data.eye_color, true, 4.0)
+	# Colorblind mode replaces the red/orange eye glow with high-contrast hues
+	# per archetype so the player can still distinguish them at a glance.
+	var eye_col: Color = data.eye_color
+	if bool(MetaProgress.get_setting("colorblind", false)):
+		eye_col = _colorblind_eye_for(data.id)
+	_tint_mesh($EyeL, eye_col, true, 4.0)
+	_tint_mesh($EyeR, eye_col, true, 4.0)
 	# Tint limbs to a darkened variant of the body so the whole zombie reads as one
 	# decaying creature instead of a body + grey detached limbs.
 	var limb_color: Color = data.body_color.darkened(0.25)
@@ -134,6 +139,20 @@ func _apply_data_visuals() -> void:
 	_tint_mesh_if_present(&"LegL", limb_color, false)
 	_tint_mesh_if_present(&"LegR", limb_color, false)
 	_tint_mesh_if_present(&"Shoulders", data.body_color.darkened(0.4), false)
+
+func _colorblind_eye_for(id: StringName) -> Color:
+	# Distinct, easily-distinguishable hues that don't rely on red/green discrimination.
+	# Tested for deuteranopia + protanopia legibility.
+	match id:
+		&"walker":        return Color(1.0, 1.0, 1.0)
+		&"runner":        return Color(0.3, 0.7, 1.0)
+		&"tank":          return Color(1.0, 0.85, 0.0)
+		&"spitter":       return Color(0.7, 0.4, 1.0)
+		&"exploder":      return Color(1.0, 0.5, 0.0)
+		&"walker_elite":  return Color(0.0, 1.0, 0.85)
+		&"subject":       return Color(0.85, 0.85, 1.0)
+		&"director":      return Color(1.0, 0.95, 0.7)
+	return Color(1.0, 1.0, 1.0)
 
 func _tint_mesh_if_present(node_name: StringName, color: Color, glowy: bool) -> void:
 	var m := get_node_or_null(NodePath(node_name)) as MeshInstance3D

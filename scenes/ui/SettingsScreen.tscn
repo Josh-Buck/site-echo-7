@@ -272,6 +272,54 @@ layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
 
+[node name="ColorblindRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="ColorblindLabel" type="Label" parent="VBox/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Colorblind Mode"
+
+[node name="ColorblindButton" type="CheckButton" parent="VBox/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+text = "OFF"
+
+[node name="ColorblindSpacer" type="Control" parent="VBox/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
+[node name="ExportSaveRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="ExportSaveLabel" type="Label" parent="VBox/ExportSaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Save Data"
+
+[node name="ExportSaveButton" type="Button" parent="VBox/ExportSaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(170, 36)
+text = "EXPORT"
+
+[node name="ImportSaveButton" type="Button" parent="VBox/ExportSaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(170, 36)
+text = "IMPORT"
+
+[node name="ExportSaveSpacer" type="Control" parent="VBox/ExportSaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
 [node name="TutorialReplayRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(720, 44)
