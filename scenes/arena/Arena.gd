@@ -142,38 +142,65 @@ func _build_perimeter_walls() -> void:
 		ring.add_child(seg)
 		seg.look_at(Vector3(0, 2.0, 0), Vector3.UP)
 
+const DEBRIS_SCENES := [
+	preload("res://art/models/props/prop_barrel1.glb"),
+	preload("res://art/models/props/prop_barrel2_closed.glb"),
+	preload("res://art/models/props/prop_locker.glb"),
+	preload("res://art/models/props/prop_chair.glb"),
+]
+
 func _build_random_debris() -> void:
-	# 6 small destroyed-equipment crates scattered between the barrier and the
-	# perimeter wall. Different placement each run for visual variety. They
-	# sit between the safe zone and the spawn ring so they read as
-	# "abandoned in the rush."
+	# 7 sci-fi props (Quaternius Sci-Fi Essentials Kit) scattered between the
+	# barrier and the perimeter wall. Different mix + placement per run.
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var group := Node3D.new()
 	group.name = "Debris"
 	add_child(group)
-	var box_mesh := BoxMesh.new()
-	box_mesh.size = Vector3(1.2, 0.85, 1.2)
-	var mat := StandardMaterial3D.new()
-	if ResourceLoader.exists(LAB_TILE_MAT_PATH):
-		var base: StandardMaterial3D = load(LAB_TILE_MAT_PATH)
-		mat = base.duplicate() as StandardMaterial3D
-		mat.albedo_color = Color(0.32, 0.28, 0.24, 1)
-	else:
-		mat.albedo_color = Color(0.32, 0.28, 0.24, 1)
-		mat.roughness = 0.85
-	# Skip a 90-degree wedge so debris doesn't block the player's barrier sightline.
-	var safe_angle := PI * 0.55  # ~99 degrees forward-facing kept clear
-	for i in 6:
+	# Skip a ~99-degree wedge so debris doesn't block the player's barrier sightline.
+	var safe_angle := PI * 0.55
+	for i in 7:
 		var ang := rng.randf_range(safe_angle, TAU - safe_angle * 0.2)
 		var radius := rng.randf_range(7.0, 13.0)
-		var crate := MeshInstance3D.new()
-		crate.mesh = box_mesh
-		crate.set_surface_override_material(0, mat)
-		crate.position = Vector3(cos(ang) * radius, 0.42, sin(ang) * radius)
-		crate.rotation.y = rng.randf_range(0.0, TAU)
-		crate.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		group.add_child(crate)
+		var packed: PackedScene = DEBRIS_SCENES[rng.randi() % DEBRIS_SCENES.size()]
+		var inst: Node3D = packed.instantiate()
+		# Sci-Fi Essentials props vary in scale; normalize to roughly chest-high
+		# (about 0.9m). Compute a uniform scale based on the AABB.
+		var aabb: AABB = _scene_aabb(inst)
+		var max_dim: float = max(aabb.size.x, aabb.size.z)
+		var s: float = 1.0
+		if max_dim > 0.0:
+			s = clamp(1.1 / max_dim, 0.5, 2.0)
+		inst.scale = Vector3.ONE * s
+		inst.position = Vector3(cos(ang) * radius, 0.0, sin(ang) * radius)
+		inst.rotation.y = rng.randf_range(0.0, TAU)
+		group.add_child(inst)
+
+func _scene_aabb(n: Node) -> AABB:
+	# Recursively combine MeshInstance3D AABBs to size the prop.
+	var combined := AABB()
+	var first := true
+	for mi in _collect_mi(n):
+		var t: Transform3D = mi.transform
+		var box: AABB = mi.get_aabb()
+		# Transform AABB by mesh transform.
+		var bw := box.size
+		var origin := box.position + t.origin
+		var local := AABB(origin, bw)
+		if first:
+			combined = local
+			first = false
+		else:
+			combined = combined.merge(local)
+	return combined
+
+func _collect_mi(n: Node) -> Array[MeshInstance3D]:
+	var out: Array[MeshInstance3D] = []
+	if n is MeshInstance3D:
+		out.append(n)
+	for c in n.get_children():
+		out.append_array(_collect_mi(c))
+	return out
 
 func _build_dust_motes() -> void:
 	var p := GPUParticles3D.new()

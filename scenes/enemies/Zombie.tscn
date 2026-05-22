@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b1zombiexyz"]
+[gd_scene load_steps=11 format=3 uid="uid://b1zombiexyz"]
 
 [ext_resource type="Script" path="res://scenes/enemies/Zombie.gd" id="1_zombie"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombies/groan_01.ogg" id="2_groan1"]
@@ -8,67 +8,11 @@
 [ext_resource type="AudioStream" path="res://audio/sfx/zombies/attack_hit.ogg" id="6_hit"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombies/death_01.ogg" id="7_death1"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombies/death_02.ogg" id="8_death2"]
+[ext_resource type="PackedScene" path="res://art/models/zombies/zombie.glb" id="9_model"]
 
 [sub_resource type="CapsuleShape3D" id="Cap_zombie"]
 height = 1.8
 radius = 0.38
-
-[sub_resource type="CapsuleMesh" id="TorsoMesh"]
-height = 0.8
-radius = 0.32
-
-[sub_resource type="SphereMesh" id="HeadMesh"]
-radius = 0.21
-height = 0.42
-
-[sub_resource type="SphereMesh" id="EyeMesh"]
-radius = 0.06
-height = 0.12
-
-[sub_resource type="CapsuleMesh" id="ArmMesh"]
-height = 0.85
-radius = 0.085
-
-[sub_resource type="CapsuleMesh" id="LegMesh"]
-height = 0.85
-radius = 0.13
-
-[sub_resource type="BoxMesh" id="JawMesh"]
-size = Vector3(0.16, 0.05, 0.1)
-
-[sub_resource type="BoxMesh" id="ShoulderMesh"]
-size = Vector3(0.55, 0.14, 0.22)
-
-[sub_resource type="StandardMaterial3D" id="Mat_body"]
-albedo_color = Color(0.32, 0.27, 0.23, 1)
-metallic = 0.0
-roughness = 0.95
-
-[sub_resource type="StandardMaterial3D" id="Mat_head"]
-albedo_color = Color(0.5, 0.4, 0.34, 1)
-metallic = 0.0
-roughness = 0.88
-
-[sub_resource type="StandardMaterial3D" id="Mat_eyes"]
-albedo_color = Color(0.9, 0.18, 0.12, 1)
-emission_enabled = true
-emission = Color(0.9, 0.2, 0.12, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="StandardMaterial3D" id="Mat_limb"]
-albedo_color = Color(0.28, 0.24, 0.21, 1)
-metallic = 0.0
-roughness = 0.92
-
-[sub_resource type="StandardMaterial3D" id="Mat_jaw"]
-albedo_color = Color(0.08, 0.04, 0.04, 1)
-metallic = 0.0
-roughness = 0.85
-
-[sub_resource type="StandardMaterial3D" id="Mat_shoulder"]
-albedo_color = Color(0.22, 0.18, 0.16, 1)
-metallic = 0.05
-roughness = 0.95
 
 [node name="Zombie" type="CharacterBody3D"]
 collision_layer = 4
@@ -86,59 +30,11 @@ death_02 = ExtResource("8_death2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("Cap_zombie")
 
-; Torso — slightly tilted forward for the hunched zombie pose.
-[node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.985, 0, -0.174, 0, 1, 0, 0.174, 0, 0.985, 0, 1.1, 0)
-mesh = SubResource("TorsoMesh")
-surface_material_override/0 = SubResource("Mat_body")
-
-; Shoulders — flat plate connecting torso to arms, sells the humanoid silhouette.
-[node name="Shoulders" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.04)
-mesh = SubResource("ShoulderMesh")
-surface_material_override/0 = SubResource("Mat_shoulder")
-
-[node name="Head" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.94, 0, -0.342, 0, 1, 0, 0.342, 0, 0.94, 0, 1.6, 0.08)
-mesh = SubResource("HeadMesh")
-surface_material_override/0 = SubResource("Mat_head")
-
-[node name="Jaw" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.94, 0, -0.342, 0, 1, 0, 0.342, 0, 0.94, 0, 1.48, -0.08)
-mesh = SubResource("JawMesh")
-surface_material_override/0 = SubResource("Mat_jaw")
-
-[node name="EyeL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.94, 0, -0.342, 0, 1, 0, 0.342, 0, 0.94, -0.08, 1.66, -0.12)
-mesh = SubResource("EyeMesh")
-surface_material_override/0 = SubResource("Mat_eyes")
-
-[node name="EyeR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.94, 0, -0.342, 0, 1, 0, 0.342, 0, 0.94, 0.08, 1.66, -0.12)
-mesh = SubResource("EyeMesh")
-surface_material_override/0 = SubResource("Mat_eyes")
-
-; Arms — reach forward (classic zombie shambling pose).
-[node name="ArmL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.866, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866, -0.36, 1.05, 0.25)
-mesh = SubResource("ArmMesh")
-surface_material_override/0 = SubResource("Mat_limb")
-
-[node name="ArmR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.866, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866, 0.36, 1.05, 0.25)
-mesh = SubResource("ArmMesh")
-surface_material_override/0 = SubResource("Mat_limb")
-
-; Legs — separate so the silhouette breaks at the hip line.
-[node name="LegL" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14, 0.42, 0)
-mesh = SubResource("LegMesh")
-surface_material_override/0 = SubResource("Mat_limb")
-
-[node name="LegR" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.42, 0)
-mesh = SubResource("LegMesh")
-surface_material_override/0 = SubResource("Mat_limb")
+; Mixamo character — Z-up in Blender becomes Y-up in glTF. Mesh extends 0 to 1.85
+; on Y. Capsule center is at +0.9 (so feet are at 0). Rotation 180 about Y so the
+; character faces -Z (Godot forward, matching the zombie's chase direction).
+[node name="Model" parent="." instance=ExtResource("9_model")]
+transform = Transform3D(-1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, -1, 0, 0, 0)
 
 [node name="AudioPlayer" type="AudioStreamPlayer3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)

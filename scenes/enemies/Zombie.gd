@@ -16,9 +16,10 @@ const DISSOLVE_TIME: float = 0.55
 @export var death_01: AudioStream
 @export var death_02: AudioStream
 
-@onready var mesh: MeshInstance3D = $Mesh
 @onready var _audio: AudioStreamPlayer3D = $AudioPlayer
 @onready var _foot_audio: AudioStreamPlayer3D = $FootstepPlayer
+@onready var _model: Node3D = $Model if has_node("Model") else null
+var _anim_player: AnimationPlayer = null
 
 var _base_pitch: float = 1.0
 
@@ -68,9 +69,34 @@ func _ready() -> void:
 	_groan_timer = randf_range(2.0, 6.0)
 	_init_audio_pitch()
 	_init_footsteps()
+	_init_anim_player()
 	_apply_data_visuals()
 	_apply_pbr_body_material()
 	_find_target()
+
+func _init_anim_player() -> void:
+	# The Mixamo GLB ships with an AnimationPlayer. Find the first one inside Model.
+	if _model == null:
+		return
+	_anim_player = _find_anim_player(_model)
+	if _anim_player == null:
+		return
+	# Mixamo animations leave the root with movement applied — fine for a Walk in
+	# place since the zombie's CharacterBody3D drives world position. Just disable
+	# root motion accumulation.
+	for anim_name in _anim_player.get_animation_list():
+		var anim := _anim_player.get_animation(anim_name)
+		if anim != null:
+			anim.loop_mode = Animation.LOOP_LINEAR if anim_name.to_lower() == "walk" else Animation.LOOP_NONE
+
+func _find_anim_player(n: Node) -> AnimationPlayer:
+	if n is AnimationPlayer:
+		return n
+	for c in n.get_children():
+		var ap := _find_anim_player(c)
+		if ap != null:
+			return ap
+	return null
 
 func _init_footsteps() -> void:
 	# Cadence scales with archetype: faster mover = quicker step.
@@ -122,23 +148,16 @@ func _apply_data_visuals() -> void:
 	if data == null:
 		return
 	scale = Vector3.ONE * data.size_scale
-	_tint_mesh($Mesh, data.body_color, false)
-	_tint_mesh($Head, data.head_color, false)
-	# Colorblind mode replaces the red/orange eye glow with high-contrast hues
-	# per archetype so the player can still distinguish them at a glance.
-	var eye_col: Color = data.eye_color
+	# Mixamo character has a single skinned mesh under Model. Apply a per-archetype
+	# tint that multiplies over the imported texture so we keep detail but the
+	# archetype is recognizable. For colorblind users we shift the tint toward
+	# a high-contrast hue.
+	var body_tint: Color = data.body_color
 	if bool(MetaProgress.get_setting("colorblind", false)):
-		eye_col = _colorblind_eye_for(data.id)
-	_tint_mesh($EyeL, eye_col, true, 4.0)
-	_tint_mesh($EyeR, eye_col, true, 4.0)
-	# Tint limbs to a darkened variant of the body so the whole zombie reads as one
-	# decaying creature instead of a body + grey detached limbs.
-	var limb_color: Color = data.body_color.darkened(0.25)
-	_tint_mesh_if_present(&"ArmL", limb_color, false)
-	_tint_mesh_if_present(&"ArmR", limb_color, false)
-	_tint_mesh_if_present(&"LegL", limb_color, false)
-	_tint_mesh_if_present(&"LegR", limb_color, false)
-	_tint_mesh_if_present(&"Shoulders", data.body_color.darkened(0.4), false)
+		body_tint = _colorblind_body_for(data.id)
+	_apply_glb_tint(body_tint)
+	# Start Walk animation by default; state transitions will switch as needed.
+	_play_anim("Walk")
 
 func _colorblind_eye_for(id: StringName) -> Color:
 	# Distinct, easily-distinguishable hues that don't rely on red/green discrimination.
@@ -158,6 +177,53 @@ func _tint_mesh_if_present(node_name: StringName, color: Color, glowy: bool) -> 
 	var m := get_node_or_null(NodePath(node_name)) as MeshInstance3D
 	if m != null:
 		_tint_mesh(m, color, glowy)
+
+func _apply_glb_tint(tint: Color) -> void:
+	if _model == null:
+		return
+	for child in _collect_meshes(_model):
+		var src: Material = child.get_active_material(0)
+		if src is StandardMaterial3D:
+			var dup: StandardMaterial3D = (src as StandardMaterial3D).duplicate()
+			# Multiply tint over the baked texture rather than replace it.
+			dup.albedo_color = tint
+			child.set_surface_override_material(0, dup)
+		else:
+			var fb := StandardMaterial3D.new()
+			fb.albedo_color = tint
+			fb.roughness = 0.92
+			child.set_surface_override_material(0, fb)
+
+func _collect_meshes(n: Node) -> Array[MeshInstance3D]:
+	var out: Array[MeshInstance3D] = []
+	if n is MeshInstance3D:
+		out.append(n)
+	for c in n.get_children():
+		out.append_array(_collect_meshes(c))
+	return out
+
+func _play_anim(name: String) -> void:
+	if _anim_player == null:
+		return
+	if not _anim_player.has_animation(name):
+		return
+	if _anim_player.current_animation == name and _anim_player.is_playing():
+		return
+	_anim_player.play(name)
+
+func _colorblind_body_for(id: StringName) -> Color:
+	# When colorblind mode is on, swap to a high-contrast palette that's
+	# distinguishable without red/green discrimination.
+	match id:
+		&"walker":        return Color(0.65, 0.65, 0.7)
+		&"runner":        return Color(0.25, 0.55, 0.85)
+		&"tank":          return Color(0.85, 0.7, 0.2)
+		&"spitter":       return Color(0.55, 0.3, 0.8)
+		&"exploder":      return Color(0.95, 0.5, 0.1)
+		&"walker_elite":  return Color(0.2, 0.85, 0.75)
+		&"subject":       return Color(0.7, 0.7, 0.95)
+		&"director":      return Color(0.9, 0.8, 0.5)
+	return Color(0.65, 0.65, 0.7)
 
 func _tint_mesh(m: MeshInstance3D, color: Color, glowy: bool, emission_strength: float = 3.0) -> void:
 	if m == null:
@@ -232,6 +298,7 @@ func _state_idle(delta: float) -> void:
 func _state_chase(_delta: float) -> void:
 	if _target == null:
 		return
+	_play_anim("Walk")
 	var to_target := _target.global_position - global_position
 	to_target.y = 0.0
 	var dist := to_target.length()
@@ -281,6 +348,7 @@ func _state_attack(delta: float) -> void:
 
 func _perform_attack() -> void:
 	var dmg := _effective_attack_damage()
+	_play_anim("Attack")
 	match data.attack_type:
 		0:  # Melee
 			_play_audio(attack_growl)
@@ -384,6 +452,7 @@ func take_damage(amount: float, source: Node = null, is_headshot: bool = false, 
 		# Extra spray on the kill blow.
 		_spawn_blood_burst(hit_position, is_headshot)
 		_play_random_death()
+		_play_anim("Death")
 		_begin_dissolve()
 		if data:
 			GameState.tokens += data.token_drop
