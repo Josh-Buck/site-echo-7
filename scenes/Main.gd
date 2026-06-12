@@ -1,10 +1,8 @@
 extends Node3D
 
 const COOLING_TOWER := preload("res://scenes/arena/CoolingTower.tscn")
-const TENSION_STINGER := preload("res://audio/ambient/tension_stinger.ogg")
 const STORY_INTRO_SCENE := preload("res://scenes/ui/StoryIntro.tscn")
 const ARENA_SWAP_ROUND := 11
-const STINGER_FIRST_ROUND := 5
 
 # Between-wave fiction beats. Indexed by round_number (the round that just ended).
 const INTERCOM_LINES := {
@@ -24,6 +22,7 @@ const INTERCOM_LINES := {
 
 var _swapped: bool = false
 var _intercom_label: Label = null
+var _intercom_tween: Tween = null
 
 func _ready() -> void:
 	GameState.start_run()
@@ -72,11 +71,13 @@ func _play_intercom_line(round_number: int) -> void:
 	if not INTERCOM_LINES.has(round_number):
 		return
 	_intercom_label.text = "▶ INTERCOM:  " + INTERCOM_LINES[round_number]
-	# Cancel any running tween on this label so back-to-back lines don't fight.
-	var tw := create_tween()
-	tw.tween_property(_intercom_label, "modulate:a", 1.0, 0.35)
-	tw.tween_interval(7.0)
-	tw.tween_property(_intercom_label, "modulate:a", 0.0, 0.6)
+	# Kill any running fade so back-to-back lines don't fight over modulate.
+	if _intercom_tween != null and _intercom_tween.is_valid():
+		_intercom_tween.kill()
+	_intercom_tween = create_tween()
+	_intercom_tween.tween_property(_intercom_label, "modulate:a", 1.0, 0.35)
+	_intercom_tween.tween_interval(7.0)
+	_intercom_tween.tween_property(_intercom_label, "modulate:a", 0.0, 0.6)
 
 func _swap_to_cooling_tower() -> void:
 	_swapped = true
