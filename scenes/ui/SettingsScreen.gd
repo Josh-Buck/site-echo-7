@@ -20,6 +20,7 @@ extends Control
 @onready var mouse_smooth_button: CheckButton = $VBox/MouseSmoothRow/MouseSmoothButton if has_node("VBox/MouseSmoothRow/MouseSmoothButton") else null
 @onready var tutorial_replay_button: Button = $VBox/TutorialReplayRow/TutorialReplayButton if has_node("VBox/TutorialReplayRow/TutorialReplayButton") else null
 @onready var colorblind_button: CheckButton = $VBox/ColorblindRow/ColorblindButton if has_node("VBox/ColorblindRow/ColorblindButton") else null
+@onready var recruit_button: CheckButton = $VBox/RecruitRow/RecruitButton if has_node("VBox/RecruitRow/RecruitButton") else null
 @onready var export_save_button: Button = $VBox/ExportSaveRow/ExportSaveButton if has_node("VBox/ExportSaveRow/ExportSaveButton") else null
 @onready var import_save_button: Button = $VBox/ExportSaveRow/ImportSaveButton if has_node("VBox/ExportSaveRow/ImportSaveButton") else null
 @onready var back_button: Button = $VBox/BackButton
@@ -62,6 +63,7 @@ func _ready() -> void:
 	_init_mouse_smooth_control()
 	_init_tutorial_replay_control()
 	_init_colorblind_control()
+	_init_recruit_control()
 	_init_save_export_controls()
 
 	sens_slider.value_changed.connect(_on_sens_changed)
@@ -243,6 +245,17 @@ func _init_colorblind_control() -> void:
 func _on_colorblind_toggled(pressed: bool) -> void:
 	MetaProgress.set_setting("colorblind", pressed)
 	colorblind_button.text = "ON" if pressed else "OFF"
+
+func _init_recruit_control() -> void:
+	if recruit_button == null:
+		return
+	recruit_button.button_pressed = bool(MetaProgress.get_setting("recruit_mode", false))
+	recruit_button.text = "ON" if recruit_button.button_pressed else "OFF"
+	recruit_button.toggled.connect(_on_recruit_toggled)
+
+func _on_recruit_toggled(pressed: bool) -> void:
+	MetaProgress.set_setting("recruit_mode", pressed)
+	recruit_button.text = "ON" if pressed else "OFF"
 
 func _init_save_export_controls() -> void:
 	if export_save_button != null:

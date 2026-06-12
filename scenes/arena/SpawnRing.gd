@@ -33,6 +33,13 @@ func refresh_spawn_points() -> void:
 	_last_spawn_index = -1
 	print("[SpawnRing] refreshed spawn_points=%d" % _spawn_points.size())
 
+func get_remaining() -> int:
+	# Zombies not yet dealt with: queued + telegraphed + alive. HUD polls this.
+	return _spawn_queue.size() + _pending_count + _active_count
+
+func is_wave_active() -> bool:
+	return _wave_active
+
 func force_end_wave() -> void:
 	# Dev-console support: abandon the in-flight wave cleanly so a skipped-to
 	# wave doesn't run concurrently with the old one's spawn queue.

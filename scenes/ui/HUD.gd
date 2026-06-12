@@ -20,6 +20,7 @@ extends CanvasLayer
 @onready var fps_label: Label = $FpsLabel if has_node("FpsLabel") else null
 
 var _active_weapon: Node = null
+var _spawn_ring: Node = null
 var _hit_marker_timer: float = 0.0
 var _kill_streak: int = 0
 var _vignette_phase: float = 0.0
@@ -44,6 +45,16 @@ func _process(delta: float) -> void:
 			damage_arrow.modulate.a = clamp(_damage_arrow_timer / 0.6, 0.0, 1.0)
 	if fps_label and fps_label.visible:
 		fps_label.text = "%d fps" % int(Engine.get_frames_per_second())
+	_update_wave_label()
+
+func _update_wave_label() -> void:
+	var text := "WAVE %d" % GameState.current_round
+	if _spawn_ring != null and is_instance_valid(_spawn_ring) and _spawn_ring.has_method("get_remaining"):
+		if bool(_spawn_ring.call("is_wave_active")):
+			var rem: int = _spawn_ring.call("get_remaining")
+			if rem > 0:
+				text += "  ·  %d LEFT" % rem
+	wave_label.text = text
 
 func _ready() -> void:
 	EventBus.barrier_damaged.connect(_on_barrier_damaged)
@@ -118,6 +129,7 @@ func _seed_active_weapon() -> void:
 		if w != null:
 			_active_weapon = w
 			_update_ammo_from_weapon(_active_weapon)
+	_spawn_ring = scene.find_child("SpawnRing", true, false)
 
 func _update_hp(current: float, max_val: float) -> void:
 	hp_bar.max_value = max_val

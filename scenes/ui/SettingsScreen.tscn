@@ -341,6 +341,27 @@ layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
 
+[node name="RecruitRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(720, 44)
+
+[node name="RecruitLabel" type="Label" parent="VBox/RecruitRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Recruit Mode  (easier · -30% RD)"
+
+[node name="RecruitButton" type="CheckButton" parent="VBox/RecruitRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(360, 36)
+text = "OFF"
+
+[node name="RecruitSpacer" type="Control" parent="VBox/RecruitRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(120, 0)
+
 [node name="GoreRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(720, 44)

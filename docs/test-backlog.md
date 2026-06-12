@@ -1,8 +1,17 @@
 # Test backlog
 
-Live URL: **https://josh-buck.github.io/site-echo-7/** — title screen bottom-right should read **v0.9.5**.
+Live URL: **https://josh-buck.github.io/site-echo-7/** — title screen bottom-right should read **v0.10.0**.
 
 Delete lines as you verify, or tell me which numbers are broken.
+
+---
+
+## 🆕 v0.10.0 — "make it better" batch
+
+13. [ ] **Ambient music** — after your first click, a quiet dark chord pad fades in and loops. It's pure tones (no rhythm, no percussion) so it can't read as gunfire. The **Music slider** in Settings controls it; zero it if you hate it.
+14. [ ] **Wave counter** — top label now reads "WAVE 3 · 12 LEFT" during combat so you know how close the wave is to done.
+15. [ ] **Tab-out auto-pause** — alt-tab or switch tabs mid-combat: game should be paused when you come back (no more barrier dying while you're away).
+16. [ ] **Recruit Mode** — Settings toggle: +50% barrier HP, 10% slower zombies, −30% Research Data payout. Try it if wave 10 keeps walling you; turn it off when you outgrow it.
 
 ---
 

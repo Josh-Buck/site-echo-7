@@ -19,6 +19,10 @@ func _ready() -> void:
 	if MetaProgress.has_unlock(&"perk_reinforced_barrier"):
 		bonus += max_hp * 0.2
 	max_hp += bonus
+	# Recruit Mode: settings-driven so it applies regardless of ready order
+	# (Barrier readies before Main calls GameState.start_run).
+	if bool(MetaProgress.get_setting("recruit_mode", false)):
+		max_hp *= 1.5
 	current_hp = max_hp
 	add_to_group("barriers")
 	collision_layer = 2

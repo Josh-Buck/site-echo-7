@@ -3,7 +3,7 @@ extends Node
 # Bump on every push so the title screen reflects the build the user is playing.
 # Format: vMAJOR.MINOR.PATCH — bump PATCH on every commit, MINOR on a feature/system
 # landing, MAJOR at 1.0 (release).
-const VERSION: String = "v0.9.7"
+const VERSION: String = "v0.10.0"
 
 # Current-run state. Reset on death. Not persisted.
 
@@ -100,4 +100,8 @@ func compute_rd_payout() -> int:
 		earned += 100
 	elif current_round >= 10:
 		earned += 40
+	# Recruit Mode trades difficulty for progression speed — keeps slow unlocks
+	# honest (see non-negotiables: slow progression IS the retention mechanic).
+	if bool(MetaProgress.get_setting("recruit_mode", false)):
+		earned = int(earned * 0.7)
 	return earned

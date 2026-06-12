@@ -12,6 +12,14 @@ func _ready() -> void:
 	resume_button.mouse_entered.connect(AudioMan.play_ui_hover)
 	menu_button.mouse_entered.connect(AudioMan.play_ui_hover)
 
+func _notification(what: int) -> void:
+	# Browser tab lost focus mid-combat — pause so the barrier doesn't die
+	# while the player is alt-tabbed. Only when actively playing (cursor
+	# captured, no other overlay owns the pause state).
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if not panel.visible and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not _other_overlay_visible():
+			_show()
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if panel.visible:

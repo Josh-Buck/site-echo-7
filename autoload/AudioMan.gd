@@ -50,9 +50,88 @@ func register_first_gesture() -> void:
 		return
 	_gesture_received = true
 	print("[AudioMan] first user gesture registered, audio enabled")
+	start_music()
 
 func can_play() -> bool:
 	return _gesture_received
+
+# --- ambient music bed ----------------------------------------------------------
+# A dark pure-sine chord pad, ~18s seamless loop, built procedurally so it ships
+# no audio file. No rhythm, no noise, no transients — it cannot read as gunfire.
+# Routes through the Music bus so the existing Music slider controls it.
+# Built async in small chunks so the one-time generation never hitches a frame.
+
+const MUSIC_RATE: int = 11025  # pads have no high-frequency content; half rate halves cost
+var _music_player: AudioStreamPlayer = null
+var _music_building: bool = false
+
+func start_music() -> void:
+	if _music_building or (_music_player != null and _music_player.playing):
+		return
+	_music_building = true
+	_build_and_play_music()
+
+func _build_and_play_music() -> void:
+	# Four dark chords. Each occupies an overlapping window with a sin^2 envelope
+	# that is zero at its window edges, so the crossfading sum is continuous.
+	# Every frequency is quantized to a whole number of cycles over the loop
+	# length, which makes the loop point mathematically seamless.
+	var chords := [
+		[110.0, 164.81, 220.0],    # A2 E3 A3 — home
+		[87.31, 130.81, 174.61],   # F2 C3 F3 — sink
+		[98.0, 146.83, 196.0],     # G2 D3 G3 — lift
+		[82.41, 123.47, 164.81],   # E2 B2 E3 — tension
+	]
+	var seg := 4.5
+	var total: float = seg * chords.size()
+	# Quantize frequencies: integer cycle counts over `total` seconds.
+	var q_chords: Array = []
+	for c in chords:
+		var qc: Array = []
+		for f in c:
+			qc.append(round(f * total) / total)
+		# Detuned shadow of the root for slow shimmer.
+		qc.append(round((c[0] + 0.7) * total) / total)
+		q_chords.append(qc)
+	var n := int(total * MUSIC_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(n)
+	var chunk := 8192
+	var i := 0
+	while i < n:
+		var end: int = mini(i + chunk, n)
+		for s in range(i, end):
+			var t: float = float(s) / MUSIC_RATE
+			var v: float = 0.0
+			for c in q_chords.size():
+				var u: float = fposmod(t - float(c) * seg, total)
+				if u < 2.0 * seg:
+					var env: float = sin(PI * u / (2.0 * seg))
+					var amp: float = env * env * 0.10
+					var freqs: Array = q_chords[c]
+					v += sin(TAU * freqs[0] * t) * amp
+					v += sin(TAU * freqs[1] * t) * amp * 0.8
+					v += sin(TAU * freqs[2] * t) * amp * 0.6
+					v += sin(TAU * freqs[3] * t) * amp * 0.5
+			samples[s] = v
+		i = end
+		if not is_inside_tree():
+			_music_building = false
+			return
+		await get_tree().process_frame
+	var stream := _make_stream_rate(samples, MUSIC_RATE)
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	stream.loop_begin = 0
+	stream.loop_end = n
+	_music_player = AudioStreamPlayer.new()
+	_music_player.bus = &"Music" if AudioServer.get_bus_index("Music") >= 0 else &"Master"
+	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	_music_player.stream = stream
+	_music_player.volume_db = -14.0
+	add_child(_music_player)
+	_music_player.play()
+	_music_building = false
+	print("[AudioMan] ambient music bed started (%.0fs loop)" % total)
 
 # --- public API: volumes ------------------------------------------------------
 
@@ -219,6 +298,9 @@ func _synth_thud(dur: float) -> AudioStreamWAV:
 	return _make_stream(samples)
 
 func _make_stream(samples: PackedFloat32Array) -> AudioStreamWAV:
+	return _make_stream_rate(samples, SAMPLE_RATE)
+
+func _make_stream_rate(samples: PackedFloat32Array, rate: int) -> AudioStreamWAV:
 	var bytes := PackedByteArray()
 	bytes.resize(samples.size() * 2)
 	for i in samples.size():
@@ -226,7 +308,7 @@ func _make_stream(samples: PackedFloat32Array) -> AudioStreamWAV:
 		bytes.encode_s16(i * 2, int(s * 32767.0))
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate = SAMPLE_RATE
+	stream.mix_rate = rate
 	stream.stereo = false
 	stream.data = bytes
 	return stream

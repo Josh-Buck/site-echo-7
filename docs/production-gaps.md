@@ -13,7 +13,7 @@ Tiers:
 ## P0 — Blockers for v1.0
 
 ### Audio
-- [ ] **Music.** Soundtrack is entirely absent (needs user: CC0 source decision — Kevin MacLeod, ccMixter, Sonniss). When it lands, wire through the existing Music bus + volume slider.
+- [x] **Music (v1: procedural ambient bed)** ✓ shipped v0.10.0 — dark pure-sine chord pad (Am/F/G/E, 18s seamless loop, frequencies quantized to whole loop-cycles), generated async at first gesture, Music bus + slider. Cannot read as gunfire by construction (no transients, no noise). Post-v1.0 upgrade: a real CC0 soundtrack (needs user source decision) drops in on the same bus.
 - [x] ~~Bus routing / gesture-gating / barrier-impact throttle / casing tink~~ — **superseded by the v0.9 audio restart.** AudioMan was rebuilt from zero: 2D-only, pure-sine synths, zero EventBus listeners, no ambient loops, no zombie vocals, no positional audio. Those four entries described a system that no longer exists.
 
 ### Visuals

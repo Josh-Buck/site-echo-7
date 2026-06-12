@@ -201,7 +201,16 @@ func _run() -> void:
 	else:
 		_fail("walker.tres or its scene missing")
 
-	# Step 13: Director phase-2 rage triggers below 50% HP.
+	# Step 13: ambient music bed builds async after the first gesture.
+	AudioMan.register_first_gesture()
+	var waited := 0
+	while waited < 180 and AudioMan.get("_music_player") == null:
+		await get_tree().process_frame
+		waited += 1
+	var mp: Node = AudioMan.get("_music_player")
+	_expect(mp != null and mp.get("stream") != null, "ambient music bed built after first gesture (waited %d frames)" % waited)
+
+	# Step 14: Director phase-2 rage triggers below 50% HP.
 	var dir_data: EnemyData = load("res://scenes/enemies/data/director.tres")
 	if dir_data != null and dir_data.scene != null:
 		var dz: Node = dir_data.scene.instantiate()
