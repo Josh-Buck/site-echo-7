@@ -168,7 +168,21 @@ func _synth(id: String) -> AudioStreamWAV:
 		"sidearm_fire":      return _synth_fire(0.10, 200.0)
 		"reload":            return _synth_click(0.12)
 		"barrier_destroyed": return _synth_thud(0.6)
+		"streak_break":      return _synth_streak_break()
 	return null
+
+func _synth_streak_break() -> AudioStreamWAV:
+	# Two quick descending sine notes — "streak lost" cue. Pure sine, no noise.
+	var dur := 0.18
+	var n := int(dur * SAMPLE_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(n)
+	for i in n:
+		var t: float = float(i) / SAMPLE_RATE
+		var f: float = 440.0 if t < dur * 0.45 else 370.0
+		var env: float = exp(-t * 6.0) * 0.35
+		samples[i] = sin(2.0 * PI * f * t) * env
+	return _make_stream(samples)
 
 func _synth_fire(dur: float, freq: float) -> AudioStreamWAV:
 	# Pure-sine pop. Sharp exponential attack + decay. NO noise component.

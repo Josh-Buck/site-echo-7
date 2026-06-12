@@ -29,7 +29,7 @@ func _other_overlay_visible() -> bool:
 	var scene := get_tree().current_scene
 	if scene == null:
 		return false
-	for ui_name in ["CardDraft", "Shop", "WaveComplete", "DeathScreen"]:
+	for ui_name in ["CardDraft", "Shop", "WaveComplete", "DeathScreen", "CardBrowseScreen"]:
 		var ui := scene.get_node_or_null(ui_name)
 		if ui == null:
 			continue

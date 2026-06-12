@@ -50,8 +50,9 @@ func _pick_target() -> Node3D:
 		if not (z is Node3D):
 			continue
 		var nz := z as Node3D
-		# Skip already-dying zombies (state DIE or layer 0).
-		if "state" in nz and nz.state == 5:  # AIState.DIE = 5 (not 4)... safety: skip below
+		# Skip dead/dying zombies — take_damage no-ops on them anyway, but
+		# targeting them wastes the turret's fire tick on a corpse.
+		if "current_hp" in nz and nz.get("current_hp") <= 0.0:
 			continue
 		var d2: float = nz.global_position.distance_squared_to(global_position)
 		if d2 < closest_d2:

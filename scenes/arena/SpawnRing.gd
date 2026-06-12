@@ -33,6 +33,14 @@ func refresh_spawn_points() -> void:
 	_last_spawn_index = -1
 	print("[SpawnRing] refreshed spawn_points=%d" % _spawn_points.size())
 
+func force_end_wave() -> void:
+	# Dev-console support: abandon the in-flight wave cleanly so a skipped-to
+	# wave doesn't run concurrently with the old one's spawn queue.
+	_spawn_queue.clear()
+	_pending_count = 0
+	_active_count = 0
+	_wave_active = false
+
 func start_next_wave() -> void:
 	_current_wave_index += 1
 	if _current_wave_index >= waves.size():

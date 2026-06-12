@@ -92,14 +92,15 @@ func _exec(cmd: String) -> void:
 			log_label.text = "unlocked %s" % parts[1]
 		"wave", "skip":
 			var n: int = int(parts[1]) if parts.size() > 1 else GameState.current_round + 1
-			# End the current wave so the between-wave UI advances. Then fast-forward
-			# the SpawnRing's index. Skipping forward only — going backward not supported.
+			# End the current wave cleanly, then fast-forward the SpawnRing index.
+			# Skipping forward only — going backward not supported.
 			var ring := get_tree().current_scene.find_child("SpawnRing", true, false)
 			if ring == null:
 				log_label.text = "no spawn ring"
 				return
 			ring.set("_current_wave_index", clamp(n - 2, -1, 19))
-			# Kill all zombies + emit wave_ended.
+			if ring.has_method("force_end_wave"):
+				ring.call("force_end_wave")
 			for z in get_tree().get_nodes_in_group("zombies"):
 				if z.has_method("queue_free"):
 					z.queue_free()

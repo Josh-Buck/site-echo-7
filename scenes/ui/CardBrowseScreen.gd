@@ -129,5 +129,15 @@ func _on_buy(card: CardData, cost: int, btn: Button) -> void:
 func _on_close() -> void:
 	AudioMan.play_ui_click()
 	panel.visible = false
+	# Opened from the Shop overlay — if the Shop is still up, hand control back
+	# to it (stay paused, keep the cursor) instead of unpausing into gameplay
+	# with the mouse captured (guns could fire under the shop).
+	var scene := get_tree().current_scene
+	var shop := scene.get_node_or_null("Shop") if scene else null
+	var shop_panel := shop.get_node_or_null("Panel") if shop else null
+	if shop_panel is CanvasItem and (shop_panel as CanvasItem).visible:
+		get_tree().paused = true
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		return
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
