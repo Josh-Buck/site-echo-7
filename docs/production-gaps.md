@@ -1,6 +1,6 @@
 # Production gaps — Site Echo 7
 
-A prioritized punch list of everything still standing between the current build and a fully-fleshed v1.0. Snapshot date: 2026-05-17. Reorder as priorities shift.
+A prioritized punch list of everything still standing between the current build and a fully-fleshed v1.0. Snapshot date: **2026-06-12 (v0.9.6)**. Doc map: `docs/INDEX.md`.
 
 Tiers:
 - **P0 — Blocker for v1.0 launch.** A reviewer would call the game obviously incomplete without these.
@@ -13,22 +13,19 @@ Tiers:
 ## P0 — Blockers for v1.0
 
 ### Audio
-- [ ] **Music.** Soundtrack is entirely absent. Need at least: main-menu loop, ambient combat bed, escalation layer for waves 10+, boss theme variant, run-end stinger. Procedural / CC0 sourced (Kevin MacLeod, ccMixter, Sonniss).
-- [x] **Route remaining AudioStreamPlayers to SFX/Music buses.** ✓ done — all 3D positional + ambient now route to SFX.
-- [x] **Browser audio gesture-gating.** ✓ first-click gesture pattern works; cold-boot bus volumes applied via AudioMan.
-- [x] **Barrier-impact SFX no longer reads as constant gunfire.** ✓ throttled to 160ms cooldown and volume dropped 6-10 dB. Was the user-reported "shots all over the background."
-- [x] **Brass casing audio.** ✓ each casing emits a quiet metal tink on first floor-bounce (cooldown-debounced so a bouncing casing doesn't clink twice).
+- [ ] **Music.** Soundtrack is entirely absent (needs user: CC0 source decision — Kevin MacLeod, ccMixter, Sonniss). When it lands, wire through the existing Music bus + volume slider.
+- [x] ~~Bus routing / gesture-gating / barrier-impact throttle / casing tink~~ — **superseded by the v0.9 audio restart.** AudioMan was rebuilt from zero: 2D-only, pure-sine synths, zero EventBus listeners, no ambient loops, no zombie vocals, no positional audio. Those four entries described a system that no longer exists.
 
 ### Visuals
 - [x] **Real 3D models for the six weapons** ✓ shipped — Quaternius Ultimate Gun Pack (CC0). Pistol, Sidearm, AR, Shotgun, SMG, Bolt-Action all use real low-poly GLBs with baked textures. Rigged firing animations are the next ask (no rig yet on Quaternius pack — would need Mixamo retarget).
-- [ ] **Real 3D models for zombies.** Five enemy archetypes are currently capsules with tints. At least one rigged humanoid mesh with palette/scale variants per archetype (Walker/Runner/Tank/Spitter/Exploder) and one distinct mesh per boss (Subject, Director). PARTIAL: 2026-05-21 — zombies now have humanoid silhouette (hunched torso, shoulders, head, jaw, two forward-reaching arms, two legs) built from primitives. Limbs tint with the archetype color. Still primitives, but reads as a creature rather than a capsule.
-- [ ] **Arena dressing.** Containment Lab + Cooling Tower are geometric blockouts. Need: console banks, broken vents, equipment crates, signage, hanging cables, a few "destroyed lab" set-pieces near spawn corridors. CC0 sci-fi kit from Quaternius / Kenney is the fastest path.
+- [x] **Real 3D models for zombies** ✓ shipped v0.8/v0.9.2 — rigged Mixamo character (`zombie.glb`, 1.7 MB) with Walk/Attack/Death animations driven by the AI state machine; per-archetype tint + size scale distinguishes types. Post-v1.0 nice-to-have: distinct *meshes* per archetype instead of tint variants.
+- [x] **Arena dressing** ✓ shipped v0.9.2 — 7 Sci-Fi Essentials props (crates ×3, barrels ×2, locker, chair; all 1K-downscaled, ~2.8 MB total) scattered randomly per run with sightline-safe placement. More set-dressing (consoles, cables, signage) is post-v1.0 polish.
 
 ### Build / deploy
 - [x] **Verify Initial Memory = 256 MB** ✓ added `application/run/initial_size_mb=256` under preset.0.options.custom_features in export_presets.cfg.
-- [ ] **Cross-browser smoke test** — Chrome, Firefox, Safari on macOS. Currently unverified after this session's churn.
-- [ ] **DevTools heap watch.** Peak wave 20 with full audio + PBR; confirm < 256 MB.
-- [ ] **Frame-time budget.** Profile at peak horde with all VFX on; 16.6ms 95th percentile target.
+- [ ] **Cross-browser smoke test** — Chrome, Firefox, Safari on macOS (needs user; checklist in `asset-pipeline.md` §3).
+- [ ] **DevTools heap watch** — peak wave 20, confirm < 256 MB (needs user; walkthrough in `asset-pipeline.md` §3).
+- [ ] **Frame-time budget** — 16.6ms 95th percentile at peak horde (needs user; walkthrough in `asset-pipeline.md` §3).
 
 ### Onboarding
 - [x] **First-run tutorial polish.** ✓ rewritten — explains the spin-to-aim loop, card→shop cadence, sidearm fallback, alarm-at-25%-HP cue, 20-wave structure / boss on wave 20.

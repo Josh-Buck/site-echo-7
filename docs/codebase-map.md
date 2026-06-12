@@ -30,7 +30,7 @@ Counts current as of latest audit: ~40 .gd files, ~5,500 LOC, ~115 .tres data fi
 | `GameState.gd` | Per-run state. Reset on death. | `start_run()`, `end_run()`, vars: `current_round`, `current_score`, `tokens` |
 | `MetaProgress.gd` | Persistent. Saves to user://. | `has_unlock(id)`, `buy_unlock(id, cost)`, `has_weapon(id)`, `get_fov()`, `get_setting/set_setting`, `gore_enabled()`, `record_run_end()` |
 | `EventBus.gd` | All cross-system signals declared here. | See signal vocabulary below |
-| `AudioMan.gd` | Procedural synth + loaded streams. SFX bus. | `play_sfx(id, pos?)`, `play_2d`, `play_3d_at`, `play_ui_click/hover/confirm`, `set_master_volume`, gesture gate |
+| `AudioMan.gd` | v0.9 restart: 2D-only 6-player pool, pure-sine synths, ZERO EventBus listeners — sounds are explicit calls. | `play_weapon_fire(id)`, `play_weapon_reload()`, `play_barrier_destroyed()`, `play_sfx(id)`, `play_ui_click/hover/confirm`, `set_bus_linear`, gesture gate |
 | `SaveSystem.gd` | Versioned JSON to user://meta.save. | `save_meta()`, `load_meta()`, `wipe_meta()` |
 | `CardSystem.gd` | Draft + active deck + payload mutation. | `offer_cards(n)`, `pick_card(idx)`, `skip_draft()`, `get_modifier(stat)`, `mutate_payload(p)` |
 | `ChallengeTracker.gd` | Tracks 26 challenges, awards RD. | listens to EventBus, persists via `MetaProgress.settings` |
@@ -126,7 +126,7 @@ Between-wave flow: `wave_ended` → CardDraft (buffer + draft) → CardSystem.pi
 | File | Purpose |
 |---|---|
 | `Zombie.gd` | All enemy behavior. State machine (Idle/Chase/Attack/Stagger/Die). Direct steering (no navmesh). Per-archetype tinting + size from EnemyData. Director enters phase-2 rage at HP<50%. White-flash + scale-pop on hit. Dissolve = single scale tween (no per-mesh allocations). |
-| `Zombie.tscn` | Humanoid silhouette built from primitives — hunched torso, shoulders, head, jaw, two forward-reaching arms, two legs. |
+| `Zombie.tscn` | Rigged Mixamo character (`art/models/zombies/zombie.glb`) with Walk/Attack/Death animations; capsule collider; per-archetype tint via cached material overrides. |
 | `data/enemy_data.gd` | `EnemyData` Resource class. |
 | `data/*.tres` | walker, walker_elite, runner, tank, exploder, spitter, subject (mini-boss), director (final boss). |
 | `AcidSpit.gd/tscn` | Spitter projectile. Area3D, hits barrier. |

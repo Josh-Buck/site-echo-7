@@ -8,6 +8,10 @@ A 3D first-person stationary horde shooter. Player is locked behind a circular b
 
 The build-a-deck card system is the hook. Cards are framed as "recovered research notes" that hot-modify the player's weapons (Site Echo-7 fiction).
 
+## Current status (v0.9.6)
+
+Feature-complete for v1.0 except music + manual browser QA. **`docs/INDEX.md`** is the master doc map; **`docs/production-gaps.md`** is the live punch list; **`docs/test-backlog.md`** is what the user verifies next. Regression net: `godot --headless res://tools/smoke_test.tscn` (42 assertions) — run before every push. Bump `GameState.VERSION` on every push; the title screen displays it.
+
 ## Core values
 
 - **Quality over speed.** No hard deadline. We ship a milestone when it meets its definition-of-done, not when a week ends. A worse game shipped fast is still a worse game.
@@ -115,6 +119,9 @@ See `docs/ideas.md`. Stuff that's *not* in v1 goes here, not into the code.
 - **Default `mouse_filter = STOP` on Control nodes blocks clicks** from reaching children/siblings. Background panels covering the screen need `mouse_filter = 2` (IGNORE).
 - **Removing a function while adding others is easy to do by accident** — when adding `_on_meta_pressed` next to `_input` in a single Edit, I deleted `_input`. Re-read the file before pushing if I've edited the same function block twice.
 - **`:=` type inference fails when chained through `Node`.** `var x := some_node.specific_method()` errors at parse time with "Cannot infer the type" if `some_node` is statically `Node` but `specific_method` lives on a subclass. Fixes: type the function's return value to the actual subclass (`-> Weapon` not `-> Node`), OR use explicit `var x: int = ...` to bypass inference. Bytecode export silently ships these and they only show as Parse Errors in the browser console at runtime.
+- **Stale `$Node` references survive model swaps silently-ish.** When Zombie went primitive → GLB, three functions kept `$Mesh`/`$EyeL` refs — "Node not found" error spam every spawn/headshot and silently-dead features (rage recolor, headshot flash). After ANY scene-rig change, grep the script for `$` paths and re-run the smoke test's damage-pipeline section.
+- **AudioMan (v0.9) has ZERO EventBus listeners — keep it that way.** Every sound is an explicit call from the system that owns the action (`play_weapon_fire(id)`, `play_weapon_reload()`, `play_barrier_destroyed()`, UI helpers). The old listener-based design layered sounds invisibly and produced the unfixable-seeming "constant gunfire" complaint. If a new feature needs audio, add an explicit call + a pure-sine synth; do NOT subscribe AudioMan to a signal.
+- **Two tweens animating the same property race.** The zombie hit-pop and corpse-shrink both tweened `scale` and flickered on kill blows. Before adding a tween on a property, check what else tweens it; gate with a flag or kill the prior tween.
 
 ## Operating cadence (user preferences)
 
