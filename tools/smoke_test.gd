@@ -175,6 +175,47 @@ func _run() -> void:
 		var sps: Array = ring.get("_spawn_points")
 		_expect(sps.size() > 0, "SpawnRing has spawn points after arena swap (got %d)" % sps.size())
 
+	# Step 12: zombie damage pipeline — regression for the stale-node-reference
+	# class of bug. Exercises spawn visuals, headshot flash, kill flow, and the
+	# Director rage recolor at runtime (these broke silently on model swaps).
+	print("[smoke] zombie damage pipeline")
+	var walker_data: EnemyData = load("res://scenes/enemies/data/walker.tres")
+	if walker_data != null and walker_data.scene != null:
+		var z: Node = walker_data.scene.instantiate()
+		z.set("data", walker_data)
+		get_tree().root.add_child(z)
+		await get_tree().process_frame
+		_expect(z.is_in_group("zombies"), "spawned zombie registers in zombies group")
+		# Headshot that does NOT kill — exercises hit reaction + white flash.
+		z.call("take_damage", 1.0, null, true, Vector3(0, 1.6, 0))
+		await _wait(0.15)
+		_expect(float(z.get("current_hp")) < walker_data.max_hp, "zombie took damage")
+		_expect(int(z.get("state")) != 4, "zombie still alive after 1 dmg")
+		# Killing blow — must emit enemy_killed and enter DIE.
+		var killed := [false]
+		EventBus.enemy_killed.connect(func(_e, _s, _h, _p): killed[0] = true, CONNECT_ONE_SHOT)
+		z.call("take_damage", 99999.0, null, false, Vector3.ZERO)
+		_expect(killed[0], "enemy_killed emitted on kill")
+		_expect(int(z.get("state")) == 4, "zombie state == DIE after kill")
+		await _wait(0.2)
+	else:
+		_fail("walker.tres or its scene missing")
+
+	# Step 13: Director phase-2 rage triggers below 50% HP.
+	var dir_data: EnemyData = load("res://scenes/enemies/data/director.tres")
+	if dir_data != null and dir_data.scene != null:
+		var dz: Node = dir_data.scene.instantiate()
+		dz.set("data", dir_data)
+		get_tree().root.add_child(dz)
+		await get_tree().process_frame
+		# Headshot bypasses armor, so this drops HP below 50% in one hit.
+		dz.call("take_damage", dir_data.max_hp * 0.6, null, true, Vector3.ZERO)
+		await _wait(0.15)
+		_expect(bool(dz.get("_enraged")), "Director enters phase-2 rage below 50% HP")
+		dz.queue_free()
+	else:
+		_fail("director.tres or its scene missing")
+
 	_done()
 
 func _done() -> void:
